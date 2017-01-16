@@ -204,9 +204,9 @@ public class PlaySoundAndWaitBrick extends BrickBaseType implements OnItemSelect
 
 	private void setOnSoundInfoListChangedAfterNewListener(Context context) {
 		ScriptActivity scriptActivity = (ScriptActivity) context;
-		SoundFragment soundFragment = (SoundFragment) scriptActivity.getFragment(ScriptActivity.FRAGMENT_SOUNDS);
-		if (soundFragment != null) {
-			soundFragment.setOnSoundInfoListChangedAfterNewListener(this);
+		SoundFragment soundListFragment = (SoundFragment) scriptActivity.getFragment(ScriptActivity.FRAGMENT_SOUNDS);
+		if (soundListFragment != null) {
+			soundListFragment.setOnSoundInfoListChangedAfterNewListener(this);
 		}
 	}
 

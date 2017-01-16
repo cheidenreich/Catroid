@@ -24,21 +24,29 @@ package org.catrobat.catroid.ui.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.BottomBar;
-import org.catrobat.catroid.ui.ProjectActivity;
-import org.catrobat.catroid.ui.dialogs.CustomAlertDialogBuilder;
+import org.catrobat.catroid.ui.controller.BackPackListManager;
+import org.catrobat.catroid.ui.dialogs.DeleteItemDialog;
 import org.catrobat.catroid.ui.dialogs.RenameItemDialog;
 
-public abstract class ListActivityFragment extends CheckBoxListFragment implements ListItemActionsInterface,
-		RenameItemDialog.RenameItemInterface {
+public abstract class ListActivityFragment extends CheckBoxListFragment implements DeleteItemDialog
+		.DeleteItemInterface, RenameItemDialog.RenameItemInterface {
 
 	public static final String TAG = ListActivityFragment.class.getSimpleName();
+	protected int deleteDialogTitle;
+	protected int replaceDialogMessage;
 
 	protected ActionMode.Callback deleteModeCallBack = new ActionMode.Callback() {
 		@Override
@@ -169,10 +177,34 @@ public abstract class ListActivityFragment extends CheckBoxListFragment implemen
 			if (adapter.getCheckedItems().isEmpty()) {
 				clearCheckedItems();
 			} else {
-				packCheckedItems();
+				showReplaceItemsInBackPackDialog();
 			}
 		}
 	};
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (BackPackListManager.getInstance().isBackpackEmpty()) {
+			BackPackListManager.getInstance().loadBackpack();
+		}
+
+		StorageHandler.getInstance().fillChecksumContainer();
+		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void clearCheckedItems() {
+		super.clearCheckedItems();
+		BottomBar.showBottomBar(getActivity());
+	}
 
 	public void startDeleteActionMode() {
 		startActionMode(deleteModeCallBack);
@@ -195,12 +227,14 @@ public abstract class ListActivityFragment extends CheckBoxListFragment implemen
 			return;
 		}
 		if (adapter.isEmpty()) {
-			if (actionModeCallback.equals(copyModeCallBack)) {
-				((ProjectActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.copy));
-			} else if (actionModeCallback.equals(deleteModeCallBack)) {
-				((ProjectActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.delete));
+			if (actionModeCallback.equals(deleteModeCallBack)) {
+				showEmptyActionModeDialog(R.string.delete, R.string.nothing_to_delete);
+			} else if (actionModeCallback.equals(copyModeCallBack)) {
+				showEmptyActionModeDialog(R.string.copy, R.string.nothing_to_copy);
 			} else if (actionModeCallback.equals(renameModeCallBack)) {
-				((ProjectActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.rename));
+				showEmptyActionModeDialog(R.string.rename, R.string.nothing_to_rename);
+			} else if (actionModeCallback.equals(backPackModeCallBack)) {
+				showEmptyActionModeDialog(R.string.backpack, R.string.nothing_to_backpack_and_unpack);
 			}
 		} else {
 			actionMode = getActivity().startActionMode(actionModeCallback);
@@ -209,9 +243,23 @@ public abstract class ListActivityFragment extends CheckBoxListFragment implemen
 		}
 	}
 
-	public abstract void showDeleteDialog();
+	public void onNewIntent(Intent intent) {
+	}
 
-	protected abstract void deleteCheckedItems();
+	public abstract void handleAddButton();
+
+	protected void showDeleteDialog() {
+		DeleteItemDialog dialog = new DeleteItemDialog(deleteDialogTitle, this);
+		dialog.show(getFragmentManager(), DeleteItemDialog.DIALOG_FRAGMENT_TAG);
+	}
+
+	@Override
+	public int getCheckedItemCount() {
+		return adapter.getCheckedItems().size();
+	}
+
+	@Override
+	public abstract void deleteCheckedItems();
 
 	protected abstract void copyCheckedItems();
 
@@ -221,31 +269,51 @@ public abstract class ListActivityFragment extends CheckBoxListFragment implemen
 
 	public abstract void renameItem(String newName);
 
+	public abstract void showReplaceItemsInBackPackDialog();
+
 	protected abstract void packCheckedItems();
 
-	@Override
-	public boolean getActionModeActive() {
-		return isActionModeActive();
+	protected abstract boolean isBackPackEmpty();
+
+	protected abstract void changeToBackPack();
+
+	public void showPackOrUnpackDialog() {
+		if (isBackPackEmpty()) {
+			startBackPackActionMode();
+			return;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(R.string.backpack_title);
+		builder.setItems(R.array.pack_or_unpack_dialog_items, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0:
+						startBackPackActionMode();
+						break;
+					case 1:
+						changeToBackPack();
+						break;
+				}
+				dialog.dismiss();
+			}
+		});
+		builder.setCancelable(true);
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
-	@Override
-	public void setActionModeActive(boolean actionModeActive) {
-		throw new UnsupportedOperationException("Refactor INTERFACE!");
-	}
+	protected void showReplaceItemsInBackPackDialog(String objectName) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(R.string.backpack);
 
-	@Override
-	public void handleAddButton() {
-		throw new UnsupportedOperationException("Refactor INTERFACE!");
-	}
+		int itemCount = adapter.getCheckedItems().size();
 
-	protected void showDeleteDialog(int titleId) {
-		AlertDialog.Builder builder = new CustomAlertDialogBuilder(getActivity());
-		builder.setTitle(titleId);
-		builder.setMessage(R.string.dialog_confirm_delete_object_message);
+		builder.setMessage(getResources().getQuantityString(replaceDialogMessage, itemCount, objectName));
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				deleteCheckedItems();
+				packCheckedItems();
 				clearCheckedItems();
 			}
 		});

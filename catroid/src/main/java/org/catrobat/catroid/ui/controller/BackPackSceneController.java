@@ -90,7 +90,7 @@ public final class BackPackSceneController {
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						fragment.showProgressCircle();
+						fragment.setProgressCircleVisibility(true);
 						fragment.packScenes(currentSceneList);
 					}
 				}).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

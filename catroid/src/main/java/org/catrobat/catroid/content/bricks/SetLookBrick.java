@@ -43,7 +43,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.ui.ScriptActivity;
-import org.catrobat.catroid.ui.controller.LookController;
+import org.catrobat.catroid.ui.controller.OldLookController;
 import org.catrobat.catroid.ui.fragment.LookFragment;
 import org.catrobat.catroid.ui.fragment.LookFragment.OnLookDataListChangedAfterNewListener;
 
@@ -321,7 +321,7 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 		if (look == null) {
 			return;
 		}
-		look = LookController.getInstance().backPackHiddenLook(this.getLook());
+		look = OldLookController.getInstance().backPackHiddenLook(this.getLook());
 		if (sprite != null && !sprite.getLookDataList().contains(look)) {
 			sprite.getLookDataList().add(look);
 		}

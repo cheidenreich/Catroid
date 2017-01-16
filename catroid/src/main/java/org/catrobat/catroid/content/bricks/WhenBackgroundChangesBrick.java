@@ -44,7 +44,7 @@ import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.WhenBackgroundChangesScript;
 import org.catrobat.catroid.ui.ScriptActivity;
-import org.catrobat.catroid.ui.controller.LookController;
+import org.catrobat.catroid.ui.controller.OldLookController;
 import org.catrobat.catroid.ui.fragment.LookFragment;
 import org.catrobat.catroid.ui.fragment.LookFragment.OnLookDataListChangedAfterNewListener;
 
@@ -314,7 +314,7 @@ public class WhenBackgroundChangesBrick extends BrickBaseType implements
 		if (getLook() == null) {
 			return;
 		}
-		setLook(LookController.getInstance().backPackHiddenLook(this.getLook()));
+		setLook(OldLookController.getInstance().backPackHiddenLook(this.getLook()));
 		if (sprite != null && !sprite.getLookDataList().contains(getLook())) {
 			sprite.getLookDataList().add(getLook());
 		}

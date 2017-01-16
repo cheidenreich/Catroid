@@ -192,6 +192,14 @@ public class LookData implements Serializable, Cloneable {
 		return fileName;
 	}
 
+	public String getLookFilenameWithoutChecksum() {
+		return fileName.substring(33);
+	}
+
+	public String getLookFileNameWithoutChecksumAndEnding() {
+		return fileName.substring(33, fileName.lastIndexOf("."));
+	}
+
 	public String getChecksum() {
 		if (fileName == null) {
 			return null;
