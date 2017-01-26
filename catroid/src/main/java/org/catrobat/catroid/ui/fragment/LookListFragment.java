@@ -37,6 +37,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.BackPackActivity;
 import org.catrobat.catroid.ui.WebViewActivity;
@@ -312,24 +313,22 @@ public class LookListFragment extends ListActivityFragment implements CheckBoxLi
 	}
 
 	private boolean copyLook() {
-		String projectName = ProjectManager.getInstance().getCurrentProject().getName();
-		String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
+		String copiedImageFile = StorageHandler.getInstance().copyFile(lookToEdit.getAbsolutePath(), ProjectManager
+				.getInstance().getFileChecksumContainer());
 
-		try {
-			StorageHandler.getInstance().copyImage(projectName, sceneName, lookToEdit.getAbsolutePath(), null);
-			String newLookName = lookToEdit.getLookName().concat(getString(R.string.copied_item_suffix));
-			LookData newLookData = new LookData(newLookName, lookToEdit.getLookFileName());
-
-			lookAdapter.add(newLookData);
-
-			if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
-				newLookData.getCollisionInformation().calculate();
-			}
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(copiedImageFile == null) {
 			return false;
 		}
+
+		String newLookName = lookToEdit.getLookName().concat(getString(R.string.copied_item_suffix));
+		LookData newLookData = new LookData(newLookName, copiedImageFile);
+
+		lookAdapter.add(newLookData);
+
+		if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
+			newLookData.getCollisionInformation().calculate();
+		}
+		return true;
 	}
 
 	@Override

@@ -419,7 +419,7 @@ public final class SoundController {
 
 	public SoundInfo copySound(SoundInfo selectedSoundInfo, List<SoundInfo> soundInfoList, SoundFragment fragment) {
 		try {
-			StorageHandler.getInstance().copySoundFile(selectedSoundInfo.getAbsolutePath());
+			StorageHandler.getInstance().OLDcopySoundFile(selectedSoundInfo.getAbsolutePath());
 		} catch (IOException ioException) {
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		}
@@ -430,7 +430,7 @@ public final class SoundController {
 	public void copySound(int position, List<SoundInfo> soundInfoList, SoundBaseAdapter adapter) {
 		SoundInfo soundInfo = soundInfoList.get(position);
 		try {
-			StorageHandler.getInstance().copySoundFile(soundInfo.getAbsolutePath());
+			StorageHandler.getInstance().OLDcopySoundFile(soundInfo.getAbsolutePath());
 		} catch (IOException ioException) {
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		}
@@ -649,7 +649,7 @@ public final class SoundController {
 				throw new IOException();
 			}
 
-			File soundFile = StorageHandler.getInstance().copySoundFile(originalSoundPath);
+			File soundFile = StorageHandler.getInstance().OLDcopySoundFile(originalSoundPath);
 
 			String soundName;
 			int extensionDotIndex = oldFile.getName().lastIndexOf('.');

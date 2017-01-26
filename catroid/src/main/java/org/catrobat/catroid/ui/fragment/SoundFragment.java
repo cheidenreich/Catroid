@@ -952,7 +952,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 		protected File doInBackground(String... path) {
 			File file = null;
 			try {
-				file = StorageHandler.getInstance().copySoundFile(path[0]);
+				file = StorageHandler.getInstance().OLDcopySoundFile(path[0]);
 			} catch (IOException e) {
 				Log.e(TAG, "Cannot load sound.", e);
 			}

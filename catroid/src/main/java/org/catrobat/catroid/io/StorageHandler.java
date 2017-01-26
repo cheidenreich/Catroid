@@ -1010,7 +1010,7 @@ public final class StorageHandler {
 		return false;
 	}
 
-	public File copySoundFile(String path) throws IOException, IllegalArgumentException {
+	public File OLDcopySoundFile(String path) throws IOException, IllegalArgumentException {
 		String currentProject = ProjectManager.getInstance().getCurrentProject().getName();
 		String currentScene = ProjectManager.getInstance().getCurrentScene().getName();
 		File soundDirectory = new File(buildPath(buildScenePath(currentProject, currentScene), SOUND_DIRECTORY));
@@ -1108,48 +1108,6 @@ public final class StorageHandler {
 		File outputFile = new File(buildPath(imageDirectory.getAbsolutePath(), newName));
 
 		return createFileFromBitmap(outputFile, inputImage, imageDirectory);
-	}
-
-	public File copyImage(String currentProjectName, String currentSceneName, String inputFilePath, String newName)
-			throws IOException {
-		String newFilePath;
-		File imageDirectory = new File(buildPath(buildScenePath(currentProjectName, currentSceneName), IMAGE_DIRECTORY));
-
-		File inputFile = new File(inputFilePath);
-		if (!inputFile.exists() || !inputFile.canRead()) {
-			return null;
-		}
-
-		int[] imageDimensions = ImageEditing.getImageDimensions(inputFilePath);
-		FileChecksumContainer checksumCont = ProjectManager.getInstance().getFileChecksumContainer();
-
-		File outputFileDirectory = new File(imageDirectory.getAbsolutePath());
-		if (!outputFileDirectory.exists()) {
-			outputFileDirectory.mkdirs();
-		}
-
-		Project project = ProjectManager.getInstance().getCurrentProject();
-
-		if ((imageDimensions[0] > project.getXmlHeader().virtualScreenWidth)
-				&& (imageDimensions[1] > project.getXmlHeader().virtualScreenHeight)) {
-			File outputFile = new File(buildPath(imageDirectory.getAbsolutePath(), inputFile.getName()));
-			return copyAndResizeImage(outputFile, inputFile, imageDirectory);
-		} else {
-			String checksumSource = Utils.md5Checksum(inputFile);
-
-			if (newName != null) {
-				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + newName);
-			} else {
-				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + inputFile.getName());
-				if (checksumCont.containsChecksum(checksumSource)) {
-					checksumCont.addChecksum(checksumSource, newFilePath);
-					return new File(checksumCont.getPath(checksumSource));
-				}
-			}
-
-			File outputFile = new File(newFilePath);
-			return copyFileAddCheckSum(outputFile, inputFile);
-		}
 	}
 
 	public File makeTempImageCopy(String inputFilePath) throws IOException {
@@ -1369,5 +1327,103 @@ public final class StorageHandler {
 	public void updateCodefileOnDownload(String projectName) {
 		File projectCodeFile = new File(buildProjectPath(projectName), PROJECTCODE_NAME);
 		xstream.updateCollisionReceiverBrickMessage(projectCodeFile);
+	}
+
+	public File copyImage(String currentProjectName, String currentSceneName, String inputFilePath, String newName)
+			throws IOException {
+		String newFilePath;
+		File imageDirectory = new File(buildPath(buildScenePath(currentProjectName, currentSceneName), IMAGE_DIRECTORY));
+
+		File inputFile = new File(inputFilePath);
+		if (!inputFile.exists() || !inputFile.canRead()) {
+			return null;
+		}
+
+		int[] imageDimensions = ImageEditing.getImageDimensions(inputFilePath);
+		FileChecksumContainer checksumCont = ProjectManager.getInstance().getFileChecksumContainer();
+
+		File outputFileDirectory = new File(imageDirectory.getAbsolutePath());
+		if (!outputFileDirectory.exists()) {
+			outputFileDirectory.mkdirs();
+		}
+
+		Project project = ProjectManager.getInstance().getCurrentProject();
+
+		if ((imageDimensions[0] > project.getXmlHeader().virtualScreenWidth)
+				&& (imageDimensions[1] > project.getXmlHeader().virtualScreenHeight)) {
+			File outputFile = new File(buildPath(imageDirectory.getAbsolutePath(), inputFile.getName()));
+			return copyAndResizeImage(outputFile, inputFile, imageDirectory);
+		} else {
+			String checksumSource = Utils.md5Checksum(inputFile);
+
+			if (newName != null) {
+				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + newName);
+			} else {
+				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + inputFile.getName());
+				if (checksumCont.containsChecksum(checksumSource)) {
+					checksumCont.addChecksum(checksumSource, newFilePath);
+					return new File(checksumCont.getPath(checksumSource));
+				}
+			}
+
+			File outputFile = new File(newFilePath);
+			return copyFileAddCheckSum(outputFile, inputFile);
+		}
+	}
+
+	/**
+	 * Creates a copy of a file in the same directory.
+	 * @param srcPath Path to the original file.
+	 * @param checksumContainer	FileChecksumContainer instance for usage count handling (shallow copy). Set to null
+	 *                             for plain copy without usage counter handling.
+	 * @return Unique name of the copied file (without path).
+	 */
+	public String copyFile(String srcPath, FileChecksumContainer checksumContainer){
+		return copyFile(srcPath, new File(srcPath).getParent(), checksumContainer);
+	}
+
+	/**
+	 * Creates a copy of a file in the specified destination directory (will be created if non existent).
+	 * @param srcPath Path to the original file.
+	 * @param dstDirectory Destination directory for the copied file.
+	 * @param checksumContainer FileChecksumContainer instance for usage count handling (shallow copy). Set to null
+	 *                             for plain copy without usage counter handling.
+	 * @return Unique name of the copied file (without path).
+	 */
+	public String copyFile(String srcPath, String dstDirectory, FileChecksumContainer checksumContainer) {
+		File original = new File(srcPath);
+
+		if(!original.exists()) {
+			Log.e(TAG, "Cannot create copy of non existent file.");
+			return null;
+		}
+
+		String checksum = Utils.md5Checksum(original);
+		String fileName = original.getName();
+		String extension = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+
+		File copy;
+		try {
+			if(checksumContainer != null && checksumContainer.containsChecksum(checksum)){
+				checksumContainer.incrementUsage(srcPath);
+				return fileName;
+			}
+
+			File destinationDir = new File(dstDirectory);
+			destinationDir.mkdirs();
+
+			copy = File.createTempFile(fileName, extension, destinationDir);
+			Files.copy(original, copy);
+
+			if(checksumContainer != null){
+				checksumContainer.addChecksum(checksum, copy.getAbsolutePath());
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "Error while copying file.");
+			Log.e(TAG, Log.getStackTraceString(e));
+			return null;
+		}
+
+		return copy.getName();
 	}
 }

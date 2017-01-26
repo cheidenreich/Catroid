@@ -69,6 +69,7 @@ public class LookData implements Serializable, Cloneable {
 	public LookData(String name, String fileName) {
 		setLookName(name);
 		setLookFilename(fileName);
+		getMeasure();
 	}
 
 	public void draw(Batch batch, float alpha) {
