@@ -60,7 +60,7 @@ public final class BackPackListManager {
 		return INSTANCE;
 	}
 
-	void addLookToBackPack(LookData lookData) {
+	public void addLookToBackPack(LookData lookData) {
 		getBackpack().backpackedLooks.add(lookData);
 	}
 
@@ -97,23 +97,25 @@ public final class BackPackListManager {
 	}
 
 	public void clearBackPackUserBricks() {
-		getBackpack().backpackedUserBricks.clear();
+		//TODO: remove
 	}
 
 	public void removeItemFromUserBrickBackPack(String userBrickGroup) {
-		getBackpack().backpackedUserBricks.remove(userBrickGroup);
+		//TODO: remove
 	}
 
 	public ArrayList<String> getBackPackedUserBrickGroups() {
-		return new ArrayList<>(getBackpack().backpackedUserBricks.keySet());
+		//TODO: remove
+		return new ArrayList<>();
 	}
 
 	public void addUserBrickToBackPack(String userBrickGroup, List<UserBrick> userBricks) {
-		getBackpack().backpackedUserBricks.put(userBrickGroup, userBricks);
+		//TODO: remove
 	}
 
 	public HashMap<String, List<UserBrick>> getBackPackedUserBricks() {
-		return getBackpack().backpackedUserBricks;
+		//TODO: remove
+		return new HashMap<>();
 	}
 
 	public void clearBackPackLooks() {

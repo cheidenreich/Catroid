@@ -49,6 +49,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.backpack.BackpackLookController;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DroneVideoLookData;
 import org.catrobat.catroid.common.LookData;
@@ -242,30 +243,10 @@ public final class LookController {
 		copyImageToCatroid(originalImagePath, activity, lookDataList, fragment);
 	}
 
-	public LookData updateLookBackPackAfterUnpacking(LookData lookData, LookBaseAdapter adapter, String name, boolean
-			delete, String existingFileNameInProjectDirectory, boolean fromHiddenBackPack) {
-		String fileName;
-		if (existingFileNameInProjectDirectory == null) {
-			fileName = lookData.getLookFileName();
-			String fileFormat = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
-			fileName = fileName.substring(0, fileName.indexOf('_') + 1) + name + fileFormat;
-		} else {
-			fileName = existingFileNameInProjectDirectory;
-		}
+	public LookData updateLookBackPackAfterUnpacking(LookData lookData, LookBaseAdapter adapter) {
 
-		LookData newLookData = new LookData(name, fileName);
+		LookData newLookData = BackpackLookController.unpack(lookData);
 		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
-
-		if (delete) {
-			if (fromHiddenBackPack) {
-				BackPackListManager.getInstance().removeItemFromLookHiddenBackpack(lookData);
-			} else {
-				BackPackListManager.getInstance().removeItemFromLookBackPack(lookData);
-			}
-			if (!otherLookDataItemsHaveAFileReference(lookData)) {
-				StorageHandler.getInstance().deleteFile(lookData.getAbsoluteBackPackPath(), true);
-			}
-		}
 
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
@@ -609,7 +590,7 @@ public final class LookController {
 	public void backPackVisibleLook(LookData currentLookData) {
 		String lookDataName = currentLookData.getLookName();
 		BackPackListManager.getInstance().removeItemFromLookBackPackByLookName(lookDataName);
-		backPack(currentLookData, lookDataName, false);
+		BackpackLookController.pack(currentLookData);
 	}
 
 	public LookData backPackHiddenLook(LookData currentLookData) {
@@ -633,19 +614,8 @@ public final class LookController {
 	}
 
 	public LookData unpack(LookData selectedLookDataBackPack, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
-		if (fromHiddenBackPack && ProjectManager.getInstance().getCurrentSprite().containsLookData(selectedLookDataBackPack)) {
-			return selectedLookDataBackPack;
-		}
-		selectedLookDataBackPack.isBackpackLookData = true;
-		String newLookDataName = Utils.getUniqueLookName(selectedLookDataBackPack, false);
-		String existingFileNameInProjectDirectory = lookFileAlreadyInProjectDirectory(selectedLookDataBackPack);
-		if (existingFileNameInProjectDirectory == null) {
-			Log.d(TAG, "copyLookBackPack" + newLookDataName);
-			copyLookBackPack(selectedLookDataBackPack, newLookDataName, true);
-		}
-		return LookController.getInstance().updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
-				BackPackListManager.getInstance().getCurrentLookAdapter(), newLookDataName, deleteUnpackedItems,
-				existingFileNameInProjectDirectory, fromHiddenBackPack);
+		return updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
+				BackPackListManager.getInstance().getCurrentLookAdapter());
 	}
 
 	private String lookFileAlreadyInBackPackDirectory(LookData lookDataToCheck) {

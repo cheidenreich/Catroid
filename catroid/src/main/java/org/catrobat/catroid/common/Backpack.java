@@ -39,7 +39,6 @@ public class Backpack implements Serializable {
 	public List<SoundInfo> backpackedSounds = new CopyOnWriteArrayList<>();
 	public List<LookData> backpackedLooks = new CopyOnWriteArrayList<>();
 	public HashMap<String, List<Script>> backpackedScripts = new HashMap<>();
-	public HashMap<String, List<UserBrick>> backpackedUserBricks = new HashMap<>();
 	public List<Sprite> backpackedSprites = new CopyOnWriteArrayList<>();
 	public List<Scene> backpackedScenes = new CopyOnWriteArrayList<>();
 
