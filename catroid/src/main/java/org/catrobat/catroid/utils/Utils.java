@@ -93,9 +93,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public final class Utils {
 
@@ -451,6 +453,10 @@ public final class Utils {
 				UtilFile.encodeSpecialCharsForFileSystem(sceneName));
 	}
 
+	public static String getBackpackImageDirectoryPath() {
+		return buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY, Constants.BACKPACK_IMAGE_DIRECTORY);
+	}
+
 	public static void showErrorDialog(Context context, int errorMessageId) {
 		Builder builder = new CustomAlertDialogBuilder(context);
 		builder.setTitle(R.string.error);
@@ -718,6 +724,27 @@ public final class Utils {
 				return searchForNonExistingNfcTagName(name, ++nextNumber);
 			}
 		}
+		return newName;
+	}
+
+	public static String getUniqueLookName(String name, List<LookData> scope) {
+		Set<String> nameSet = new HashSet<>();
+		for (LookData lookData : scope) {
+			nameSet.add(lookData.getLookName());
+		}
+
+		return getUniqueName(name, nameSet);
+	}
+
+	private static String getUniqueName(String name, Set<String> nameSet) {
+		String newName = name;
+		int suffix = 1;
+
+		while(nameSet.contains(newName)) {
+			suffix++;
+			newName = name.concat(" ").concat(Integer.toString(suffix));
+		}
+
 		return newName;
 	}
 

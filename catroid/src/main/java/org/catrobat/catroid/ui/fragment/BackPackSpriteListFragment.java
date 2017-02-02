@@ -228,7 +228,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 
 	protected void unpackCheckedItems(boolean singleItem) {
 		if (singleItem) {
-			BackPackSpriteController.getInstance().unpack(spriteToEdit, false, false, false, false);
+			BackPackSpriteController.getInstance().unpack(spriteToEdit, false, false, false, true);
 			showUnpackingCompleteToast(1);
 			return;
 		}

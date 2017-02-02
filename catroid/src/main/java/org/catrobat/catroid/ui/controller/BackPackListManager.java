@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Backpack;
+import org.catrobat.catroid.common.FileChecksumContainer;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Scene;
@@ -50,6 +51,7 @@ public final class BackPackListManager {
 	private static final BackPackListManager INSTANCE = new BackPackListManager();
 
 	private static Backpack backpack;
+	private static FileChecksumContainer fileChecksumContainer;
 	private static SoundBaseAdapter currentSoundAdapter;
 	private static LookBaseAdapter currentLookAdapter;
 
@@ -57,10 +59,17 @@ public final class BackPackListManager {
 		if (backpack == null) {
 			backpack = new Backpack();
 		}
+		if (fileChecksumContainer == null) {
+			fileChecksumContainer = new FileChecksumContainer();
+		}
 		return INSTANCE;
 	}
 
-	void addLookToBackPack(LookData lookData) {
+	public FileChecksumContainer getFileChecksumContainer() {
+		return fileChecksumContainer;
+	}
+
+	public void addLookToBackPack(LookData lookData) {
 		getBackpack().backpackedLooks.add(lookData);
 	}
 
@@ -97,23 +106,25 @@ public final class BackPackListManager {
 	}
 
 	public void clearBackPackUserBricks() {
-		getBackpack().backpackedUserBricks.clear();
+		//TODO: remove
 	}
 
 	public void removeItemFromUserBrickBackPack(String userBrickGroup) {
-		getBackpack().backpackedUserBricks.remove(userBrickGroup);
+		//TODO: remove
 	}
 
 	public ArrayList<String> getBackPackedUserBrickGroups() {
-		return new ArrayList<>(getBackpack().backpackedUserBricks.keySet());
+		//TODO: remove
+		return new ArrayList<>();
 	}
 
 	public void addUserBrickToBackPack(String userBrickGroup, List<UserBrick> userBricks) {
-		getBackpack().backpackedUserBricks.put(userBrickGroup, userBricks);
+		//TODO: remove
 	}
 
 	public HashMap<String, List<UserBrick>> getBackPackedUserBricks() {
-		return getBackpack().backpackedUserBricks;
+		//TODO: remove
+		return new HashMap<>();
 	}
 
 	public void clearBackPackLooks() {

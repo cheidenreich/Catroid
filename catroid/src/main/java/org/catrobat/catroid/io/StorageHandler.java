@@ -216,6 +216,7 @@ import org.catrobat.catroid.physics.content.bricks.SetVelocityBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnLeftSpeedBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnRightSpeedBrick;
 import org.catrobat.catroid.stage.StageListener;
+import org.catrobat.catroid.ui.controller.BackPackListManager;
 import org.catrobat.catroid.utils.ImageEditing;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.utils.Utils;
@@ -1050,9 +1051,9 @@ public final class StorageHandler {
 		} else {
 			outputFilePath = buildPath(DEFAULT_ROOT, BACKPACK_DIRECTORY, backpackSubDirectory,
 					inputFileChecksum + "_" + newTitle + fileFormat);
-			FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-			if (!fileChecksumContainer.containsChecksumBackPack(inputFileChecksum)) {
-				fileChecksumContainer.addChecksumBackPack(inputFileChecksum, outputFilePath);
+			FileChecksumContainer fileChecksumContainer = BackPackListManager.getInstance().getFileChecksumContainer();
+			if (!fileChecksumContainer.containsChecksum(inputFileChecksum)) {
+				fileChecksumContainer.addChecksum(inputFileChecksum, outputFilePath);
 			}
 		}
 
@@ -1074,20 +1075,6 @@ public final class StorageHandler {
 			inputFilePath = selectedSoundInfo.getAbsoluteProjectPath();
 		}
 		return copyFileBackPack(SOUND_DIRECTORY, BACKPACK_SOUND_DIRECTORY, inputFilePath, newTitle, copyFromBackpack);
-	}
-
-	public File copyImageBackPack(LookData selectedLookData, String newName, boolean copyFromBackpack)
-			throws IOException {
-		if (selectedLookData == null) {
-			return null;
-		}
-		String inputFilePath;
-		if (copyFromBackpack) {
-			inputFilePath = selectedLookData.getAbsoluteBackPackPath();
-		} else {
-			inputFilePath = selectedLookData.getAbsoluteProjectPath();
-		}
-		return copyFileBackPack(IMAGE_DIRECTORY, BACKPACK_IMAGE_DIRECTORY, inputFilePath, newName, copyFromBackpack);
 	}
 
 	public File copyImageFromResourceToCatroid(Activity activity, int imageId, String defaultImageName) throws IOException {
@@ -1369,5 +1356,141 @@ public final class StorageHandler {
 	public void updateCodefileOnDownload(String projectName) {
 		File projectCodeFile = new File(buildProjectPath(projectName), PROJECTCODE_NAME);
 		xstream.updateCollisionReceiverBrickMessage(projectCodeFile);
+	}
+
+	/**
+	 * Deletes file *WITHOUT* decrementing usage in ChecksumContainer.
+	 *
+	 * @param srcFilePath Path to the file.
+	 * @return true if file was deleted successfully, false otherwise.
+	 */
+	public static boolean deleteFile(String srcFilePath) {
+		File toDelete = new File(srcFilePath);
+		return toDelete.delete();
+	}
+
+	/**
+	 * Deletes file and decrements usage in ChecksumContainer.
+	 *
+	 * @param srcFilePath Path to the file.
+	 * @param checksumContainer The ChecksumContainer, to decrement usage.
+	 * @return true if file was deleted and usage decremented successfully, false otherwise.
+	 */
+	public static boolean deleteFile(String srcFilePath, FileChecksumContainer checksumContainer) {
+		File toDelete = new File(srcFilePath);
+
+		try {
+			return checksumContainer.decrementUsage(srcFilePath) && toDelete.delete();
+		} catch (Exception e) {
+			Log.e(TAG, "Error while decrementing usage in ChecksumContainer.");
+			Log.e(TAG, Log.getStackTraceString(e));
+			return false;
+		}
+	}
+
+	/**
+	 * Recursively deletes all files in a directory. A return value is ignored because a failed attempt to delete
+	 * certain folders/files within the directory would have to be handled more thoroughly.
+	 *
+	 * @param srcPath Path to either file or directory
+	 */
+	public void deleteAllFiles(String srcPath) {
+		File toDelete = new File(srcPath);
+
+		if (toDelete.isDirectory()) {
+			for (String file : toDelete.list()) {
+				deleteAllFiles(file);
+			}
+		}
+
+		toDelete.delete();
+	}
+
+	/**
+	 * Copies all files within the given source path into the given destination path. Directories within the source
+	 * path are NOT handled!
+	 * @param srcDirectoryPath Path to source directory.
+	 * @param dstDirectoryPath Path to destination directory. This gets created if it does not exist yet.
+	 * @return true if all fies were copied successfully, false otherwise.
+	 */
+	public static boolean copyAllFiles(String srcDirectoryPath, String dstDirectoryPath)
+	{
+		File srcDirectory = new File(srcDirectoryPath);
+		if(!srcDirectory.exists() || !srcDirectory.isDirectory()) {
+			return false;
+		}
+
+		File dstDirectory = new File(dstDirectoryPath);
+		dstDirectory.mkdirs();
+
+		boolean success = true;
+
+		for(File file : srcDirectory.listFiles()){
+			if(file.isDirectory()){
+				continue;
+			}
+
+			File copy = copyFile(file.getAbsolutePath(), dstDirectoryPath, null);
+			success &= copy != null;
+		}
+		return success;
+	}
+	
+	/**
+	 * Creates a copy of a file in the same directory.
+	 * @param srcFilePath Path to the original file.
+	 * @param checksumContainer	FileChecksumContainer instance for usage count handling (shallow copy). Set to null
+	 *                             for plain copy without usage counter handling.
+	 * @return Copied File or referenced original File depending on usage count handling.
+	 */
+	public static File copyFile(String srcFilePath, FileChecksumContainer checksumContainer){
+		return copyFile(srcFilePath, new File(srcFilePath).getParent(), checksumContainer);
+	}
+
+	/**
+	 * Creates a copy of a file in the specified destination directory (will be created if non existent).
+	 * <p>Note that this method does <i>not</i> throw {@code IOException} on failure.
+	 * Callers must check the return value.
+	 *
+	 * @param srcFilePath Path to the original file.
+	 * @param dstFileDirectory Destination directory for the copied file.
+	 * @param checksumContainer FileChecksumContainer instance for usage count handling (shallow copy). Set to null
+	 *                             for plain copy without usage counter handling.
+	 * @return Copied File or referenced original File depending on usage count handling.
+	 */
+	public static File copyFile(String srcFilePath, String dstFileDirectory, FileChecksumContainer checksumContainer) {
+		File original = new File(srcFilePath);
+
+		if(!original.exists()) {
+			Log.e(TAG, "Cannot create copy of non existent file.");
+			return null;
+		}
+
+		String checksum = Utils.md5Checksum(original);
+		String destinationName = original.getName();
+
+		File copy;
+		try {
+			if(checksumContainer != null && checksumContainer.containsChecksum(checksum)) {
+				checksumContainer.incrementUsage(srcFilePath);
+				return new File(checksumContainer.getPath(checksum));
+			}
+
+			File destinationDir = new File(dstFileDirectory);
+			destinationDir.mkdirs();
+
+			copy = new File(destinationDir, destinationName);
+			Files.copy(original, copy);
+
+			if(checksumContainer != null){
+				checksumContainer.addChecksum(checksum, copy.getAbsolutePath());
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "Error while copying file.");
+			Log.e(TAG, Log.getStackTraceString(e));
+			return null;
+		}
+
+		return copy;
 	}
 }
