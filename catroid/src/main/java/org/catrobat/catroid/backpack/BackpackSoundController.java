@@ -42,7 +42,7 @@ public final class BackpackSoundController {
 			return backpackedSounds.get(backpackedSounds.indexOf(item));
 		}
 
-		File backpackedSoundFile = getSoundFileNameFromBackpack(item);
+		File backpackedSoundFile = getPackedSoundFile(item);
 
 		if(backpackedSoundFile != null) {
 			SoundInfo backpackedSoundInfo = new SoundInfo(item.getTitle(), backpackedSoundFile.getName());
@@ -54,57 +54,26 @@ public final class BackpackSoundController {
 		return null;
 	}
 
-	private static File getSoundFileNameFromBackpack(SoundInfo item) {
-		List<SoundInfo> backpackedItemList = BackPackListManager.getBackPackedSounds();
-		for (SoundInfo backpackedItem : backpackedItemList) {
-			if (backpackedItem.getTitle().equals(item.getTitle())) {
-				return new File(backpackedItem.getSoundFileName());
-			}
-		}
-
+	private static File getPackedSoundFile(SoundInfo item) {
+    FileChecksumContainer container = BackPackListManager.getInstance().getFileChecksumContainer();
 		return StorageHandler.copyFile(item.getAbsolutePath(), Utils.getBackpackSoundDirectoryPath(), null);
-	}
-
-	private static SoundInfo getExistingSoundInfoFromUnpacked(SoundInfo item) {
-		List<SoundInfo> unpackedSoundList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
-		for (SoundInfo unpackedSound : unpackedSoundList) {
-			if (unpackedSound.equals(item)) {
-				return unpackedSound;
-			}
-		}
-		return null;
-	}
-
-	private static File getSoundFileNameFromUnpacked(SoundInfo item) {
-		List<SoundInfo> unpackedSoundDataList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
-		for (SoundInfo unpackedSoundData : unpackedSoundDataList) {
-			if (unpackedSoundData.getSoundFileName().equals(item.getSoundFileName())) {
-				return new File(unpackedSoundData.getSoundFileName());
-			}
-		}
-
-		String currentSoundDirectoryPath = ProjectManager.getInstance().getCurrentScene().getSceneSoundDirectoryPath();
-		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
-		return StorageHandler.copyFile(item.getAbsolutePath(), currentSoundDirectoryPath, container);
 	}
 
 	public static SoundInfo unpack(SoundInfo item) {
 		String newSoundName = Utils.getUniqueSoundName(item, false);
-		SoundInfo existingSoundInfo = getExistingSoundInfoFromUnpacked(item);
-
-		if(existingSoundInfo != null){
-			return new SoundInfo(newSoundName, existingSoundInfo.getSoundFileName());
-		}
-
-		File unpackedSoundFile = getSoundFileNameFromUnpacked(item);
+		File unpackedSoundFile = getUnpackedSoundFile(item);
 
 		if(unpackedSoundFile != null) {
-			SoundInfo backpackedSoundData = new SoundInfo(newSoundName, unpackedSoundFile.getName());
-
-			backpackedSoundData.setBackpackSoundInfo(false);
-			return backpackedSoundData;
+			SoundInfo unpackedSoundData = new SoundInfo(newSoundName, unpackedSoundFile.getName());
+			unpackedSoundData.setBackpackSoundInfo(false);
+			return unpackedSoundData;
 		}
-
 		return null;
+	}
+  
+	private static File getUnpackedSoundFile(SoundInfo item) {
+		String currentSoundDirectoryPath = ProjectManager.getInstance().getCurrentScene().getSceneSoundDirectoryPath();
+		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
+		return StorageHandler.copyFile(item.getAbsolutePath(), currentSoundDirectoryPath, container);
 	}
 }

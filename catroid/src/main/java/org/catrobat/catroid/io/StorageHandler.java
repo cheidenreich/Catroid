@@ -216,6 +216,7 @@ import org.catrobat.catroid.physics.content.bricks.SetVelocityBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnLeftSpeedBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnRightSpeedBrick;
 import org.catrobat.catroid.stage.StageListener;
+import org.catrobat.catroid.ui.controller.BackPackListManager;
 import org.catrobat.catroid.utils.ImageEditing;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.utils.Utils;
@@ -1050,9 +1051,9 @@ public final class StorageHandler {
 		} else {
 			outputFilePath = buildPath(DEFAULT_ROOT, BACKPACK_DIRECTORY, backpackSubDirectory,
 					inputFileChecksum + "_" + newTitle + fileFormat);
-			FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-			if (!fileChecksumContainer.containsChecksumBackPack(inputFileChecksum)) {
-				fileChecksumContainer.addChecksumBackPack(inputFileChecksum, outputFilePath);
+			FileChecksumContainer fileChecksumContainer = BackPackListManager.getInstance().getFileChecksumContainer();
+			if (!fileChecksumContainer.containsChecksum(inputFileChecksum)) {
+				fileChecksumContainer.addChecksum(inputFileChecksum, outputFilePath);
 			}
 		}
 
@@ -1074,20 +1075,6 @@ public final class StorageHandler {
 			inputFilePath = selectedSoundInfo.getAbsoluteProjectPath();
 		}
 		return copyFileBackPack(SOUND_DIRECTORY, BACKPACK_SOUND_DIRECTORY, inputFilePath, newTitle, copyFromBackpack);
-	}
-
-	public File copyImageBackPack(LookData selectedLookData, String newName, boolean copyFromBackpack)
-			throws IOException {
-		if (selectedLookData == null) {
-			return null;
-		}
-		String inputFilePath;
-		if (copyFromBackpack) {
-			inputFilePath = selectedLookData.getAbsoluteBackPackPath();
-		} else {
-			inputFilePath = selectedLookData.getAbsoluteProjectPath();
-		}
-		return copyFileBackPack(IMAGE_DIRECTORY, BACKPACK_IMAGE_DIRECTORY, inputFilePath, newName, copyFromBackpack);
 	}
 
 	public File copyImageFromResourceToCatroid(Activity activity, int imageId, String defaultImageName) throws IOException {
@@ -1484,9 +1471,9 @@ public final class StorageHandler {
 
 		File copy;
 		try {
-			if(checksumContainer != null && checksumContainer.containsChecksum(checksum)){
+			if(checksumContainer != null && checksumContainer.containsChecksum(checksum)) {
 				checksumContainer.incrementUsage(srcFilePath);
-				return original;
+				return new File(checksumContainer.getPath(checksum));
 			}
 
 			File destinationDir = new File(dstFileDirectory);

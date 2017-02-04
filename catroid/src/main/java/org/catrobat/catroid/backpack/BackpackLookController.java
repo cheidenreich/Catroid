@@ -43,67 +43,40 @@ public final class BackpackLookController {
 			return backpackedLooks.get(backpackedLooks.indexOf(item));
 		}
 
-		File backpackedLookFile = getLookFileNameFromBackpack(item);
+		File packedLookFile = getPackedLookFile(item);
 
-		if(backpackedLookFile != null) {
-			LookData backpackedLookData = new LookData(item.getLookName(), backpackedLookFile.getName());
+		if(packedLookFile != null) {
+			LookData backpackedLookData = new LookData(item.getLookName(), packedLookFile.getName());
 			backpackedLookData.isBackpackLookData = true;
-			BackPackListManager.addLookToBackPack(backpackedLookData);
+			BackPackListManager.getInstance().addLookToBackPack(backpackedLookData);
+
 			return backpackedLookData;
 		}
 
 		return null;
 	}
 
-	private static File getLookFileNameFromBackpack(LookData item) {
-		List<LookData> backpackedItemList = BackPackListManager.getBackPackedLooks();
-		for (LookData backpackedItem : backpackedItemList) {
-			if (backpackedItem.getLookFileName().equals(item.getLookFileName())) {
-				return new File(backpackedItem.getLookFileName());
-			}
-		}
-
-		return StorageHandler.copyFile(item.getAbsolutePath(), Utils.getBackpackImageDirectoryPath(), null);
+	private static File getPackedLookFile(LookData item) {
+		FileChecksumContainer container = BackPackListManager.getFileChecksumContainer();
+		return StorageHandler.copyFile(item.getAbsolutePath(), Utils.getBackpackImageDirectoryPath(), container);
 	}
 
 	public static LookData unpack(LookData item) {
 		List<LookData> scope = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
 		String newLookName = Utils.getUniqueLookName(item.getLookName(), scope);
-		LookData existingLookData = getExistingLookDataFromUnpacked(item);
 
-		if(existingLookData != null) {
-			return new LookData(newLookName, existingLookData.getLookFileName());
-		}
-
-		File unpackedLookFile = getLookFileNameFromUnpacked(item);
+		File unpackedLookFile = getUnpackedLookFile(item);
 
 		if(unpackedLookFile != null) {
-			LookData backpackedLookData = new LookData(newLookName, unpackedLookFile.getName());
-			backpackedLookData.isBackpackLookData = false;
-			return backpackedLookData;
+			LookData unpackedLookData = new LookData(newLookName, unpackedLookFile.getName());
+			unpackedLookData.isBackpackLookData = false;
+			return unpackedLookData;
 		}
 
 		return null;
 	}
 
-	private static LookData getExistingLookDataFromUnpacked(LookData item) {
-		List<LookData> unpackedLookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
-		for (LookData unpackedLookData : unpackedLookDataList) {
-			if (unpackedLookData.equals(item)) {
-				return unpackedLookData;
-			}
-		}
-		return null;
-	}
-
-	private static File getLookFileNameFromUnpacked(LookData item) {
-		List<LookData> unpackedLookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
-		for (LookData unpackedLookData : unpackedLookDataList) {
-			if (unpackedLookData.getLookFileName().equals(item.getLookFileName())) {
-				return new File(unpackedLookData.getLookFileName());
-			}
-		}
-
+	private static File getUnpackedLookFile(LookData item) {
 		String currentImageDirectoryPath = ProjectManager.getInstance().getCurrentScene().getSceneImageDirectoryPath();
 		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
 		return StorageHandler.copyFile(item.getAbsolutePath(), currentImageDirectoryPath, container);

@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Backpack;
+import org.catrobat.catroid.common.FileChecksumContainer;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Scene;
@@ -48,8 +49,13 @@ import java.util.List;
 
 public final class BackPackListManager {
 	private static Backpack backpack = new Backpack();
+  private static FileChecksumContainer fileChecksumContainer new FileCheckSumContainer();
 	private static SoundBaseAdapter currentSoundAdapter;
 	private static LookBaseAdapter currentLookAdapter;
+  
+  public static FileChecksumContainer getFileChecksumContainer() {
+		return fileChecksumContainer;
+	}
 
 	public static void addLookToBackPack(LookData lookData) {
 		backpack.backpackedLooks.add(lookData);

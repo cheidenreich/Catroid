@@ -242,6 +242,17 @@ public final class LookController {
 		copyImageToCatroid(originalImagePath, activity, lookDataList, fragment);
 	}
 
+	public LookData updateLookBackPackAfterUnpacking(LookData lookData, LookBaseAdapter adapter) {
+
+		LookData newLookData = BackpackLookController.unpack(lookData);
+		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
+
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
+		return newLookData;
+	}
+
 	public void updateLookAdapter(String name, String fileName, List<LookData> lookDataList, LookFragment fragment) {
 		updateLookAdapter(name, fileName, lookDataList, fragment, false);
 	}
@@ -576,87 +587,16 @@ public final class LookController {
 	}
 
 	public void backPackVisibleLook(LookData currentLookData) {
-		String lookDataName = currentLookData.getLookName();
-		BackPackListManager.removeItemFromLookBackPackByLookName(lookDataName);
 		BackpackLookController.pack(currentLookData);
 	}
 
 	public LookData backPackHiddenLook(LookData currentLookData) {
-		if (BackPackListManager.backPackedLooksContain(currentLookData, false)) {
-			return currentLookData;
-		}
-		String newLookDataName = Utils.getUniqueLookName(currentLookData, true);
-		return backPack(currentLookData, newLookDataName, true);
+		return BackpackLookController.pack(currentLookData);
 	}
 
-	private LookData backPack(LookData currentLookData, String newLookDataName, boolean addToHiddenBackpack) {
-		String existingFileNameInBackPackDirectory = lookFileAlreadyInBackPackDirectory(currentLookData);
-		currentLookData.isBackpackLookData = true;
-		File backPackedFile = null;
-		if (existingFileNameInBackPackDirectory == null && currentLookData != null
-				&& currentLookData.getAbsolutePath() != null && !currentLookData.getAbsolutePath().isEmpty()) {
-			backPackedFile = copyLookBackPack(currentLookData, newLookDataName, false);
-		}
-		return updateLookBackPackAfterInsertion(newLookDataName, currentLookData,
-				existingFileNameInBackPackDirectory, addToHiddenBackpack, backPackedFile);
-	}
-
-	public LookData unpack(LookData selectedLookDataBackPack) {
-		LookData newLookData = BackpackLookController.unpack(selectedLookDataBackPack);
-		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
-
-		LookBaseAdapter adapter = BackPackListManager.getCurrentLookAdapter();
-
-		if (adapter != null) {
-			adapter.notifyDataSetChanged();
-		}
-		return newLookData;
-	}
-
-	private String lookFileAlreadyInBackPackDirectory(LookData lookDataToCheck) {
-		for (LookData lookData : BackPackListManager.getAllBackPackedLooks()) {
-			if (lookData.getChecksum().equals(lookDataToCheck.getChecksum())) {
-				return lookData.getLookFileName();
-			}
-		}
-		return null;
-	}
-
-	private LookData updateLookBackPackAfterInsertion(String title, LookData currentLookData, String existingFileNameInBackPackDirectory, boolean addToHiddenBackpack, File backPackedFile) {
-		String fileName = null;
-		if (existingFileNameInBackPackDirectory == null) {
-			if (currentLookData != null) {
-				fileName = currentLookData.getLookFileName();
-				String hash = backPackedFile == null ? fileName.substring(0, 32) : Utils.md5Checksum(backPackedFile);
-				if (backPackedFile == null) {
-					Log.e(TAG, "backpacked file was null, file hash is possibly wrong");
-				}
-				String fileFormat = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
-				fileName = hash + "_" + title + fileFormat;
-			}
-		} else {
-			fileName = existingFileNameInBackPackDirectory;
-		}
-
-		LookData newLookData = new LookData(title, fileName);
-		newLookData.isBackpackLookData = true;
-
-		if (addToHiddenBackpack) {
-			BackPackListManager.addLookToHiddenBackPack(newLookData);
-		} else {
-			BackPackListManager.addLookToBackPack(newLookData);
-		}
-
-		return newLookData;
-	}
-
-	private File copyLookBackPack(LookData selectedlookData, String newLookDataName, boolean copyFromBackpack) {
-		try {
-			return StorageHandler.getInstance().copyImageBackPack(selectedlookData, newLookDataName, copyFromBackpack);
-		} catch (IOException ioException) {
-			Log.e(TAG, Log.getStackTraceString(ioException));
-		}
-		return null;
+	public LookData unpack(LookData selectedLookDataBackPack, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
+		return updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
+				BackPackListManager.getInstance().getCurrentLookAdapter());
 	}
 
 	public void copyLook(int position, List<LookData> lookDataList, final Activity activity, LookFragment fragment) {
