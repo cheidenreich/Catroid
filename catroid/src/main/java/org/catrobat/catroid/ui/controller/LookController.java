@@ -53,7 +53,6 @@ import org.catrobat.catroid.backpack.BackpackLookController;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DroneVideoLookData;
 import org.catrobat.catroid.common.LookData;
-import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.LookViewHolder;
 import org.catrobat.catroid.ui.ScriptActivity;
@@ -241,17 +240,6 @@ public final class LookController {
 			return;
 		}
 		copyImageToCatroid(originalImagePath, activity, lookDataList, fragment);
-	}
-
-	public LookData updateLookBackPackAfterUnpacking(LookData lookData, LookBaseAdapter adapter) {
-
-		LookData newLookData = BackpackLookController.unpack(lookData);
-		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
-
-		if (adapter != null) {
-			adapter.notifyDataSetChanged();
-		}
-		return newLookData;
 	}
 
 	public void updateLookAdapter(String name, String fileName, List<LookData> lookDataList, LookFragment fragment) {
@@ -614,8 +602,15 @@ public final class LookController {
 	}
 
 	public LookData unpack(LookData selectedLookDataBackPack) {
-		return updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
-				BackPackListManager.getCurrentLookAdapter());
+		LookData newLookData = BackpackLookController.unpack(selectedLookDataBackPack);
+		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
+
+		LookBaseAdapter adapter = BackPackListManager.getCurrentLookAdapter();
+
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
+		return newLookData;
 	}
 
 	private String lookFileAlreadyInBackPackDirectory(LookData lookDataToCheck) {

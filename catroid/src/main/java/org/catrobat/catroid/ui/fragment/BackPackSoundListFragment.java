@@ -220,6 +220,6 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 	}
 
 	private void unpackSound() {
-		SoundController.getInstance().unpack(soundInfoToEdit, false, false);
+		SoundController.getInstance().unpack(soundInfoToEdit);
 	}
 }

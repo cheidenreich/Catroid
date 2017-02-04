@@ -184,7 +184,7 @@ public final class BackPackSpriteController {
 		}
 		for (SoundInfo soundInfo : selectedSprite.getSoundList()) {
 			if (!soundInfoIsUsedInScript(soundInfo, selectedSprite)) {
-				SoundController.getInstance().unpack(soundInfo, delete, true);
+				SoundController.getInstance().unpack(soundInfo);
 			}
 		}
 

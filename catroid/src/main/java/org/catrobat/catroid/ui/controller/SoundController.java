@@ -56,6 +56,7 @@ import android.widget.TextView;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
+import org.catrobat.catroid.backpack.BackpackSoundController;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.io.StorageHandler;
@@ -435,7 +436,7 @@ public final class SoundController {
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		}
 		String newSoundInfoTitle = Utils.getUniqueSoundName(soundInfo, false);
-		updateSoundAdapter(soundInfo, adapter, newSoundInfoTitle, false, false);
+		updateSoundAdapter(soundInfo, adapter, newSoundInfoTitle);
 	}
 
 	private void deleteSound(int position, List<SoundInfo> soundInfoList, Activity activity) {
@@ -504,23 +505,9 @@ public final class SoundController {
 	}
 
 	private SoundInfo updateSoundAdapter(SoundInfo soundInfo,
-			SoundBaseAdapter adapter, String title, boolean delete, boolean fromHiddenBackPack) {
-		String fileName = soundInfo.getSoundFileName();
-		String fileFormat = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
-		fileName = fileName.substring(0, fileName.indexOf('_') + 1) + title + fileFormat;
-		SoundInfo newSoundInfo = new SoundInfo(title, fileName);
+			SoundBaseAdapter adapter, String title) {
+		SoundInfo newSoundInfo = new SoundInfo(title, soundInfo.getSoundFileName());
 		ProjectManager.getInstance().getCurrentSprite().getSoundList().add(newSoundInfo);
-
-		if (delete) {
-			if (fromHiddenBackPack) {
-				BackPackListManager.removeItemFromSoundHiddenBackpack(soundInfo);
-			} else {
-				BackPackListManager.removeItemFromSoundBackPack(soundInfo);
-			}
-			if (!otherSoundInfoItemsHaveAFileReference(soundInfo)) {
-				StorageHandler.getInstance().deleteFile(soundInfo.getAbsoluteBackPackPath(), true);
-			}
-		}
 
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
@@ -752,7 +739,7 @@ public final class SoundController {
 	public void backPackVisibleSound(SoundInfo selectedSoundInfo) {
 		String soundInfoTitle = selectedSoundInfo.getTitle();
 		BackPackListManager.removeItemFromSoundBackPackBySoundTitle(soundInfoTitle);
-		backPack(selectedSoundInfo, soundInfoTitle, false);
+		BackpackSoundController.pack(selectedSoundInfo);
 	}
 
 	public SoundInfo backPackHiddenSound(SoundInfo selectedSoundInfo) {
@@ -774,13 +761,16 @@ public final class SoundController {
 				existingFileNameInBackPackDirectory, addToHiddenBackpack, backPackedSound);
 	}
 
-	public SoundInfo unpack(SoundInfo currentSoundInfo, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
-		String newSoundTitle = Utils.getUniqueSoundName(currentSoundInfo, false);
-		if (copySoundBackPack(currentSoundInfo, newSoundTitle, true) != null) {
-			return updateSoundAdapter(currentSoundInfo,
-					BackPackListManager.getCurrentSoundAdapter(), newSoundTitle, deleteUnpackedItems, fromHiddenBackPack);
+	public SoundInfo unpack(SoundInfo currentSoundInfo) {
+		SoundInfo newSoundInfo = new BackpackSoundController().unpack(currentSoundInfo);
+		ProjectManager.getInstance().getCurrentSprite().getSoundList().add(newSoundInfo);
+
+		SoundBaseAdapter adapter = BackPackListManager.getCurrentSoundAdapter();
+
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
 		}
-		return null;
+		return newSoundInfo;
 	}
 
 	public void setOnBackpackSoundCompleteListener(OnBackpackSoundCompleteListener listener) {

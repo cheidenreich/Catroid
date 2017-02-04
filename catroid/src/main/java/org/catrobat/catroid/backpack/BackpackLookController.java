@@ -37,9 +37,10 @@ import java.util.List;
 public final class BackpackLookController {
 
 	public static LookData pack(LookData item) {
-		LookData existingLookData = getExistingLookDataFromBackpack(item);
-		if(existingLookData != null) {
-			return existingLookData;
+		List<LookData> backpackedLooks = BackPackListManager.getBackPackedLooks();
+		if(backpackedLooks.contains(item)) {
+			//contains and indexOf use the passed Class' equals implementation (stated in JavaDoc)
+			return backpackedLooks.get(backpackedLooks.indexOf(item));
 		}
 
 		File backpackedLookFile = getLookFileNameFromBackpack(item);
@@ -51,16 +52,6 @@ public final class BackpackLookController {
 			return backpackedLookData;
 		}
 
-		return null;
-	}
-
-	private static LookData getExistingLookDataFromBackpack(LookData item) {
-		List<LookData> backpackedItemList = BackPackListManager.getBackPackedLooks();
-		for (LookData backpackedItem : backpackedItemList) {
-				if (backpackedItem.equals(item)) {
-						return backpackedItem;
-					}
-			}
 		return null;
 	}
 
@@ -76,17 +67,17 @@ public final class BackpackLookController {
 	}
 
 	public static LookData unpack(LookData item) {
+		List<LookData> scope = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
+		String newLookName = Utils.getUniqueLookName(item.getLookName(), scope);
 		LookData existingLookData = getExistingLookDataFromUnpacked(item);
 
 		if(existingLookData != null) {
-			return existingLookData;
+			return new LookData(newLookName, existingLookData.getLookFileName());
 		}
 
 		File unpackedLookFile = getLookFileNameFromUnpacked(item);
 
 		if(unpackedLookFile != null) {
-			List<LookData> scope = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
-			String newLookName = Utils.getUniqueLookName(item.getLookName(), scope);
 			LookData backpackedLookData = new LookData(newLookName, unpackedLookFile.getName());
 			backpackedLookData.isBackpackLookData = false;
 			return backpackedLookData;

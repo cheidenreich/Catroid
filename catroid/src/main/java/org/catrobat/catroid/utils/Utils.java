@@ -457,6 +457,10 @@ public final class Utils {
 		return buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY, Constants.BACKPACK_IMAGE_DIRECTORY);
 	}
 
+	public static String getBackpackSoundDirectoryPath() {
+		return buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY, Constants.BACKPACK_SOUND_DIRECTORY);
+	}
+
 	public static void showErrorDialog(Context context, int errorMessageId) {
 		Builder builder = new CustomAlertDialogBuilder(context);
 		builder.setTitle(R.string.error);
@@ -741,8 +745,8 @@ public final class Utils {
 		int suffix = 1;
 
 		while(nameSet.contains(newName)) {
-			suffix++;
 			newName = name.concat(" ").concat(Integer.toString(suffix));
+			suffix++;
 		}
 
 		return newName;
