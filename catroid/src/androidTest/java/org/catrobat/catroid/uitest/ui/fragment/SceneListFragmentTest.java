@@ -554,7 +554,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 
 		SceneListAdapter adapter = getSceneListAdapter(true);
 		int oldCount = adapter.getCount();
-		List<Scene> backPackSceneList = BackPackListManager.getInstance().getBackPackedScenes();
+		List<Scene> backPackSceneList = BackPackListManager.getBackPackedScenes();
 
 		clickOnContextMenuItem(SCENE_NAME, delete);
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
@@ -571,7 +571,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 
 		SceneListAdapter adapter = getSceneListAdapter(true);
 		int oldCount = adapter.getCount();
-		List<Scene> backPackSceneList = BackPackListManager.getInstance().getBackPackedScenes();
+		List<Scene> backPackSceneList = BackPackListManager.getBackPackedScenes();
 
 		UiTestUtils.deleteAllItems(solo);
 
@@ -666,7 +666,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 		UiTestUtils.backPackAllItems(solo, getActivity(), SCENE_NAME, SCENE_NAME2);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfScenes = BackPackListManager.getInstance().getBackPackedScenes().size();
+		int expectedNumberOfScenes = BackPackListManager.getBackPackedScenes().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyChecked(false, false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -734,7 +734,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Scene wasn't backpacked!", solo.waitForText(SCENE_NAME, 0, TIME_TO_WAIT));
-		assertTrue("Scene was not replaced!", BackPackListManager.getInstance().getBackPackedScenes().size() == 1);
+		assertTrue("Scene was not replaced!", BackPackListManager.getBackPackedScenes().size() == 1);
 	}
 
 	public void testBackPackAlreadyPackedDialogMultipleItems() {
@@ -761,7 +761,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Scene wasn't backpacked!", solo.waitForText(SCENE_NAME, 0, TIME_TO_WAIT));
 		assertTrue("Scene wasn't backpacked!", solo.waitForText(SCENE_NAME2, 0, TIME_TO_WAIT));
-		assertTrue("Scene was not replaced!", BackPackListManager.getInstance().getAllBackpackedScenes().size() == 3);
+		assertTrue("Scene was not replaced!", BackPackListManager.getAllBackpackedScenes().size() == 3);
 	}
 
 	public void testBackPackSerializationAndDeserialization() {
@@ -771,18 +771,18 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 		solo.goBack();
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 
-		assertFalse("No items have been backpacked!", BackPackListManager.getInstance().getBackpack()
+		assertFalse("No items have been backpacked!", BackPackListManager.getBackpack()
 				.backpackedScenes.isEmpty());
 		assertTrue("Backpack.json has not been saved!", backPackFile.exists());
 
 		UiTestUtils.clearBackPack(false);
 		solo.sleep(TIME_TO_WAIT);
-		assertTrue("Backpacked items not deleted!", BackPackListManager.getInstance().getBackpack()
+		assertTrue("Backpacked items not deleted!", BackPackListManager.getBackpack()
 				.backpackedScenes.isEmpty());
 
-		BackPackListManager.getInstance().loadBackpack();
+		BackPackListManager.loadBackpack();
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
-		assertFalse("Backpacked items haven't been restored from backpack.json!", BackPackListManager.getInstance()
+		assertFalse("Backpacked items haven't been restored from backpack.json!", BackPackListManager
 				.getBackpack().backpackedScenes.isEmpty());
 	}
 
@@ -793,7 +793,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 	}
 
 	private void backPackItem(String sceneName) {
-		if (BackPackListManager.getInstance().getBackPackedScenes().size() == 0) {
+		if (BackPackListManager.getBackPackedScenes().size() == 0) {
 			UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		} else {
 			UiTestUtils.openBackPackActionMode(solo);

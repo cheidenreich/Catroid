@@ -38,7 +38,6 @@ public final class BackpackLookController {
 
 	public static LookData pack(LookData item) {
 		LookData existingLookData = getExistingLookDataFromBackpack(item);
-
 		if(existingLookData != null) {
 			return existingLookData;
 		}
@@ -48,7 +47,7 @@ public final class BackpackLookController {
 		if(backpackedLookFile != null) {
 			LookData backpackedLookData = new LookData(item.getLookName(), backpackedLookFile.getName());
 			backpackedLookData.isBackpackLookData = true;
-			BackPackListManager.getInstance().addLookToBackPack(backpackedLookData);
+			BackPackListManager.addLookToBackPack(backpackedLookData);
 			return backpackedLookData;
 		}
 
@@ -56,25 +55,24 @@ public final class BackpackLookController {
 	}
 
 	private static LookData getExistingLookDataFromBackpack(LookData item) {
-		List<LookData> backpackedItemList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookData> backpackedItemList = BackPackListManager.getBackPackedLooks();
 		for (LookData backpackedItem : backpackedItemList) {
-			if (backpackedItem.equals(item)) {
-				return backpackedItem;
+				if (backpackedItem.equals(item)) {
+						return backpackedItem;
+					}
 			}
-		}
 		return null;
 	}
 
 	private static File getLookFileNameFromBackpack(LookData item) {
-		List<LookData> backpackedItemList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookData> backpackedItemList = BackPackListManager.getBackPackedLooks();
 		for (LookData backpackedItem : backpackedItemList) {
 			if (backpackedItem.getLookFileName().equals(item.getLookFileName())) {
 				return new File(backpackedItem.getLookFileName());
 			}
 		}
 
-		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
-		return StorageHandler.copyFile(item.getAbsolutePath(), Utils.getBackpackImageDirectoryPath(), container);
+		return StorageHandler.copyFile(item.getAbsolutePath(), Utils.getBackpackImageDirectoryPath(), null);
 	}
 
 	public static LookData unpack(LookData item) {

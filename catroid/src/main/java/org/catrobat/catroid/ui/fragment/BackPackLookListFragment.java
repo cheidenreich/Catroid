@@ -84,7 +84,7 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 	}
 
 	private void initializeList() {
-		List<LookData> lookList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookData> lookList = BackPackListManager.getBackPackedLooks();
 
 		lookAdapter = new LookListAdapter(getActivity(), R.layout.list_item, lookList);
 		setListAdapter(lookAdapter);
@@ -122,7 +122,7 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 			projectManager.saveProject(getActivity().getApplicationContext());
 		}
 
-		BackPackListManager.getInstance().saveBackpack();
+		BackPackListManager.saveBackpack();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
 				.getApplicationContext());
@@ -135,7 +135,7 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (BackPackListManager.getInstance().getBackPackedLooks().isEmpty()) {
+		if (BackPackListManager.getBackPackedLooks().isEmpty()) {
 			menu.findItem(R.id.unpacking).setVisible(false);
 		}
 	}
@@ -199,7 +199,7 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 	}
 
 	private void deleteLook() {
-		BackPackListManager.getInstance().removeItemFromLookBackPack(lookToEdit);
+		BackPackListManager.removeItemFromLookBackPack(lookToEdit);
 		checkEmptyBackgroundBackPack();
 		lookAdapter.notifyDataSetChanged();
 	}
@@ -219,6 +219,6 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 	}
 
 	private void unpackLook() {
-		LookController.getInstance().unpack(lookToEdit, false, false);
+		LookController.getInstance().unpack(lookToEdit);
 	}
 }

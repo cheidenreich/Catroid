@@ -2724,12 +2724,12 @@ public final class UiTestUtils {
 	}
 
 	public static void clearBackPack(boolean deleteBackPackDirectories) {
-		BackPackListManager.getInstance().clearBackPackLooks();
-		BackPackListManager.getInstance().clearBackPackSounds();
-		BackPackListManager.getInstance().clearBackPackScripts();
-		BackPackListManager.getInstance().clearBackPackSprites();
-		BackPackListManager.getInstance().clearBackPackScenes();
-		BackPackListManager.getInstance().clearBackPackUserBricks();
+		BackPackListManager.clearBackPackLooks();
+		BackPackListManager.clearBackPackSounds();
+		BackPackListManager.clearBackPackScripts();
+		BackPackListManager.clearBackPackSprites();
+		BackPackListManager.clearBackPackScenes();
+		BackPackListManager.clearBackPackUserBricks();
 		if (deleteBackPackDirectories) {
 			clearBackPackJson();
 			StorageHandler.getInstance().clearBackPackLookDirectory();

@@ -341,7 +341,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 		Utils.loadProjectIfNeeded(activity);
 
-		BackPackListManager.getInstance().setCurrentLookAdapter(adapter);
+		BackPackListManager.setCurrentLookAdapter(adapter);
 	}
 
 	@Override
@@ -349,7 +349,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		menu.findItem(R.id.copy).setVisible(true);
 		menu.findItem(R.id.unpacking).setVisible(false);
 		menu.findItem(R.id.backpack).setVisible(true);
-		if (BackPackListManager.getInstance().getAllBackPackedLooks().isEmpty()) {
+		if (BackPackListManager.getAllBackPackedLooks().isEmpty()) {
 			StorageHandler.getInstance().clearBackPackLookDirectory();
 		}
 		menu.findItem(R.id.cut).setVisible(true);
@@ -375,8 +375,8 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 			return;
 		}
 
-		if (BackPackListManager.getInstance().isBackpackEmpty()) {
-			BackPackListManager.getInstance().loadBackpack();
+		if (BackPackListManager.isBackpackEmpty()) {
+			BackPackListManager.loadBackpack();
 		}
 
 		if (lookRenamedReceiver == null) {
@@ -645,7 +645,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 				} else if (actionModeCallback.equals(deleteModeCallBack)) {
 					((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.delete));
 				} else if (actionModeCallback.equals(backPackModeCallBack)) {
-					if (BackPackListManager.getInstance().getBackPackedLooks().isEmpty()) {
+					if (BackPackListManager.getBackPackedLooks().isEmpty()) {
 						((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.backpack));
 					} else {
 						openBackPack();

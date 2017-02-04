@@ -1140,7 +1140,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 
 		assertEquals("Not all scripts were backpacked", 1, oldCount);
 		assertEquals("Script group wasn't deleted in backpack", 0, newCount);
-		assertEquals("Count of the backpack scriptGroupList is not correct", newCount, BackPackListManager.getInstance().getBackPackedScriptGroups().size());
+		assertEquals("Count of the backpack scriptGroupList is not correct", newCount, BackPackListManager.getBackPackedScriptGroups().size());
 	}
 
 	public void testBackPackScriptsDeleteActionMode() {
@@ -1165,7 +1165,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 
 		assertEquals("Not all scripts were backpacked", 2, oldCount);
 		assertEquals("Script Groups were not deleted in backpack", 0, newCount);
-		assertEquals("Count of the backpack scriptGroupList is not correct", newCount, BackPackListManager.getInstance().getBackPackedScriptGroups().size());
+		assertEquals("Count of the backpack scriptGroupList is not correct", newCount, BackPackListManager.getBackPackedScriptGroups().size());
 	}
 
 	public void testBackPackScriptsActionModeDifferentProgrammes() {
@@ -1265,7 +1265,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfScriptGroups = BackPackListManager.getInstance().getBackPackedScriptGroups().size();
+		int expectedNumberOfScriptGroups = BackPackListManager.getBackPackedScriptGroups().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyCheckedInBackPack(false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -1290,7 +1290,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfScriptGroups = BackPackListManager.getInstance().getBackPackedScriptGroups().size();
+		int expectedNumberOfScriptGroups = BackPackListManager.getBackPackedScriptGroups().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 
 		solo.clickOnCheckBox(0);
@@ -1347,7 +1347,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite look should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
 		assertFalse("Visible Backpack was opened despite look should be in hidden backpack", solo.waitForText(TEST_LOOK_NAME + "1", 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Look is not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedLooks().size() == 1);
+		assertTrue("Look is not in hidden backpack!", BackPackListManager.getHiddenBackpackedLooks().size() == 1);
 		solo.goBack();
 		solo.goBack();
 
@@ -1356,15 +1356,15 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite sound should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
 		assertFalse("Visible Backpack was opened despite sound should be in hidden backpack", solo.waitForText(TEST_SOUND_NAME + "1", 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Sound is not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedSounds().size() == 1);
+		assertTrue("Sound is not in hidden backpack!", BackPackListManager.getHiddenBackpackedSounds().size() == 1);
 		solo.goBack();
 		solo.goBack();
 		solo.goBack();
 
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite sprite should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Sprite is not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedSprites().size() == 1);
-		assertTrue("Wrong sprite was backpacked!", BackPackListManager.getInstance().getHiddenBackpackedSprites().get(0).getName().equals("dog"));
+		assertTrue("Sprite is not in hidden backpack!", BackPackListManager.getHiddenBackpackedSprites().size() == 1);
+		assertTrue("Wrong sprite was backpacked!", BackPackListManager.getHiddenBackpackedSprites().get(0).getName().equals("dog"));
 
 		UiTestUtils.switchToProgrammesBackground(solo, UiTestUtils.PROJECTNAME3, "cat");
 		solo.clickOnText(solo.getString(R.string.scripts));
@@ -1614,7 +1614,7 @@ public class ScriptFragmentTest extends BaseActivityInstrumentationTestCase<Main
 	}
 
 	private void checkIfNumberOfBricksIsEqualInBackPack(int expectedNumber) {
-		int currentNumberOfScriptGroups = BackPackListManager.getInstance().getBackPackedScriptGroups().size();
+		int currentNumberOfScriptGroups = BackPackListManager.getBackPackedScriptGroups().size();
 		assertEquals("Number of script groups is not as expected", expectedNumber, currentNumberOfScriptGroups);
 	}
 

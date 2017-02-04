@@ -103,7 +103,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 	private ProjectManager projectManager;
 
-	private BackPackListManager backPackListManager;
+	private BackPackListManager BackPackListManager;
 
 	private String unpack;
 	private String backpack;
@@ -122,8 +122,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		super.setUp();
 		UiTestUtils.createTestProject(UiTestUtils.PROJECTNAME1);
 		UiTestUtils.createTestProject();
-
-		backPackListManager = BackPackListManager.getInstance();
+		
 		projectManager = ProjectManager.getInstance();
 		soundInfoList = projectManager.getCurrentSprite().getSoundList();
 
@@ -174,7 +173,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 			solo.sleep(TIME_TO_WAIT);
 		}
 
-		BackPackListManager.getInstance().clearBackPackSounds();
+		BackPackListManager.clearBackPackSounds();
 		StorageHandler.getInstance().clearBackPackSoundDirectory();
 	}
 
@@ -701,7 +700,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 
 		assertTrue("BackPack title didn't show up", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT_BACKPACK));
-		soundInfoList = backPackListManager.getBackPackedSounds();
+		soundInfoList = BackPackListManager.getBackPackedSounds();
 		SoundInfo soundInfo = soundInfoList.get(0);
 		solo.clickOnView(playAndStopImageButton);
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
@@ -925,7 +924,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 		SoundListAdapter adapter = getSoundListAdapter();
 		int oldCount = adapter.getCount();
-		List<SoundInfo> backPackSoundInfoList = BackPackListManager.getInstance().getBackPackedSounds();
+		List<SoundInfo> backPackSoundInfoList = BackPackListManager.getBackPackedSounds();
 		String pathOfFirstBackPackedSound = backPackSoundInfoList.get(0).getAbsolutePath();
 		String pathOfSecondBackPackedSound = backPackSoundInfoList.get(1).getAbsolutePath();
 		assertTrue("Backpack sound file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedSound));
@@ -949,7 +948,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 		SoundListAdapter adapter = getSoundListAdapter();
 		int oldCount = adapter.getCount();
-		List<SoundInfo> backPackSoundInfoList = BackPackListManager.getInstance().getBackPackedSounds();
+		List<SoundInfo> backPackSoundInfoList = BackPackListManager.getBackPackedSounds();
 		String pathOfFirstBackPackedSound = backPackSoundInfoList.get(0).getAbsolutePath();
 		String pathOfSecondBackPackedSound = backPackSoundInfoList.get(1).getAbsolutePath();
 		assertTrue("Backpack sound file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedSound));
@@ -1044,7 +1043,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		UiTestUtils.backPackAllItems(solo, getActivity(), firstTestSoundNamePacked, secondTestSoundNamePacked);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfSounds = BackPackListManager.getInstance().getBackPackedSounds().size();
+		int expectedNumberOfSounds = BackPackListManager.getBackPackedSounds().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyChecked(false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -1139,7 +1138,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Sound wasn't backpacked!", solo.waitForText(firstTestSoundNamePacked, 0, TIME_TO_WAIT));
-		assertTrue("Sound was not replaced!", BackPackListManager.getInstance().getBackPackedSounds().size() == 1);
+		assertTrue("Sound was not replaced!", BackPackListManager.getBackPackedSounds().size() == 1);
 	}
 
 	public void testBackPackAlreadyPackedDialogMultipleItems() {
@@ -1162,7 +1161,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Sound wasn't backpacked!", solo.waitForText(firstTestSoundNamePacked, 0, TIME_TO_WAIT));
 		assertTrue("Sound wasn't backpacked!", solo.waitForText(secondTestSoundNamePacked, 0, TIME_TO_WAIT));
-		assertTrue("Sound was not replaced!", BackPackListManager.getInstance().getBackPackedSounds().size() == 2);
+		assertTrue("Sound was not replaced!", BackPackListManager.getBackPackedSounds().size() == 2);
 	}
 
 	public void testRenameActionModeIfSomethingSelectedAndPressingBack() {

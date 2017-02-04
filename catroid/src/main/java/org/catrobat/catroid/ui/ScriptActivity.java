@@ -418,20 +418,20 @@ public class ScriptActivity extends BaseActivity {
 		switch (currentFragmentPosition) {
 			case FRAGMENT_SCRIPTS:
 				if (scriptFragment.isInUserBrickOverview()) {
-					numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedUserBricks().size();
+					numberOfItemsInBackpack = BackPackListManager.getBackPackedUserBricks().size();
 					Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
 					numberOfItemsInAdapter = currentSprite.getUserBrickList().size();
 				} else {
-					numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedScripts().size();
+					numberOfItemsInBackpack = BackPackListManager.getBackPackedScripts().size();
 					numberOfItemsInAdapter = ((ScriptFragment) currentFragment).getAdapter().getCount();
 				}
 				break;
 			case FRAGMENT_LOOKS:
-				numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedLooks().size();
+				numberOfItemsInBackpack = BackPackListManager.getBackPackedLooks().size();
 				numberOfItemsInAdapter = currentFragment.getListAdapter().getCount();
 				break;
 			case FRAGMENT_SOUNDS:
-				numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedSounds().size();
+				numberOfItemsInBackpack = BackPackListManager.getBackPackedSounds().size();
 				numberOfItemsInAdapter = currentFragment.getListAdapter().getCount();
 				break;
 		}

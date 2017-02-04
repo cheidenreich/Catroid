@@ -60,7 +60,7 @@ public class ScriptTest extends AndroidTestCase {
 		hideBrick = new HideBrick();
 		showBrick = new ShowBrick();
 		placeAtBrick = new PlaceAtBrick(0, 0);
-		BackPackListManager.getInstance().clearBackPackScripts();
+		BackPackListManager.clearBackPackScripts();
 	}
 
 	@Override
@@ -88,9 +88,9 @@ public class ScriptTest extends AndroidTestCase {
 		List<Brick> brickList = UiTestUtils.createTestProjectWithUserVariables();
 		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
 
-		assertTrue("ScriptBackPack is not empty", BackPackListManager.getInstance().getAllBackPackedScripts().isEmpty());
+		assertTrue("ScriptBackPack is not empty", BackPackListManager.getAllBackPackedScripts().isEmpty());
 		BackPackScriptController.getInstance().backpack(group, brickList, false, sprite);
-		List<Script> backPackedScripts = BackPackListManager.getInstance().getBackPackedScripts().get(group);
+		List<Script> backPackedScripts = BackPackListManager.getBackPackedScripts().get(group);
 		assertFalse("Group was not backpacked", backPackedScripts.isEmpty());
 
 		SetXBrick setXVariableBrick = (SetXBrick) backPackedScripts.get(0).getBrick(0);

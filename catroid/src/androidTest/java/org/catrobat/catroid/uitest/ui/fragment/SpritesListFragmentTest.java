@@ -632,7 +632,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 
 		SpriteListAdapter adapter = getSpriteListAdapter();
 		int oldCount = adapter.getCount();
-		List<Sprite> backPackSpriteList = BackPackListManager.getInstance().getBackPackedSprites();
+		List<Sprite> backPackSpriteList = BackPackListManager.getBackPackedSprites();
 
 		clickOnBackPackItem(SPRITE_NAME, delete);
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
@@ -649,7 +649,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 
 		SpriteListAdapter adapter = getSpriteListAdapter();
 		int oldCount = adapter.getCount();
-		List<Sprite> backPackSpriteList = BackPackListManager.getInstance().getBackPackedSprites();
+		List<Sprite> backPackSpriteList = BackPackListManager.getBackPackedSprites();
 
 		UiTestUtils.deleteAllItems(solo);
 
@@ -738,7 +738,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		UiTestUtils.backPackAllItems(solo, getActivity(), SPRITE_NAME_BACKGROUND, SPRITE_NAME);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfSprites = BackPackListManager.getInstance().getBackPackedSprites().size();
+		int expectedNumberOfSprites = BackPackListManager.getBackPackedSprites().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyChecked(false, false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -837,7 +837,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite look should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
 		assertFalse("Visible Backpack was opened despite look should be in hidden backpack", solo.waitForText(TEST_LOOK_NAME + "1", 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Look is not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedLooks().size() == 1);
+		assertTrue("Look is not in hidden backpack!", BackPackListManager.getHiddenBackpackedLooks().size() == 1);
 		solo.goBack();
 		solo.goBack();
 
@@ -846,7 +846,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite sound should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
 		assertFalse("Visible Backpack was opened despite sound should be in hidden backpack", solo.waitForText(TEST_SOUND_NAME + "1", 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Sound is not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedSounds().size() == 1);
+		assertTrue("Sound is not in hidden backpack!", BackPackListManager.getHiddenBackpackedSounds().size() == 1);
 		solo.goBack();
 		solo.goBack();
 
@@ -854,7 +854,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
 		assertFalse("Visible Backpack was opened despite script should be in hidden backpack", solo.waitForText(unpack, 1, TIME_TO_WAIT_BACKPACK));
-		assertTrue("Scripts are not in hidden backpack!", BackPackListManager.getInstance().getHiddenBackpackedScripts().size() == 2);
+		assertTrue("Scripts are not in hidden backpack!", BackPackListManager.getHiddenBackpackedScripts().size() == 2);
 		solo.goBack();
 
 		switchToProgrammeBackgroundFromSpritesList(UiTestUtils.PROJECTNAME3);
@@ -975,7 +975,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT, false, true));
 		assertTrue("Sprite wasn't backpacked!", solo.waitForText(SPRITE_NAME, 0, TIME_TO_WAIT, false, true));
-		assertTrue("Sprite was not replaced!", BackPackListManager.getInstance().getBackPackedSprites().size() == 1);
+		assertTrue("Sprite was not replaced!", BackPackListManager.getBackPackedSprites().size() == 1);
 	}
 
 	public void testBackPackAlreadyPackedDialogMultipleItems() {
@@ -1002,7 +1002,7 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		assertTrue("Sprite wasn't backpacked!", solo.waitForText(SPRITE_NAME_BACKGROUND, 0, TIME_TO_WAIT));
 		assertTrue("Sprite wasn't backpacked!", solo.waitForText(SPRITE_NAME, 0, TIME_TO_WAIT));
 		assertTrue("Sprite wasn't backpacked!", solo.waitForText(SPRITE_NAME2, 0, TIME_TO_WAIT));
-		assertTrue("Sprite was not replaced!", BackPackListManager.getInstance().getBackPackedSprites().size() == 3);
+		assertTrue("Sprite was not replaced!", BackPackListManager.getBackPackedSprites().size() == 3);
 	}
 
 	public void testBackPackSerializationAndDeserialization() {
@@ -1012,19 +1012,19 @@ public class SpritesListFragmentTest extends BaseActivityInstrumentationTestCase
 		solo.goBack();
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
 
-		assertTrue("No items have been backpacked!", !BackPackListManager.getInstance().getBackpack()
+		assertTrue("No items have been backpacked!", !BackPackListManager.getBackpack()
 				.backpackedSprites.isEmpty());
 		backPackFile = new File(buildPath(DEFAULT_ROOT, BACKPACK_DIRECTORY, StorageHandler.BACKPACK_FILENAME));
 		assertTrue("Backpack.json has not been saved!", backPackFile.exists());
 
 		UiTestUtils.clearBackPack(false);
 		solo.sleep(TIME_TO_WAIT);
-		assertTrue("Backpacked items not deleted!", BackPackListManager.getInstance().getBackpack()
+		assertTrue("Backpacked items not deleted!", BackPackListManager.getBackpack()
 				.backpackedSprites.isEmpty());
 
-		BackPackListManager.getInstance().loadBackpack();
+		BackPackListManager.loadBackpack();
 		solo.sleep(TIME_TO_WAIT_BACKPACK);
-		assertTrue("Backpacked items haven't been restored from backpack.json!", !BackPackListManager.getInstance()
+		assertTrue("Backpacked items haven't been restored from backpack.json!", !BackPackListManager
 				.getBackpack().backpackedSprites.isEmpty());
 	}
 

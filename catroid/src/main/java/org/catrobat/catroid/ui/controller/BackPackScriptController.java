@@ -92,9 +92,9 @@ public final class BackPackScriptController {
 		}
 		if (!scriptsToAdd.isEmpty()) {
 			if (addToHiddenBackpack) {
-				BackPackListManager.getInstance().addScriptToHiddenBackpack(groupName, scriptsToAdd);
+				BackPackListManager.addScriptToHiddenBackpack(groupName, scriptsToAdd);
 			} else {
-				BackPackListManager.getInstance().addScriptToBackPack(groupName, scriptsToAdd);
+				BackPackListManager.addScriptToBackPack(groupName, scriptsToAdd);
 			}
 		}
 		return scriptsToAdd;
@@ -104,9 +104,9 @@ public final class BackPackScriptController {
 			handleInsertFromScriptBackPack, Activity activity, boolean fromHiddenBackPack) {
 		List<Script> scriptsInGroup;
 		if (fromHiddenBackPack) {
-			scriptsInGroup = BackPackListManager.getInstance().getHiddenBackpackedScripts().get(selectedScriptGroupBackPack);
+			scriptsInGroup = BackPackListManager.getHiddenBackpackedScripts().get(selectedScriptGroupBackPack);
 		} else {
-			scriptsInGroup = BackPackListManager.getInstance().getBackPackedScripts().get(selectedScriptGroupBackPack);
+			scriptsInGroup = BackPackListManager.getBackPackedScripts().get(selectedScriptGroupBackPack);
 		}
 
 		if (scriptsInGroup == null) {
@@ -126,9 +126,9 @@ public final class BackPackScriptController {
 
 			if (deleteUnpackedItems) {
 				if (fromHiddenBackPack) {
-					BackPackListManager.getInstance().removeItemFromScriptHiddenBackpack(selectedScriptGroupBackPack);
+					BackPackListManager.removeItemFromScriptHiddenBackpack(selectedScriptGroupBackPack);
 				} else {
-					BackPackListManager.getInstance().removeItemFromScriptBackPack(selectedScriptGroupBackPack);
+					BackPackListManager.removeItemFromScriptBackPack(selectedScriptGroupBackPack);
 				}
 			}
 			if (handleInsertFromScriptBackPack) {
@@ -147,7 +147,7 @@ public final class BackPackScriptController {
 
 	private void handleBackPackedBricksWithAdditionalData(Brick brickOfScript, boolean deleteUnpackedItems) {
 		if (brickOfScript instanceof SetLookBrick) {
-			handleLookBrickUnpacking(brickOfScript, deleteUnpackedItems);
+			handleLookBrickUnpacking(brickOfScript);
 		} else if (brickOfScript instanceof PlaySoundBrick) {
 			handleSoundBrickUnpacking(brickOfScript, deleteUnpackedItems);
 		} else if (brickOfScript instanceof UserVariableBrick) {
@@ -178,9 +178,9 @@ public final class BackPackScriptController {
 		}
 	}
 
-	private void handleLookBrickUnpacking(Brick brickOfScript, boolean deleteUnpackedItems) {
+	private void handleLookBrickUnpacking(Brick brickOfScript) {
 		SetLookBrick brick = (SetLookBrick) brickOfScript;
-		LookData newLookData = LookController.getInstance().unpack(brick.getLook(), deleteUnpackedItems, true);
+		LookData newLookData = LookController.getInstance().unpack(brick.getLook());
 		if (newLookData != null) {
 			brick.setLook(newLookData);
 		}

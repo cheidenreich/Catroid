@@ -190,7 +190,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 		//setHandleAddbutton();
 
 		// set adapter and soundInfoList for ev. unpacking
-		BackPackListManager.getInstance().setCurrentSoundAdapter(adapter);
+		BackPackListManager.setCurrentSoundAdapter(adapter);
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 		menu.findItem(R.id.copy).setVisible(true);
 		menu.findItem(R.id.unpacking).setVisible(false);
 		menu.findItem(R.id.backpack).setVisible(true);
-		if (BackPackListManager.getInstance().getAllBackPackedSounds().isEmpty()) {
+		if (BackPackListManager.getAllBackPackedSounds().isEmpty()) {
 			StorageHandler.getInstance().clearBackPackSoundDirectory();
 		}
 
@@ -225,8 +225,8 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 			return;
 		}
 
-		if (BackPackListManager.getInstance().isBackpackEmpty()) {
-			BackPackListManager.getInstance().loadBackpack();
+		if (BackPackListManager.isBackpackEmpty()) {
+			BackPackListManager.loadBackpack();
 		}
 
 		if (soundRenamedReceiver == null) {
@@ -387,7 +387,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 				} else if (actionModeCallback.equals(deleteModeCallBack)) {
 					((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.delete));
 				} else if (actionModeCallback.equals(backPackModeCallBack)) {
-					if (BackPackListManager.getInstance().getBackPackedSounds().isEmpty()) {
+					if (BackPackListManager.getBackPackedSounds().isEmpty()) {
 						((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.backpack));
 					} else {
 						openBackPack();

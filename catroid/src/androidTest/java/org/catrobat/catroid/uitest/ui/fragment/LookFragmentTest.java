@@ -193,7 +193,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 			solo.sleep(TIME_TO_WAIT);
 		}
 
-		BackPackListManager.getInstance().clearBackPackLooks();
+		BackPackListManager.clearBackPackLooks();
 		StorageHandler.getInstance().clearBackPackLookDirectory();
 	}
 
@@ -496,7 +496,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		LookListAdapter adapter = getBackPackLookAdapter();
 		int oldCount = adapter.getCount();
-		List<LookData> backPackLookDataList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookData> backPackLookDataList = BackPackListManager.getBackPackedLooks();
 		String pathOfFirstBackPackedLook = backPackLookDataList.get(0).getAbsolutePath();
 		String pathOfSecondBackPackedLook = backPackLookDataList.get(1).getAbsolutePath();
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
@@ -519,7 +519,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		LookListAdapter adapter = getBackPackLookAdapter();
 		int oldCount = adapter.getCount();
-		List<LookData> backPackLookDataList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookData> backPackLookDataList = BackPackListManager.getBackPackedLooks();
 		String pathOfFirstBackPackedLook = backPackLookDataList.get(0).getAbsolutePath();
 		String pathOfSecondBackPackedLook = backPackLookDataList.get(1).getAbsolutePath();
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
@@ -610,7 +610,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		UiTestUtils.backPackAllItems(solo, getActivity(), firstTestLookNamePacked, secondTestLookNamePacked);
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
-		int expectedNumberOfLooks = BackPackListManager.getInstance().getBackPackedLooks().size();
+		int expectedNumberOfLooks = BackPackListManager.getBackPackedLooks().size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyChecked(false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -695,7 +695,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Look wasn't backpacked!", solo.waitForText(firstTestLookNamePacked, 0, TIME_TO_WAIT));
-		assertTrue("Look was not replaced!", BackPackListManager.getInstance().getBackPackedLooks().size() == 1);
+		assertTrue("Look was not replaced!", BackPackListManager.getBackPackedLooks().size() == 1);
 	}
 
 	public void testBackPackAlreadyPackedDialogMultipleItems() {
@@ -722,7 +722,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		assertTrue("Should be in backpack!", solo.waitForText(backpackTitle, 0, TIME_TO_WAIT));
 		assertTrue("Look wasn't backpacked!", solo.waitForText(firstTestLookNamePacked, 0, TIME_TO_WAIT));
 		assertTrue("Look wasn't backpacked!", solo.waitForText(secondTestLookNamePacked, 0, TIME_TO_WAIT));
-		assertTrue("Look was not replaced!", BackPackListManager.getInstance().getBackPackedLooks().size() == 2);
+		assertTrue("Look was not replaced!", BackPackListManager.getBackPackedLooks().size() == 2);
 	}
 
 	public void testCopyLookContextMenu() {

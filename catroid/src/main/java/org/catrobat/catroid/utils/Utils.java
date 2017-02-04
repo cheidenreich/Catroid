@@ -757,7 +757,7 @@ public final class Utils {
 		String newName;
 		List<LookData> lookDataList;
 		if (forBackPack) {
-			lookDataList = BackPackListManager.getInstance().getAllBackPackedLooks();
+			lookDataList = BackPackListManager.getAllBackPackedLooks();
 		} else {
 			lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
 		}
@@ -783,7 +783,7 @@ public final class Utils {
 		String newName;
 		List<Sprite> spriteList;
 		if (!sprite.isBackpackObject) {
-			spriteList = BackPackListManager.getInstance().getAllBackPackedSprites();
+			spriteList = BackPackListManager.getAllBackPackedSprites();
 		} else {
 			spriteList = ProjectManager.getInstance().getCurrentScene().getSpriteList();
 		}
@@ -815,7 +815,7 @@ public final class Utils {
 		List<Scene> sceneList;
 
 		if (forBackPack) {
-			sceneList = BackPackListManager.getInstance().getAllBackpackedScenes();
+			sceneList = BackPackListManager.getAllBackpackedScenes();
 		} else {
 			sceneList = ProjectManager.getInstance().getCurrentProject().getSceneList();
 		}
@@ -843,7 +843,7 @@ public final class Utils {
 		List<Scene> sceneList;
 
 		if (forBackPack) {
-			sceneList = BackPackListManager.getInstance().getAllBackpackedScenes();
+			sceneList = BackPackListManager.getAllBackpackedScenes();
 		} else {
 			sceneList = ProjectManager.getInstance().getCurrentProject().getSceneList();
 		}
@@ -880,7 +880,7 @@ public final class Utils {
 		String newTitle = "";
 		List<SoundInfo> soundInfoList;
 		if (forBackPack) {
-			soundInfoList = BackPackListManager.getInstance().getAllBackPackedSounds();
+			soundInfoList = BackPackListManager.getAllBackPackedSounds();
 		} else {
 			soundInfoList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
 		}

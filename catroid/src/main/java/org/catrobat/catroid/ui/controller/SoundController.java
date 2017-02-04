@@ -396,7 +396,7 @@ public final class SoundController {
 		if (soundInfoToCheck == null) {
 			return null;
 		}
-		for (SoundInfo soundInfo : BackPackListManager.getInstance().getAllBackPackedSounds()) {
+		for (SoundInfo soundInfo : BackPackListManager.getAllBackPackedSounds()) {
 			if (soundInfo == null) {
 				continue;
 			}
@@ -454,7 +454,7 @@ public final class SoundController {
 	}
 
 	public boolean otherSoundInfoItemsHaveAFileReference(SoundInfo soundInfoToCheck) {
-		for (SoundInfo soundInfo : BackPackListManager.getInstance().getAllBackPackedSounds()) {
+		for (SoundInfo soundInfo : BackPackListManager.getAllBackPackedSounds()) {
 			if (soundInfo.equals(soundInfoToCheck)) {
 				continue;
 			}
@@ -495,9 +495,9 @@ public final class SoundController {
 		newSoundInfo.setBackpackSoundInfo(true);
 
 		if (addToHiddenBackpack) {
-			BackPackListManager.getInstance().addSoundToHiddenBackpack(newSoundInfo);
+			BackPackListManager.addSoundToHiddenBackpack(newSoundInfo);
 		} else {
-			BackPackListManager.getInstance().addSoundToBackPack(newSoundInfo);
+			BackPackListManager.addSoundToBackPack(newSoundInfo);
 		}
 
 		return newSoundInfo;
@@ -513,9 +513,9 @@ public final class SoundController {
 
 		if (delete) {
 			if (fromHiddenBackPack) {
-				BackPackListManager.getInstance().removeItemFromSoundHiddenBackpack(soundInfo);
+				BackPackListManager.removeItemFromSoundHiddenBackpack(soundInfo);
 			} else {
-				BackPackListManager.getInstance().removeItemFromSoundBackPack(soundInfo);
+				BackPackListManager.removeItemFromSoundBackPack(soundInfo);
 			}
 			if (!otherSoundInfoItemsHaveAFileReference(soundInfo)) {
 				StorageHandler.getInstance().deleteFile(soundInfo.getAbsoluteBackPackPath(), true);
@@ -695,7 +695,7 @@ public final class SoundController {
 	}
 
 	public boolean checkSoundReplaceInBackpack(SoundInfo currentSoundInfo) {
-		return BackPackListManager.getInstance().backPackedSoundsContain(currentSoundInfo, true);
+		return BackPackListManager.backPackedSoundsContain(currentSoundInfo, true);
 	}
 
 	public void showBackPackReplaceDialog(final List<SoundInfo> currentSoundInfoList, final Context context) {
@@ -751,12 +751,12 @@ public final class SoundController {
 
 	public void backPackVisibleSound(SoundInfo selectedSoundInfo) {
 		String soundInfoTitle = selectedSoundInfo.getTitle();
-		BackPackListManager.getInstance().removeItemFromSoundBackPackBySoundTitle(soundInfoTitle);
+		BackPackListManager.removeItemFromSoundBackPackBySoundTitle(soundInfoTitle);
 		backPack(selectedSoundInfo, soundInfoTitle, false);
 	}
 
 	public SoundInfo backPackHiddenSound(SoundInfo selectedSoundInfo) {
-		if (BackPackListManager.getInstance().backPackedSoundsContain(selectedSoundInfo, false)) {
+		if (BackPackListManager.backPackedSoundsContain(selectedSoundInfo, false)) {
 			return selectedSoundInfo;
 		}
 		String newSoundInfoTitle = Utils.getUniqueSoundName(selectedSoundInfo, true);
@@ -778,7 +778,7 @@ public final class SoundController {
 		String newSoundTitle = Utils.getUniqueSoundName(currentSoundInfo, false);
 		if (copySoundBackPack(currentSoundInfo, newSoundTitle, true) != null) {
 			return updateSoundAdapter(currentSoundInfo,
-					BackPackListManager.getInstance().getCurrentSoundAdapter(), newSoundTitle, deleteUnpackedItems, fromHiddenBackPack);
+					BackPackListManager.getCurrentSoundAdapter(), newSoundTitle, deleteUnpackedItems, fromHiddenBackPack);
 		}
 		return null;
 	}

@@ -119,8 +119,8 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 			return;
 		}
 
-		if (BackPackListManager.getInstance().isBackpackEmpty()) {
-			BackPackListManager.getInstance().loadBackpack();
+		if (BackPackListManager.isBackpackEmpty()) {
+			BackPackListManager.loadBackpack();
 		}
 
 		StorageHandler.getInstance().fillChecksumContainer();

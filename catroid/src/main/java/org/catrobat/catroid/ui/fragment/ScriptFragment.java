@@ -318,8 +318,8 @@ public class ScriptFragment extends ScriptActivityFragment implements OnCategory
 
 		setupUiForUserBricks();
 
-		if (BackPackListManager.getInstance().isBackpackEmpty()) {
-			BackPackListManager.getInstance().loadBackpack();
+		if (BackPackListManager.isBackpackEmpty()) {
+			BackPackListManager.loadBackpack();
 		}
 
 		if (brickListChangedReceiver == null) {
@@ -482,7 +482,7 @@ public class ScriptFragment extends ScriptActivityFragment implements OnCategory
 			} else if (actionModeCallback.equals(commentOutModeCallBack)) {
 				((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.comment_in_out));
 			} else if (actionModeCallback.equals(backPackModeCallBack)) {
-				if (BackPackListManager.getInstance().getBackPackedScripts().isEmpty()) {
+				if (BackPackListManager.getBackPackedScripts().isEmpty()) {
 					((ScriptActivity) getActivity()).showEmptyActionModeDialog(getString(R.string.backpack));
 				} else {
 					openBackPack();

@@ -313,10 +313,10 @@ public class ProjectActivity extends BaseActivity {
 		int numberOfItemsInBackpack = 0;
 		switch (currentFragmentPosition) {
 			case FRAGMENT_SPRITES:
-				numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedSprites().size();
+				numberOfItemsInBackpack = BackPackListManager.getBackPackedSprites().size();
 				break;
 			case FRAGMENT_SCENES:
-				numberOfItemsInBackpack = BackPackListManager.getInstance().getBackPackedScenes().size();
+				numberOfItemsInBackpack = BackPackListManager.getBackPackedScenes().size();
 				break;
 		}
 

@@ -169,8 +169,8 @@ public class SpritesListFragment extends Fragment implements SpriteAdapter.OnSpr
 			return;
 		}
 
-		if (BackPackListManager.getInstance().isBackpackEmpty()) {
-			BackPackListManager.getInstance().loadBackpack();
+		if (BackPackListManager.isBackpackEmpty()) {
+			BackPackListManager.loadBackpack();
 		}
 
 		if (spriteRenamedReceiver == null) {

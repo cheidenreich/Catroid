@@ -85,7 +85,7 @@ public class BackPackSceneListFragment extends BackPackActivityFragment implemen
 	}
 
 	private void initializeList() {
-		List<Scene> sceneList = BackPackListManager.getInstance().getBackPackedScenes();
+		List<Scene> sceneList = BackPackListManager.getBackPackedScenes();
 
 		sceneAdapter = new SceneListAdapter(getActivity(), R.layout.list_item, sceneList);
 
@@ -104,14 +104,14 @@ public class BackPackSceneListFragment extends BackPackActivityFragment implemen
 	@Override
 	public void onPause() {
 		super.onPause();
-		BackPackListManager.getInstance().saveBackpack();
+		BackPackListManager.saveBackpack();
 	}
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		menu.findItem(R.id.show_details).setVisible(false);
-		if (BackPackListManager.getInstance().getBackPackedScenes().isEmpty()) {
+		if (BackPackListManager.getBackPackedScenes().isEmpty()) {
 			menu.findItem(R.id.unpacking).setVisible(false);
 		}
 	}
@@ -179,9 +179,9 @@ public class BackPackSceneListFragment extends BackPackActivityFragment implemen
 		BackPackListManager.searchForHiddenScenes(sceneToEdit, hiddenScenes, true);
 		hiddenScenes.remove(sceneToEdit);
 		for (Scene scene : hiddenScenes) {
-			BackPackListManager.getInstance().removeItemFromSceneBackPackByName(scene.getName(), true);
+			BackPackListManager.removeItemFromSceneBackPackByName(scene.getName(), true);
 		}
-		BackPackListManager.getInstance().removeItemFromSceneBackPackByName(sceneToEdit.getName(), false);
+		BackPackListManager.removeItemFromSceneBackPackByName(sceneToEdit.getName(), false);
 		checkEmptyBackgroundBackPack();
 		sceneAdapter.notifyDataSetChanged();
 	}

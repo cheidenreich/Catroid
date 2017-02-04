@@ -63,7 +63,7 @@ public final class BackPackSpriteController {
 	}
 
 	private boolean checkSpriteReplaceInBackpack(Sprite currentSprite) {
-		return BackPackListManager.getInstance().backPackedSpritesContains(currentSprite, true);
+		return BackPackListManager.backPackedSpritesContains(currentSprite, true);
 	}
 
 	public void showBackPackReplaceDialog(final List<Sprite> currentSpriteList, final Context context) {
@@ -119,18 +119,18 @@ public final class BackPackSpriteController {
 
 	public void backpackVisibleSprite(Sprite spriteToEdit) {
 		String spriteName = spriteToEdit.getName();
-		BackPackListManager.getInstance().removeItemFromSpriteBackPackByName(spriteName);
+		BackPackListManager.removeItemFromSpriteBackPackByName(spriteName);
 
 		Sprite backPackSprite = backpack(spriteToEdit);
-		BackPackListManager.getInstance().addSpriteToBackPack(backPackSprite);
+		BackPackListManager.addSpriteToBackPack(backPackSprite);
 	}
 
 	public Sprite backpackHiddenSprite(Sprite spriteToEdit) {
-		if (BackPackListManager.getInstance().backPackedSpritesContains(spriteToEdit, false)) {
+		if (BackPackListManager.backPackedSpritesContains(spriteToEdit, false)) {
 			return spriteToEdit;
 		}
 		Sprite backPackSprite = backpack(spriteToEdit);
-		BackPackListManager.getInstance().addSpriteToHiddenBackpack(backPackSprite);
+		BackPackListManager.addSpriteToHiddenBackpack(backPackSprite);
 		return backPackSprite;
 	}
 
@@ -179,7 +179,7 @@ public final class BackPackSpriteController {
 
 		for (LookData lookData : selectedSprite.getLookDataList()) {
 			if (!lookDataIsUsedInScript(lookData, selectedSprite)) {
-				LookController.getInstance().unpack(lookData, delete, true);
+				LookController.getInstance().unpack(lookData);
 			}
 		}
 		for (SoundInfo soundInfo : selectedSprite.getSoundList()) {
@@ -205,9 +205,9 @@ public final class BackPackSpriteController {
 
 		if (delete) {
 			if (fromHiddenBackPack) {
-				BackPackListManager.getInstance().removeItemFromSpriteHiddenBackpack(selectedSprite);
+				BackPackListManager.removeItemFromSpriteHiddenBackpack(selectedSprite);
 			} else {
-				BackPackListManager.getInstance().removeItemFromSpriteBackPack(selectedSprite);
+				BackPackListManager.removeItemFromSpriteBackPack(selectedSprite);
 			}
 		}
 		return unpackedSprite;

@@ -487,7 +487,7 @@ public final class LookController {
 	}
 
 	public boolean otherLookDataItemsHaveAFileReference(LookData lookDataToCheck) {
-		for (LookData lookData : BackPackListManager.getInstance().getAllBackPackedLooks()) {
+		for (LookData lookData : BackPackListManager.getAllBackPackedLooks()) {
 			if (lookData.equals(lookDataToCheck)) {
 				continue;
 			}
@@ -533,7 +533,7 @@ public final class LookController {
 	}
 
 	public boolean checkLookReplaceInBackpack(LookData currentLookData) {
-		return BackPackListManager.getInstance().backPackedLooksContain(currentLookData, true);
+		return BackPackListManager.backPackedLooksContain(currentLookData, true);
 	}
 
 	public void showBackPackReplaceDialog(final List<LookData> currentLookDataList, final Context context) {
@@ -589,12 +589,12 @@ public final class LookController {
 
 	public void backPackVisibleLook(LookData currentLookData) {
 		String lookDataName = currentLookData.getLookName();
-		BackPackListManager.getInstance().removeItemFromLookBackPackByLookName(lookDataName);
+		BackPackListManager.removeItemFromLookBackPackByLookName(lookDataName);
 		BackpackLookController.pack(currentLookData);
 	}
 
 	public LookData backPackHiddenLook(LookData currentLookData) {
-		if (BackPackListManager.getInstance().backPackedLooksContain(currentLookData, false)) {
+		if (BackPackListManager.backPackedLooksContain(currentLookData, false)) {
 			return currentLookData;
 		}
 		String newLookDataName = Utils.getUniqueLookName(currentLookData, true);
@@ -613,27 +613,15 @@ public final class LookController {
 				existingFileNameInBackPackDirectory, addToHiddenBackpack, backPackedFile);
 	}
 
-	public LookData unpack(LookData selectedLookDataBackPack, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
+	public LookData unpack(LookData selectedLookDataBackPack) {
 		return updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
-				BackPackListManager.getInstance().getCurrentLookAdapter());
+				BackPackListManager.getCurrentLookAdapter());
 	}
 
 	private String lookFileAlreadyInBackPackDirectory(LookData lookDataToCheck) {
-		for (LookData lookData : BackPackListManager.getInstance().getAllBackPackedLooks()) {
+		for (LookData lookData : BackPackListManager.getAllBackPackedLooks()) {
 			if (lookData.getChecksum().equals(lookDataToCheck.getChecksum())) {
 				return lookData.getLookFileName();
-			}
-		}
-		return null;
-	}
-
-	private String lookFileAlreadyInProjectDirectory(LookData lookDataToCheck) {
-		List<Sprite> spritesToCheck = ProjectManager.getInstance().getCurrentScene().getSpriteList();
-		for (Sprite sprite : spritesToCheck) {
-			for (LookData lookData : sprite.getLookDataList()) {
-				if (lookData.getChecksum().equals(lookDataToCheck.getChecksum())) {
-					return lookData.getLookFileName();
-				}
 			}
 		}
 		return null;
@@ -659,9 +647,9 @@ public final class LookController {
 		newLookData.isBackpackLookData = true;
 
 		if (addToHiddenBackpack) {
-			BackPackListManager.getInstance().addLookToHiddenBackPack(newLookData);
+			BackPackListManager.addLookToHiddenBackPack(newLookData);
 		} else {
-			BackPackListManager.getInstance().addLookToBackPack(newLookData);
+			BackPackListManager.addLookToBackPack(newLookData);
 		}
 
 		return newLookData;

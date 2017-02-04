@@ -87,7 +87,7 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 	}
 
 	private void initializeList() {
-		List<SoundInfo> soundList = BackPackListManager.getInstance().getBackPackedSounds();
+		List<SoundInfo> soundList = BackPackListManager.getBackPackedSounds();
 
 		soundAdapter = new SoundListAdapter(getActivity(), R.layout.list_item, soundList);
 		setListAdapter(soundAdapter);
@@ -122,8 +122,8 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 	public void onPause() {
 		super.onPause();
 
-		BackPackListManager.getInstance().saveBackpack();
-		SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getInstance().getBackPackedSounds());
+		BackPackListManager.saveBackpack();
+		SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getBackPackedSounds());
 		soundAdapter.notifyDataSetChanged();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
@@ -144,7 +144,7 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		if (BackPackListManager.getInstance().getBackPackedSounds().isEmpty()) {
+		if (BackPackListManager.getBackPackedSounds().isEmpty()) {
 			menu.findItem(R.id.unpacking).setVisible(false);
 		}
 
@@ -156,7 +156,7 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 		super.onCreateContextMenu(menu, view, menuInfo);
 
 		if (SoundController.getInstance().isSoundPlaying(mediaPlayer)) {
-			SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getInstance().getBackPackedSounds());
+			SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getBackPackedSounds());
 		}
 
 		soundInfoToEdit = soundAdapter.getItem(selectedSoundPosition);

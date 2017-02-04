@@ -80,7 +80,7 @@ public class BackPackScriptListFragment extends BackPackActivityFragment impleme
 	}
 
 	private void initializeList() {
-		List<String> groupList = BackPackListManager.getInstance().getBackPackedScriptGroups();
+		List<String> groupList = BackPackListManager.getBackPackedScriptGroups();
 
 		scriptAdapter = new BackPackScriptListAdapter(getActivity(), R.layout.list_item, groupList);
 		setListAdapter(scriptAdapter);
@@ -118,7 +118,7 @@ public class BackPackScriptListFragment extends BackPackActivityFragment impleme
 			projectManager.saveProject(getActivity().getApplicationContext());
 		}
 
-		BackPackListManager.getInstance().saveBackpack();
+		BackPackListManager.saveBackpack();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
 				.getApplicationContext());
@@ -131,7 +131,7 @@ public class BackPackScriptListFragment extends BackPackActivityFragment impleme
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (BackPackListManager.getInstance().getBackPackedScripts().isEmpty()) {
+		if (BackPackListManager.getBackPackedScripts().isEmpty()) {
 			menu.findItem(R.id.unpacking).setVisible(false);
 		}
 	}
@@ -196,7 +196,7 @@ public class BackPackScriptListFragment extends BackPackActivityFragment impleme
 	}
 
 	private void deleteScript() {
-		BackPackListManager.getInstance().removeItemFromScriptBackPack(scriptToEdit);
+		BackPackListManager.removeItemFromScriptBackPack(scriptToEdit);
 		checkEmptyBackgroundBackPack();
 		scriptAdapter.remove(scriptToEdit);
 	}

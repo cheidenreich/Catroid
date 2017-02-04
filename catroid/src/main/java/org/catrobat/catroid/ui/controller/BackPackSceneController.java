@@ -70,7 +70,7 @@ public final class BackPackSceneController {
 	}
 
 	public boolean checkSceneReplaceInBackpack(Scene currentScene) {
-		return BackPackListManager.getInstance().backPackedScenesContains(currentScene, true);
+		return BackPackListManager.backPackedScenesContains(currentScene, true);
 	}
 
 	public void showBackPackReplaceDialog(final List<Scene> currentSceneList, final SceneListFragment fragment) {
@@ -117,7 +117,7 @@ public final class BackPackSceneController {
 
 		for (Scene sceneToEdit : scenes) {
 			String sceneName = sceneToEdit.getName();
-			BackPackListManager.getInstance().removeItemFromSceneBackPackByName(sceneName, false);
+			BackPackListManager.removeItemFromSceneBackPackByName(sceneName, false);
 
 			Scene backPackScene = backpack(sceneToEdit);
 			if (backPackScene == null) {
@@ -127,17 +127,17 @@ public final class BackPackSceneController {
 			backPackedNameMap.put(sceneToEdit.getName(), backPackScene.getName());
 			backPackedScenes.add(backPackScene);
 			BackPackListManager.searchForHiddenScenes(backPackScene, hiddenScenes, false);
-			BackPackListManager.getInstance().addSceneToBackPack(backPackScene);
+			BackPackListManager.addSceneToBackPack(backPackScene);
 		}
 
 		for (Scene scene : hiddenScenes) {
-			BackPackListManager.getInstance().removeItemFromSceneBackPackByName(scene.getName(), true);
+			BackPackListManager.removeItemFromSceneBackPackByName(scene.getName(), true);
 			Scene hiddenBackPackScene = backpack(scene);
 			if (hiddenBackPackScene == null) {
 				return false;
 			}
 			backPackedNameMap.put(scene.getName(), hiddenBackPackScene.getName());
-			BackPackListManager.getInstance().addSceneToHiddenBackpack(hiddenBackPackScene);
+			BackPackListManager.addSceneToHiddenBackpack(hiddenBackPackScene);
 			backPackedScenes.add(hiddenBackPackScene);
 		}
 		correctTransitionAndStartSceneBricksAfterPacking(backPackedScenes, backPackedNameMap);

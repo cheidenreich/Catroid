@@ -1046,7 +1046,7 @@ public class BrickAdapter extends BrickBaseAdapter implements DragAndDropListene
 						checkedBricks.add(brickList.get(currentPosition));
 						currentPosition++;
 					}
-					List<String> backPackedScriptGroups = BackPackListManager.getInstance().getAllBackPackedScriptGroups();
+					List<String> backPackedScriptGroups = BackPackListManager.getAllBackPackedScriptGroups();
 					showNewGroupBackPackDialog(backPackedScriptGroups, false);
 				} else if (clickedItemText.equals(context.getText(R.string.brick_context_dialog_comment_in))) {
 					commentBrickOut(brickList.get(itemPosition), false);
@@ -1375,7 +1375,7 @@ public class BrickAdapter extends BrickBaseAdapter implements DragAndDropListene
 
 	public void onDestroyActionModeBackPack() {
 		actionMode = ActionModeEnum.NO_ACTION;
-		List<String> backPackedScriptGroups = BackPackListManager.getInstance().getAllBackPackedScriptGroups();
+		List<String> backPackedScriptGroups = BackPackListManager.getAllBackPackedScriptGroups();
 		showNewGroupBackPackDialog(backPackedScriptGroups, false);
 	}
 

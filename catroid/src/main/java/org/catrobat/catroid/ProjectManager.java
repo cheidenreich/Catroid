@@ -645,14 +645,14 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 		if (inBackPack) {
 			if (sceneBackpack) {
-				for (Scene scene : BackPackListManager.getInstance().getAllBackpackedScenes()) {
+				for (Scene scene : BackPackListManager.getAllBackpackedScenes()) {
 					spritesToCheck.addAll(scene.getSpriteList());
 				}
 			} else {
-				spritesToCheck = BackPackListManager.getInstance().getAllBackPackedSprites();
+				spritesToCheck = BackPackListManager.getAllBackPackedSprites();
 			}
 
-			HashMap<String, List<Script>> backPackedScripts = BackPackListManager.getInstance().getAllBackPackedScripts();
+			HashMap<String, List<Script>> backPackedScripts = BackPackListManager.getAllBackPackedScripts();
 			for (String scriptGroup : backPackedScripts.keySet()) {
 				List<Script> scriptListToCheck = backPackedScripts.get(scriptGroup);
 				for (Script scriptToCheck : scriptListToCheck) {

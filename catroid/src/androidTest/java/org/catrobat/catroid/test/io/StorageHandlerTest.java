@@ -372,10 +372,10 @@ public class StorageHandlerTest extends InstrumentationTestCase {
 	public void testDeserializeInvalidBackpackFile() throws IOException {
 		File backPackFile = loadBackpackFile(backpackJsonInvalid);
 
-		BackPackListManager.getInstance().loadBackpack();
+		BackPackListManager.loadBackpack();
 		TestUtils.sleep(1000);
 
-		assertTrue("Backpacked items loaded despite file is invalid!", BackPackListManager.getInstance().getBackpack()
+		assertTrue("Backpacked items loaded despite file is invalid!", BackPackListManager.getBackpack()
 				.backpackedScripts.isEmpty());
 		assertFalse("Backpack.json should be deleted!", backPackFile.exists());
 	}
@@ -383,13 +383,13 @@ public class StorageHandlerTest extends InstrumentationTestCase {
 	public void testDeserializeValidBackpackFile() throws IOException {
 		File backPackFile = loadBackpackFile(backpackJsonValid);
 
-		BackPackListManager.getInstance().loadBackpack();
+		BackPackListManager.loadBackpack();
 		TestUtils.sleep(1000);
 
-		assertFalse("Backpacked sprites not loaded!", BackPackListManager.getInstance().getBackpack().backpackedSprites.isEmpty());
-		assertFalse("Backpacked scripts not loaded!", BackPackListManager.getInstance().getBackpack().hiddenBackpackedScripts.isEmpty());
-		assertFalse("Backpacked looks not loaded!", BackPackListManager.getInstance().getBackpack().hiddenBackpackedLooks.isEmpty());
-		assertFalse("Backpacked sounds not loaded!", BackPackListManager.getInstance().getBackpack().hiddenBackpackedSounds.isEmpty());
+		assertFalse("Backpacked sprites not loaded!", BackPackListManager.getBackpack().backpackedSprites.isEmpty());
+		assertFalse("Backpacked scripts not loaded!", BackPackListManager.getBackpack().hiddenBackpackedScripts.isEmpty());
+		assertFalse("Backpacked looks not loaded!", BackPackListManager.getBackpack().hiddenBackpackedLooks.isEmpty());
+		assertFalse("Backpacked sounds not loaded!", BackPackListManager.getBackpack().hiddenBackpackedSounds.isEmpty());
 		assertTrue("Backpack.json should not be deleted!", backPackFile.exists());
 	}
 
@@ -406,7 +406,7 @@ public class StorageHandlerTest extends InstrumentationTestCase {
 		OutputStream outStream = new FileOutputStream(targetFile);
 		outStream.write(buffer);
 		assertTrue("Backpack.json should exist!", backPackFile.exists());
-		assertTrue("Backpacked items not deleted!", BackPackListManager.getInstance().getBackpack()
+		assertTrue("Backpacked items not deleted!", BackPackListManager.getBackpack()
 				.backpackedScripts.isEmpty());
 		return backPackFile;
 	}

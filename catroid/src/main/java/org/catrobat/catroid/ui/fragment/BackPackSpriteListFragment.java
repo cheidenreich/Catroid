@@ -91,7 +91,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 	}
 
 	private void initializeList() {
-		List<Sprite> spriteList = BackPackListManager.getInstance().getBackPackedSprites();
+		List<Sprite> spriteList = BackPackListManager.getBackPackedSprites();
 
 		spriteAdapter = new SpriteListAdapter(getActivity(), R.layout.list_item, spriteList);
 
@@ -125,7 +125,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 	public void onPause() {
 		super.onPause();
 
-		BackPackListManager.getInstance().saveBackpack();
+		BackPackListManager.saveBackpack();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
 				.getApplicationContext());
@@ -138,7 +138,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (BackPackListManager.getInstance().getBackPackedSprites().isEmpty()) {
+		if (BackPackListManager.getBackPackedSprites().isEmpty()) {
 			menu.findItem(R.id.unpacking).setVisible(false);
 		}
 	}
@@ -204,7 +204,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 	}
 
 	public void deleteSprite() {
-		BackPackListManager.getInstance().removeItemFromSpriteBackPack(spriteToEdit);
+		BackPackListManager.removeItemFromSpriteBackPack(spriteToEdit);
 		removeLooksAndSounds();
 		checkEmptyBackgroundBackPack();
 		spriteAdapter.notifyDataSetChanged();
@@ -215,14 +215,14 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 			if (!LookController.getInstance().otherLookDataItemsHaveAFileReference(currentLookData)) {
 				StorageHandler.getInstance().deleteFile(currentLookData.getAbsolutePath(), true);
 			}
-			BackPackListManager.getInstance().removeItemFromLookHiddenBackpack(currentLookData);
+			BackPackListManager.removeItemFromLookHiddenBackpack(currentLookData);
 		}
 
 		for (SoundInfo currentSoundInfo : spriteToEdit.getSoundList()) {
 			if (!SoundController.getInstance().otherSoundInfoItemsHaveAFileReference(currentSoundInfo)) {
 				StorageHandler.getInstance().deleteFile(currentSoundInfo.getAbsolutePath(), true);
 			}
-			BackPackListManager.getInstance().removeItemFromSoundHiddenBackpack(currentSoundInfo);
+			BackPackListManager.removeItemFromSoundHiddenBackpack(currentSoundInfo);
 		}
 	}
 
