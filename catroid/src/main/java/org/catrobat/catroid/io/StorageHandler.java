@@ -259,6 +259,8 @@ public final class StorageHandler {
 	private static final StorageHandler INSTANCE;
 	private static final String TAG = StorageHandler.class.getSimpleName();
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n";
+	private static final String COPY_FILENAME_POSTFIX = "_copy";
+
 	private static final int JPG_COMPRESSION_SETTING = 95;
 	public static final String BACKPACK_FILENAME = "backpack.json";
 
@@ -1369,5 +1371,114 @@ public final class StorageHandler {
 	public void updateCodefileOnDownload(String projectName) {
 		File projectCodeFile = new File(buildProjectPath(projectName), PROJECTCODE_NAME);
 		xstream.updateCollisionReceiverBrickMessage(projectCodeFile);
+	}
+
+	/**
+	 * Deletes file.
+	 *
+	 * @param srcFilePath Path to the file.
+	 * @return true if file was deleted, false otherwise.
+	 */
+	public static boolean deleteFile(String srcFilePath) {
+		File toDelete = new File(srcFilePath);
+		return toDelete.delete();
+	}
+
+	/**
+	 * Recursively deletes all files in a directory. A return value is ignored because a failed attempt to delete
+	 * certain folders/files within the directory would have to be handled more thoroughly.
+	 *
+	 * @param srcPath Path to either file or directory
+	 */
+	public void deleteAllFiles(String srcPath) {
+		File toDelete = new File(srcPath);
+
+		if (toDelete.isDirectory()) {
+			for (String file : toDelete.list()) {
+				deleteAllFiles(file);
+			}
+		}
+
+		toDelete.delete();
+	}
+
+	/**
+	 * Copies all files within the given source path into the given destination path.
+	 *
+	 * @param srcDirectoryPath Path to source directory.
+	 * @param dstDirectoryPath Path to destination directory. This gets created if it does not exist yet.
+	 * @return true if all fies were copied successfully, false otherwise.
+	 */
+	public static void copyRecursive (String srcDirectoryPath, String dstDirectoryPath) throws IOException {
+		File srcDirectory = new File(srcDirectoryPath);
+		if(!srcDirectory.exists()) {
+			throw new IOException("Cannot create copy of non existent file.");
+		}
+
+		if (srcDirectory.isDirectory()) {
+			for (String subDirectory : srcDirectory.list()) {
+				copyRecursive(srcDirectoryPath.concat(subDirectory), dstDirectoryPath.concat(subDirectory));
+			}
+		}
+
+		copyFile(srcDirectoryPath, dstDirectoryPath);
+	}
+
+	/**
+	 * Creates a copy of a file in the same directory.
+	 * @param srcFilePath Path to the original file.
+	 * @return Copied File or referenced original File depending on usage count handling.
+	 */
+	public static File copyFile(String srcFilePath) throws IOException {
+		return copyFile(srcFilePath, new File(srcFilePath).getParent());
+	}
+
+	/**
+	 * Creates a copy of a file in the specified destination directory (will be created if non existent).
+	 *
+	 * @param srcFilePath Path to the original file.
+	 * @param dstFileDirectory Destination directory for the copied file.
+	 * @return Copied File or referenced original File depending on usage count handling.
+	 */
+	public static File copyFile(String srcFilePath, String dstFileDirectory)
+			throws IOException {
+		File original = new File(srcFilePath);
+
+		if (!original.exists()) {
+			throw new IOException("Cannot copy file: SourceFile does not exist");
+		}
+
+		File copy = null;
+		try {
+			File destinationDir = new File(dstFileDirectory);
+			destinationDir.mkdirs();
+
+			copy = getFileCopyUniqueName(original.getName(), dstFileDirectory);
+			Files.copy(original, copy);
+		} catch (Exception e) {
+			if (copy != null && copy.exists()) {
+				copy.delete();
+			}
+			throw e;
+		}
+
+		return copy;
+	}
+
+	private static synchronized File getFileCopyUniqueName(String originalName, String dstDirectory){
+		int extensionStartIndex = originalName.lastIndexOf(".");
+		String extension = originalName.substring(extensionStartIndex);
+		String fileName = originalName.substring(0, extensionStartIndex);
+
+		int appendix = 0;
+
+		while(true) {
+			String copyFileName = fileName + COPY_FILENAME_POSTFIX + String.valueOf(appendix) + extension;
+			File copyFile = new File(dstDirectory, copyFileName);
+			if(!copyFile.exists()) {
+				return copyFile;
+			}
+			appendix++;
+		}
 	}
 }

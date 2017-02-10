@@ -108,7 +108,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	private LookData selectedLookData;
 	private Uri lookFromCameraUri = null;
 	private ListView listView;
-	private LookDeletedReceiver lookDeletedReceiver;
 	private LookRenamedReceiver lookRenamedReceiver;
 	private LooksListInitReceiver looksListInitReceiver;
 	private LookListTouchActionUpReceiver lookListTouchActionUpReceiver;
@@ -149,7 +148,20 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
 			for (int position : adapter.getCheckedItems()) {
-				LookController.getInstance().copyLook(position, lookDataList, activity, LookFragment.this);
+				try {
+					LookData copiedLook = LookController.getInstance().copyLook(lookDataList.get(position),
+							getString (R.string.copy_addition));
+
+					lookDataList.add(copiedLook);
+					updateLookAdapter(copiedLook);
+
+					activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
+				}
+				catch (IOException ioException) {
+					Log.e(TAG, "Error copying look file.");
+					Utils.showErrorDialog(activity, R.string.error_load_image);
+					Log.e(TAG, Log.getStackTraceString(ioException));
+				}
 			}
 			clearCheckedLooksAndEnableButtons();
 		}
@@ -383,10 +395,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 			lookRenamedReceiver = new LookRenamedReceiver();
 		}
 
-		if (lookDeletedReceiver == null) {
-			lookDeletedReceiver = new LookDeletedReceiver();
-		}
-
 		if (looksListInitReceiver == null) {
 			looksListInitReceiver = new LooksListInitReceiver();
 		}
@@ -397,9 +405,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 		IntentFilter intentFilterRenameLook = new IntentFilter(ScriptActivity.ACTION_LOOK_RENAMED);
 		activity.registerReceiver(lookRenamedReceiver, intentFilterRenameLook);
-
-		IntentFilter intentFilterDeleteLook = new IntentFilter(ScriptActivity.ACTION_LOOK_DELETED);
-		activity.registerReceiver(lookDeletedReceiver, intentFilterDeleteLook);
 
 		IntentFilter intentFilterLooksListInit = new IntentFilter(ScriptActivity.ACTION_LOOKS_LIST_INIT);
 		activity.registerReceiver(looksListInitReceiver, intentFilterLooksListInit);
@@ -440,10 +445,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		ProjectManager projectManager = ProjectManager.getInstance();
 		if (projectManager.getCurrentProject() != null) {
 			projectManager.saveProject(activity.getApplicationContext());
-		}
-
-		if (lookDeletedReceiver != null) {
-			activity.unregisterReceiver(lookDeletedReceiver);
 		}
 
 		if (lookRenamedReceiver != null) {
@@ -836,9 +837,21 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				adapter.addCheckedItemIfNotExists(selectedLookPosition);
-				LookController.getInstance().deleteCheckedLooks(adapter, lookDataList, activity);
+				List<LookData> deletedLooks = new ArrayList<>();
+				for(int position : adapter.getCheckedItems()) {
+					LookData toDelete = lookDataList.get(position);
+					if(LookController.getInstance().deleteLook(toDelete)){
+						deletedLooks.add(toDelete);
+					}
+				}
+
+				lookDataList.removeAll(deletedLooks);
+
+				ProjectManager.getInstance().getCurrentSprite().setLookDataList(lookDataList);
+
+				adapter.notifyDataSetChanged();
 				clearCheckedLooksAndEnableButtons();
+				activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
 			}
 		});
 		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -972,16 +985,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	public interface OnLookDataListChangedAfterNewListener {
 
 		void onLookDataListChangedAfterNew(LookData soundInfo);
-	}
-
-	private class LookDeletedReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(ScriptActivity.ACTION_LOOK_DELETED)) {
-				adapter.notifyDataSetChanged();
-				activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
-			}
-		}
 	}
 
 	private class LookRenamedReceiver extends BroadcastReceiver {

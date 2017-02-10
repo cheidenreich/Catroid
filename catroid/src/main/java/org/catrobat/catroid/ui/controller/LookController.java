@@ -66,6 +66,7 @@ import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -498,13 +499,6 @@ public final class LookController {
 		return true;
 	}
 
-	public void deleteCheckedLooks(LookBaseAdapter adapter, List<LookData> lookDataList, Activity activity) {
-		Iterator iterator = ((TreeSet) adapter.getCheckedItems()).descendingIterator();
-		while (iterator.hasNext()) {
-			deleteLook((int) iterator.next(), lookDataList, activity);
-		}
-	}
-
 	public boolean otherLookDataItemsHaveAFileReference(LookData lookDataToCheck) {
 		for (LookData lookData : BackPackListManager.getInstance().getAllBackPackedLooks()) {
 			if (lookData.equals(lookDataToCheck)) {
@@ -517,27 +511,9 @@ public final class LookController {
 		return false;
 	}
 
-	public void deleteLook(int position, List<LookData> lookDataList, Activity activity) {
-		if (position < 0 || position >= lookDataList.size()) {
-			Log.d(TAG, "attempted to delete a look at a position not in lookdatalist");
-			return;
-		}
-		LookData lookDataToDelete = lookDataList.get(position);
-		lookDataToDelete.getCollisionInformation().cancelCalculation();
-
-		boolean isBackPackLook = lookDataToDelete.isBackpackLookData;
-
-		if (!otherLookDataItemsHaveAFileReference(lookDataToDelete)) {
-			Log.d(TAG, "delete - is bp:" + isBackPackLook);
-			StorageHandler.getInstance().deleteFile(lookDataList.get(position).getAbsolutePath(), isBackPackLook);
-		}
-
-		lookDataList.remove(position);
-		if (!isBackPackLook) {
-			ProjectManager.getInstance().getCurrentSprite().setLookDataList(lookDataList);
-		}
-
-		activity.sendBroadcast(new Intent(ScriptActivity.ACTION_LOOK_DELETED));
+	public boolean deleteLook(LookData look) {
+		look.getCollisionInformation().cancelCalculation();
+		return StorageHandler.deleteFile(look.getAbsolutePath());
 	}
 
 	public boolean checkLookReplaceInBackpack(List<LookData> currentLookDataList) {
@@ -706,24 +682,11 @@ public final class LookController {
 		return null;
 	}
 
-	public void copyLook(int position, List<LookData> lookDataList, final Activity activity, LookFragment fragment) {
-		LookData lookData = lookDataList.get(position);
+	public LookData copyLook(LookData look, String copyNameAddition) throws IOException {
+		String copiedLookName = look.getLookName() + "_" + copyNameAddition;
+		File copiedFile = StorageHandler.copyFile(look.getAbsolutePath());
 
-		try {
-			String projectName = ProjectManager.getInstance().getCurrentProject().getName();
-			String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
-
-			StorageHandler.getInstance().copyImage(projectName, sceneName, lookData.getAbsolutePath(), null);
-			String imageName = lookData.getLookName() + "_" + activity.getString(R.string.copy_addition);
-			String imageFileName = lookData.getLookFileName();
-
-			updateLookAdapter(imageName, imageFileName, lookDataList, fragment);
-		} catch (IOException ioException) {
-			Log.e(TAG, "Error loading image in copyLook");
-			Utils.showErrorDialog(activity, R.string.error_load_image);
-			Log.e(TAG, Log.getStackTraceString(ioException));
-		}
-		activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
+		return new LookData(copiedLookName, copiedFile.getName());
 	}
 
 	public void switchToScriptFragment(LookFragment fragment, ScriptActivity scriptActivity) {
