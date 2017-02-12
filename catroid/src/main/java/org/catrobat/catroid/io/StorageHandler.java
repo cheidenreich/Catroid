@@ -22,11 +22,9 @@
  */
 package org.catrobat.catroid.io;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.common.base.Charsets;
@@ -44,7 +42,6 @@ import org.catrobat.catroid.common.Backpack;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
 import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.FileChecksumContainer;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.NfcTagData;
 import org.catrobat.catroid.common.SoundInfo;
@@ -216,7 +213,6 @@ import org.catrobat.catroid.physics.content.bricks.SetVelocityBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnLeftSpeedBrick;
 import org.catrobat.catroid.physics.content.bricks.TurnRightSpeedBrick;
 import org.catrobat.catroid.stage.StageListener;
-import org.catrobat.catroid.utils.ImageEditing;
 import org.catrobat.catroid.utils.UtilFile;
 import org.catrobat.catroid.utils.Utils;
 
@@ -345,6 +341,7 @@ public final class StorageHandler {
 			}
 			outputStream.flush();
 		} catch (IOException ioException) {
+			//TODO REFACTOR: handle error
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		} finally {
 			try {
@@ -1052,10 +1049,6 @@ public final class StorageHandler {
 		} else {
 			outputFilePath = buildPath(DEFAULT_ROOT, BACKPACK_DIRECTORY, backpackSubDirectory,
 					inputFileChecksum + "_" + newTitle + fileFormat);
-			FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-			if (!fileChecksumContainer.containsChecksumBackPack(inputFileChecksum)) {
-				fileChecksumContainer.addChecksumBackPack(inputFileChecksum, outputFilePath);
-			}
 		}
 
 		File outputFile = new File(outputFilePath);
@@ -1092,198 +1085,6 @@ public final class StorageHandler {
 		return copyFileBackPack(IMAGE_DIRECTORY, BACKPACK_IMAGE_DIRECTORY, inputFilePath, newName, copyFromBackpack);
 	}
 
-	public File copyImageFromResourceToCatroid(Activity activity, int imageId, String defaultImageName) throws IOException {
-		Bitmap newImage = BitmapFactory.decodeResource(activity.getApplicationContext().getResources(), imageId);
-		String projectName = ProjectManager.getInstance().getCurrentProject().getName();
-		String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
-		return createImageFromBitmap(projectName, sceneName, newImage, defaultImageName);
-	}
-
-	public File createImageFromBitmap(String currentProjectName, String currentSceneName, Bitmap inputImage, String
-			newName) throws
-			IOException {
-
-		File imageDirectory = new File(buildPath(buildScenePath(currentProjectName, currentSceneName), IMAGE_DIRECTORY));
-
-		File outputFileDirectory = new File(imageDirectory.getAbsolutePath());
-
-		if (!outputFileDirectory.exists()) {
-			outputFileDirectory.mkdirs();
-		}
-
-		File outputFile = new File(buildPath(imageDirectory.getAbsolutePath(), newName));
-
-		return createFileFromBitmap(outputFile, inputImage, imageDirectory);
-	}
-
-	public File copyImage(String currentProjectName, String currentSceneName, String inputFilePath, String newName)
-			throws IOException {
-		String newFilePath;
-		File imageDirectory = new File(buildPath(buildScenePath(currentProjectName, currentSceneName), IMAGE_DIRECTORY));
-
-		File inputFile = new File(inputFilePath);
-		if (!inputFile.exists() || !inputFile.canRead()) {
-			return null;
-		}
-
-		int[] imageDimensions = ImageEditing.getImageDimensions(inputFilePath);
-		FileChecksumContainer checksumCont = ProjectManager.getInstance().getFileChecksumContainer();
-
-		File outputFileDirectory = new File(imageDirectory.getAbsolutePath());
-		if (!outputFileDirectory.exists()) {
-			outputFileDirectory.mkdirs();
-		}
-
-		Project project = ProjectManager.getInstance().getCurrentProject();
-
-		if ((imageDimensions[0] > project.getXmlHeader().virtualScreenWidth)
-				&& (imageDimensions[1] > project.getXmlHeader().virtualScreenHeight)) {
-			File outputFile = new File(buildPath(imageDirectory.getAbsolutePath(), inputFile.getName()));
-			return copyAndResizeImage(outputFile, inputFile, imageDirectory);
-		} else {
-			String checksumSource = Utils.md5Checksum(inputFile);
-
-			if (newName != null) {
-				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + newName);
-			} else {
-				newFilePath = buildPath(imageDirectory.getAbsolutePath(), checksumSource + "_" + inputFile.getName());
-				if (checksumCont.containsChecksum(checksumSource)) {
-					checksumCont.addChecksum(checksumSource, newFilePath);
-					return new File(checksumCont.getPath(checksumSource));
-				}
-			}
-
-			File outputFile = new File(newFilePath);
-			return copyFileAddCheckSum(outputFile, inputFile);
-		}
-	}
-
-	public File makeTempImageCopy(String inputFilePath) throws IOException {
-		File tempDirectory = new File(Constants.TMP_PATH);
-
-		File inputFile = new File(inputFilePath);
-		if (!inputFile.exists() || !inputFile.canRead()) {
-			return null;
-		}
-
-		File outputFileDirectory = new File(tempDirectory.getAbsolutePath());
-		if (!outputFileDirectory.exists()) {
-			outputFileDirectory.mkdirs();
-		}
-
-		File outputFile = new File(Constants.TMP_IMAGE_PATH);
-
-		File copiedFile = UtilFile.copyFile(outputFile, inputFile);
-
-		return copiedFile;
-	}
-
-	public void deleteTempImageCopy() {
-		File temporaryPictureFileInPocketPaint = new File(Constants.TMP_IMAGE_PATH);
-		if (temporaryPictureFileInPocketPaint.exists()) {
-			temporaryPictureFileInPocketPaint.delete();
-		}
-	}
-
-	private File createFileFromBitmap(File outputFile, Bitmap inputImage, File imageDirectory) throws IOException {
-		saveBitmapToImageFile(outputFile, inputImage);
-
-		String checksumCompressedFile = Utils.md5Checksum(outputFile);
-		FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-		String newFilePath = buildPath(imageDirectory.getAbsolutePath(),
-				checksumCompressedFile + "_" + outputFile.getName());
-
-		if (!fileChecksumContainer.addChecksum(checksumCompressedFile, newFilePath)) {
-
-			return new File(fileChecksumContainer.getPath(checksumCompressedFile));
-		}
-
-		File compressedFile = new File(newFilePath);
-		outputFile.renameTo(compressedFile);
-
-		return compressedFile;
-	}
-
-	private File copyAndResizeImage(File outputFile, File inputFile, File imageDirectory) throws IOException {
-		Project project = ProjectManager.getInstance().getCurrentProject();
-		Bitmap bitmap = ImageEditing.getScaledBitmapFromPath(inputFile.getAbsolutePath(),
-				project.getXmlHeader().virtualScreenWidth, project.getXmlHeader().virtualScreenHeight,
-				ImageEditing.ResizeType.FILL_RECTANGLE_WITH_SAME_ASPECT_RATIO, true);
-
-		saveBitmapToImageFile(outputFile, bitmap);
-
-		String checksumCompressedFile = Utils.md5Checksum(outputFile);
-
-		FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-		String newFilePath = buildPath(imageDirectory.getAbsolutePath(),
-				checksumCompressedFile + "_" + inputFile.getName());
-
-		if (!fileChecksumContainer.addChecksum(checksumCompressedFile, newFilePath)) {
-			if (!outputFile.getAbsolutePath().equalsIgnoreCase(inputFile.getAbsolutePath())) {
-				outputFile.delete();
-			}
-			return new File(fileChecksumContainer.getPath(checksumCompressedFile));
-		}
-
-		File compressedFile = new File(newFilePath);
-		outputFile.renameTo(compressedFile);
-
-		return compressedFile;
-	}
-
-	public void deleteFile(String filepath, boolean isBackPackFile) {
-		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
-		try {
-			if (isBackPackFile) {
-				File toDelete = new File(filepath);
-				Log.d(TAG, "delete" + toDelete);
-				toDelete.delete();
-			} else if (container.decrementUsage(filepath)) {
-				File toDelete = new File(filepath);
-				Log.d(TAG, "delete" + toDelete);
-				toDelete.delete();
-			}
-		} catch (FileNotFoundException fileNotFoundException) {
-			Log.e(TAG, Log.getStackTraceString(fileNotFoundException));
-		}
-	}
-
-	public void deleteAllFile(String filepath) {
-
-		File toDelete = new File(filepath);
-
-		if (toDelete.isDirectory()) {
-			Log.d(TAG, "file is directory" + filepath);
-			for (String file : toDelete.list()) {
-				deleteAllFile(file);
-			}
-		}
-		toDelete.delete();
-	}
-
-	public void fillChecksumContainer() {
-		Project currentProject = ProjectManager.getInstance().getCurrentProject();
-		if (currentProject == null) {
-			return;
-		}
-
-		ProjectManager.getInstance().setFileChecksumContainer(new FileChecksumContainer());
-		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
-
-		Project newProject = ProjectManager.getInstance().getCurrentProject();
-		for (Scene scene : newProject.getSceneList()) {
-			for (Sprite currentSprite : scene.getSpriteList()) {
-				for (SoundInfo soundInfo : currentSprite.getSoundList()) {
-					container.addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
-				}
-
-				for (LookData lookData : currentSprite.getLookDataList()) {
-					container.addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
-				}
-			}
-		}
-	}
-
 	public String getXMLStringOfAProject(Project project) {
 		loadSaveLock.lock();
 		String xmlProject = "";
@@ -1297,15 +1098,7 @@ public final class StorageHandler {
 
 	private File copyFileAddCheckSum(File destinationFile, File sourceFile) throws IOException {
 		File copiedFile = UtilFile.copyFile(destinationFile, sourceFile);
-		addChecksum(destinationFile, sourceFile);
-
 		return copiedFile;
-	}
-
-	private void addChecksum(File destinationFile, File sourceFile) {
-		String checksumSource = Utils.md5Checksum(sourceFile);
-		FileChecksumContainer fileChecksumContainer = ProjectManager.getInstance().getFileChecksumContainer();
-		fileChecksumContainer.addChecksum(checksumSource, destinationFile.getAbsolutePath());
 	}
 
 	private Set<String> generatePermissionsSetFromResource(int resources) {
@@ -1469,6 +1262,8 @@ public final class StorageHandler {
 		int extensionStartIndex = originalName.lastIndexOf(".");
 		String extension = originalName.substring(extensionStartIndex);
 		String fileName = originalName.substring(0, extensionStartIndex);
+
+		//TODO REFACTOR: return original file if dies not exist to avoid the _copy appendix
 
 		int appendix = 0;
 

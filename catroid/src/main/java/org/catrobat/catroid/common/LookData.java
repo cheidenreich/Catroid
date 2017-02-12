@@ -39,10 +39,12 @@ import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.sensing.CollisionInformation;
+import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.utils.ImageEditing;
 import org.catrobat.catroid.utils.Utils;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 public class LookData implements Serializable, Cloneable {
@@ -103,17 +105,14 @@ public class LookData implements Serializable, Cloneable {
 
 	@Override
 	public LookData clone() {
-		LookData cloneLookData = new LookData(this.name, this.fileName);
-
-		String filePath = getPathToImageDirectory() + "/" + fileName;
-		cloneLookData.isBackpackLookData = false;
+		LookData clonedLook = null;
 		try {
-			ProjectManager.getInstance().getFileChecksumContainer().incrementUsage(filePath);
-		} catch (FileNotFoundException fileNotFoundexception) {
-			Log.e(TAG, Log.getStackTraceString(fileNotFoundexception));
+			clonedLook = LookController.getInstance().copyLook(this, "");
+		} catch (IOException e) {
+			//TODO REFACTOR: handle error
+			e.printStackTrace();
 		}
-
-		return cloneLookData;
+		return clonedLook;
 	}
 
 	public void resetLookData() {
@@ -196,7 +195,7 @@ public class LookData implements Serializable, Cloneable {
 		if (fileName == null) {
 			return null;
 		}
-		return fileName.substring(0, 32);
+		return Utils.md5Checksum(new File(getAbsolutePath()));
 	}
 
 	String getPathToImageDirectory() {

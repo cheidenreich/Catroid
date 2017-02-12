@@ -35,7 +35,6 @@ import com.facebook.AccessToken;
 
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.FileChecksumContainer;
 import org.catrobat.catroid.common.MessageContainer;
 import org.catrobat.catroid.common.ScreenModes;
 import org.catrobat.catroid.content.Project;
@@ -90,8 +89,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 	private boolean handleNewSceneFromScriptActivity;
 	private boolean showUploadDialog = false;
 	private boolean showLegoSensorInfoDialog = true;
-
-	private FileChecksumContainer fileChecksumContainer = new FileChecksumContainer();
 
 	private ProjectManager() {
 		this.comingFromScriptFragmentToSoundFragment = false;
@@ -152,11 +149,9 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 	public void loadProject(String projectName, Context context) throws LoadingProjectException,
 			OutdatedVersionProjectException, CompatibilityProjectException {
-		fileChecksumContainer = new FileChecksumContainer();
 		Project oldProject = project;
 		MessageContainer.createBackup();
 		project = StorageHandler.getInstance().loadProject(projectName, context);
-		StorageHandler.getInstance().fillChecksumContainer();
 
 		if (project == null) {
 			if (oldProject != null) {
@@ -311,7 +306,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 	public boolean initializeDefaultProject(Context context) {
 		try {
-			fileChecksumContainer = new FileChecksumContainer();
 			project = DefaultProjectHandler.createAndSaveDefaultProject(context);
 
 			currentSprite = null;
@@ -328,7 +322,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 
 	public void initializeNewProject(String projectName, Context context, boolean empty, boolean drone, boolean landscapeMode)
 			throws IllegalArgumentException, IOException {
-		fileChecksumContainer = new FileChecksumContainer();
 
 		if (empty) {
 			project = DefaultProjectHandler.createAndSaveEmptyProject(projectName, context, landscapeMode);
@@ -369,6 +362,24 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			currentScene = project.getDefaultScene();
 		}
 		return currentScene;
+	}
+
+	/**
+	 * Returns the image directory path for the current scene within the current project
+	 * @return image directory path
+	 */
+	public String getImageDirectory(){
+		return getImageDirectory(getCurrentProject(), getCurrentScene());
+	}
+
+	/**
+	 * Returns the image directory path for the given scene within the given project
+	 * @param project Project for the image directory
+	 * @param scene Scene for the image directory
+	 * @return image directory path
+	 */
+	public String getImageDirectory(Project project, Scene scene) {
+		return Utils.buildPath(Utils.buildScenePath(project.getName(), scene.getName()), Constants.IMAGE_DIRECTORY);
 	}
 
 	public boolean isCurrentProjectLandscapeMode() {
@@ -551,14 +562,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 			suffixCounter++;
 		}
 		return temporaryDirectoryName;
-	}
-
-	public FileChecksumContainer getFileChecksumContainer() {
-		return this.fileChecksumContainer;
-	}
-
-	public void setFileChecksumContainer(FileChecksumContainer fileChecksumContainer) {
-		this.fileChecksumContainer = fileChecksumContainer;
 	}
 
 	@Override

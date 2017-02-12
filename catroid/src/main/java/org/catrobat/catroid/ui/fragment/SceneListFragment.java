@@ -123,8 +123,6 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 			BackPackListManager.getInstance().loadBackpack();
 		}
 
-		StorageHandler.getInstance().fillChecksumContainer();
-
 		ProjectManager.getInstance().setCurrentScene(ProjectManager.getInstance().getCurrentProject().getDefaultScene());
 	}
 

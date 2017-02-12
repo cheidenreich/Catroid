@@ -901,7 +901,9 @@ public final class Utils {
 			if (pixmap == null) {
 				Log.e(TAG, "error_load_image rewriteImageFileForStage");
 				Utils.showErrorDialog(context, R.string.error_load_image);
-				StorageHandler.getInstance().deleteFile(lookFile.getAbsolutePath(), false);
+
+				//TODO REFACTOR: handle error if file not deleted:
+				StorageHandler.deleteFile(lookFile.getAbsolutePath());
 				throw new IOException("Pixmap could not be fixed");
 			}
 		}

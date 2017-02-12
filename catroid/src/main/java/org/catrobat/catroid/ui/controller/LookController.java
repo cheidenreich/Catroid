@@ -35,6 +35,8 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -66,10 +68,7 @@ import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 public final class LookController {
 	public static final int REQUEST_SELECT_OR_DRAW_IMAGE = 0;
@@ -263,9 +262,9 @@ public final class LookController {
 			} else {
 				BackPackListManager.getInstance().removeItemFromLookBackPack(lookData);
 			}
-			if (!otherLookDataItemsHaveAFileReference(lookData)) {
-				StorageHandler.getInstance().deleteFile(lookData.getAbsoluteBackPackPath(), true);
-			}
+
+			//TODO REFACTOR: handle error if not deleted:
+			StorageHandler.deleteFile(lookData.getAbsoluteBackPackPath());
 		}
 
 		if (adapter != null) {
@@ -298,17 +297,14 @@ public final class LookController {
 		}
 	}
 
-	public void loadDroneVideoImageToProject(String defaultImageName, int imageId, Activity activity, List<LookData>
-			lookDataList, LookFragment fragment) {
-		try {
-			File imageFile = StorageHandler.getInstance().copyImageFromResourceToCatroid(activity, imageId, defaultImageName);
-			updateLookAdapter(defaultImageName, imageFile.getName(), lookDataList, fragment, true);
-		} catch (IOException e) {
-			Utils.showErrorDialog(activity, R.string.error_load_image);
-		}
+	public static LookData createLookFromBitmapResource(Resources res, int imageId, String outputImageName)
+			throws IOException {
 
-		fragment.destroyLoader();
-		activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
+		Bitmap newImage = BitmapFactory.decodeResource(res, imageId);
+		File outputFile = new File(ProjectManager.getInstance().getImageDirectory(), outputImageName);
+		StorageHandler.saveBitmapToImageFile(outputFile, newImage);
+
+		return new LookData(outputImageName, outputFile.getName());
 	}
 
 	private void copyImageToCatroid(String originalImagePath, Activity activity, List<LookData> lookDataList,
@@ -330,8 +326,17 @@ public final class LookController {
 
 			String projectName = ProjectManager.getInstance().getCurrentProject().getName();
 			String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
-			File imageFile = StorageHandler.getInstance().copyImage(projectName, sceneName, originalImagePath, null);
+			String destinationDir = Utils.buildPath(Utils.buildScenePath(projectName, sceneName), Constants
+					.IMAGE_DIRECTORY);
 
+			File imageFile = null;
+			try {
+				imageFile = StorageHandler.copyFile(originalImagePath, destinationDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+				//TODO REFACTOR: handle error, all error handling should be done outside of this method, rethrow exception
+			}
 			String imageName;
 			int extensionDotIndex = oldFile.getName().lastIndexOf('.');
 			if (extensionDotIndex > 0) {
@@ -352,15 +357,19 @@ public final class LookController {
 				if (pixmap == null) {
 					Log.e(TAG, "Error loading image in copyImageToCatroid pixmap");
 					Utils.showErrorDialog(activity, R.string.error_load_image);
-					StorageHandler.getInstance().deleteFile(imageFile.getAbsolutePath(), false);
+
+					//TODO REFACTOR: handle error if file not deleted:
+					StorageHandler.deleteFile(imageFile.getAbsolutePath());
 					return;
 				}
 			}
 			updateLookAdapter(imageName, imageFileName, lookDataList, fragment);
 		} catch (IOException e) {
+			//TODO REFACTOR: handle error, all error handling should be done outside of this method, rethrow exception
 			Log.e(TAG, "Error loading image in copyImageToCatroid IOException");
 			Utils.showErrorDialog(activity, R.string.error_load_image);
 		} catch (NullPointerException e) {
+			//TODO REFACTOR: handle error, all error handling should be done outside of this method, rethrow exception
 			Log.e(TAG, "probably originalImagePath null; message: " + e.getMessage());
 			Utils.showErrorDialog(activity, R.string.error_load_image);
 		}
@@ -409,37 +418,37 @@ public final class LookController {
 			return;
 		}
 
-		String actualChecksum = Utils.md5Checksum(new File(pathOfPocketPaintImage));
+		String editedFileChecksum = Utils.md5Checksum(new File(pathOfPocketPaintImage));
 
 		// If look changed --> saving new image with new checksum and changing lookData
-		if (!selectedLookData.getChecksum().equalsIgnoreCase(actualChecksum)) {
-			String oldFileName = selectedLookData.getLookFileName();
-			String newFileName = oldFileName.substring(oldFileName.indexOf('_') + 1);
-
-			//HACK for https://github.com/Catrobat/Catroid/issues/81
-			if (!newFileName.endsWith(".png")) {
-				newFileName = newFileName + ".png";
-			}
+		if (!selectedLookData.getChecksum().equalsIgnoreCase(editedFileChecksum)) {
 
 			String projectName = ProjectManager.getInstance().getCurrentProject().getName();
 			String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
+			String destinationDir = Utils.buildPath(Utils.buildScenePath(projectName, sceneName), Constants
+					.IMAGE_DIRECTORY);
 
+			File imageFile = null;
 			try {
-				File newLookFile = StorageHandler.getInstance().copyImage(projectName, sceneName,
-						pathOfPocketPaintImage,
-						newFileName);
-
-				StorageHandler.getInstance().deleteFile(selectedLookData.getAbsolutePath(), false); //reduce usage in container or delete it
-
-				selectedLookData.setLookFilename(newLookFile.getName());
-				selectedLookData.resetThumbnailBitmap();
-			} catch (IOException ioException) {
-				Log.e(TAG, Log.getStackTraceString(ioException));
+				imageFile = StorageHandler.copyFile(pathOfPocketPaintImage, destinationDir);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+				//TODO REFACTOR: handle error
 			}
+
+			StorageHandler.deleteFile(selectedLookData.getAbsolutePath());
+
+			selectedLookData.setLookFilename(imageFile.getName());
+			selectedLookData.resetThumbnailBitmap();
+
 			if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
 				selectedLookData.getCollisionInformation().calculate();
 			}
 		}
+
+		//delete temporary image
+		StorageHandler.deleteFile(pathOfPocketPaintImage);
 	}
 
 	public void loadPictureFromCameraIntoCatroid(Uri lookFromCameraUri, Activity activity,
@@ -683,6 +692,8 @@ public final class LookController {
 	}
 
 	public LookData copyLook(LookData look, String copyNameAddition) throws IOException {
+
+		//TODO REFACTOR: make name uniqe
 		String copiedLookName = look.getLookName() + "_" + copyNameAddition;
 		File copiedFile = StorageHandler.copyFile(look.getAbsolutePath());
 

@@ -34,6 +34,7 @@ import org.catrobat.catroid.ui.BackPackActivity;
 import org.catrobat.catroid.ui.controller.SoundController;
 import org.catrobat.catroid.ui.fragment.SoundFragment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,16 +96,6 @@ public class SoundAdapter extends SoundBaseAdapter implements ActionModeActivity
 			int position = iterator.next();
 			soundFragment.setSelectedSoundInfo((SoundInfo) listView.getItemAtPosition(position));
 			soundFragment.showRenameDialog();
-		}
-		soundFragment.clearCheckedSoundsAndEnableButtons();
-	}
-
-	public void onDestroyActionModeCopy(ActionMode mode) {
-		Iterator<Integer> iterator = checkedSounds.iterator();
-
-		while (iterator.hasNext()) {
-			int position = iterator.next();
-			SoundController.getInstance().copySound(position, soundFragment.getSoundInfoList(), this);
 		}
 		soundFragment.clearCheckedSoundsAndEnableButtons();
 	}

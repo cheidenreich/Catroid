@@ -62,6 +62,7 @@ import android.widget.TextView;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
+import org.catrobat.catroid.common.DroneVideoLookData;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
@@ -291,22 +292,6 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		this.activity = activity;
 	}
 
-	/*
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		try {
-			Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
-			childFragmentManager.setAccessible(true);
-			childFragmentManager.set(this, null);
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	*/
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -501,14 +486,28 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 					break;
 				case LookController.REQUEST_DRONE_VIDEO:
 					String droneFilePath = getString(R.string.add_look_drone_video);
-					LookController.getInstance().loadDroneVideoImageToProject(droneFilePath,
-							R.drawable.ic_video, this.getActivity(), lookDataList, this);
+					try {
+						LookData look = LookController.getInstance().createLookFromBitmapResource(
+								activity.getResources(), R.drawable.ic_video, droneFilePath);
+
+						DroneVideoLookData droneLook = new DroneVideoLookData(look);
+
+						lookDataList.add(droneLook);
+						updateLookAdapter(droneLook);
+
+						if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
+							droneLook.getCollisionInformation().calculate();
+						}
+
+						destroyLoader();
+						activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
+					} catch (IOException e) {
+						e.printStackTrace();
+						//TODO REFACTOR: handle error
+					}
+					break;
 			}
 			isResultHandled = true;
-		}
-
-		if (requestCode == LookController.REQUEST_POCKET_PAINT_EDIT_IMAGE) {
-			StorageHandler.getInstance().deleteTempImageCopy();
 		}
 	}
 
@@ -790,8 +789,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		Bundle bundleForPocketPaint = new Bundle();
 
 		try {
-			File tempCopy = StorageHandler.getInstance()
-					.makeTempImageCopy(lookDataList.get(selectedPosition).getAbsolutePath());
+			File tempCopy = StorageHandler.copyFile(lookDataList.get(selectedPosition).getAbsolutePath(), Constants.TMP_PATH);
 
 			bundleForPocketPaint.putString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT, tempCopy.getAbsolutePath());
 			bundleForPocketPaint.putInt(Constants.EXTRA_X_VALUE_POCKET_PAINT, 0);
@@ -801,6 +799,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 			intent.addCategory("android.intent.category.LAUNCHER");
 			startActivityForResult(intent, LookController.REQUEST_POCKET_PAINT_EDIT_IMAGE);
 		} catch (IOException ioException) {
+			//TODO REFACTOR: handle error
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		} catch (NullPointerException nullPointerException) {
 			Log.e(TAG, Log.getStackTraceString(nullPointerException));
@@ -843,6 +842,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 					if(LookController.getInstance().deleteLook(toDelete)){
 						deletedLooks.add(toDelete);
 					}
+					//TODO REFACTOR: show toast if sound was not deleted
 				}
 
 				lookDataList.removeAll(deletedLooks);

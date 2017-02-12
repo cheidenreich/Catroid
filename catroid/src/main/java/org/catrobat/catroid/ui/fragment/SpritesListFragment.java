@@ -932,10 +932,14 @@ public class SpritesListFragment extends Fragment implements SpriteAdapter.OnSpr
 
 	private void deleteSpriteFiles() {
 		for (LookData currentLookData : spriteToEdit.getLookDataList()) {
-			StorageHandler.getInstance().deleteFile(currentLookData.getAbsolutePath(), false);
+
+			//TODO REFACTOR: handle error if file not deleted:
+			StorageHandler.deleteFile(currentLookData.getAbsolutePath());
 		}
 		for (SoundInfo currentSoundInfo : spriteToEdit.getSoundList()) {
-			StorageHandler.getInstance().deleteFile(currentSoundInfo.getAbsolutePath(), false);
+
+			//TODO REFACTOR: handle error if file not deleted:
+			StorageHandler.deleteFile(currentSoundInfo.getAbsolutePath());
 		}
 	}
 
