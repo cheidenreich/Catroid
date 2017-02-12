@@ -45,20 +45,13 @@ public class DroneVideoLookData extends LookData {
 	private transient int[] videoSize = { 0, 0 };
 	private transient int[] defaultVideoTextureSize;
 
-	@Override
-	public DroneVideoLookData clone() {
-		DroneVideoLookData cloneVideoLookData = new DroneVideoLookData();
+	public DroneVideoLookData() {
 
-		cloneVideoLookData.name = this.name;
-		cloneVideoLookData.fileName = this.fileName;
-		String filePath = getPathToImageDirectory() + "/" + fileName;
-		try {
-			ProjectManager.getInstance().getFileChecksumContainer().incrementUsage(filePath);
-		} catch (FileNotFoundException fileNotFoundexception) {
-			Log.e(TAG, Log.getStackTraceString(fileNotFoundexception));
-		}
+	}
 
-		return cloneVideoLookData;
+	public DroneVideoLookData(LookData original) {
+		this.name = original.getLookName();
+		this.fileName = original.getLookFileName();
 	}
 
 	@Override

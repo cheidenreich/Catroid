@@ -219,7 +219,9 @@ public class OverwriteRenameMediaDialog extends DialogFragment implements OnClic
 						if (lookData.getLookName().compareTo(mediaName) == 0) {
 							lookToRemove = lookData;
 							ProjectManager.getInstance().getCurrentSprite().getLookDataList().remove(lookToRemove);
-							StorageHandler.getInstance().deleteFile(lookToRemove.getAbsolutePath(), false);
+
+							//TODO REFACTOR: handle error if file not deleted:
+							StorageHandler.deleteFile(lookToRemove.getAbsolutePath());
 							break;
 						}
 					}
@@ -230,7 +232,9 @@ public class OverwriteRenameMediaDialog extends DialogFragment implements OnClic
 						if (soundInfo.getTitle().compareTo(mediaName) == 0) {
 							soundToRemove = soundInfo;
 							ProjectManager.getInstance().getCurrentSprite().getSoundList().remove(soundToRemove);
-							StorageHandler.getInstance().deleteFile(soundToRemove.getAbsolutePath(), false);
+
+							//TODO REFACTOR: handle error if file not deleted:
+							StorageHandler.deleteFile(soundToRemove.getAbsolutePath());
 							break;
 						}
 					}

@@ -361,7 +361,9 @@ public class NewSpriteDialog extends DialogFragment {
 			@Override
 			public void onClick(View view) {
 				try {
-					newLookFile = StorageHandler.getInstance().copyImageFromResourceToCatroid(getActivity(), R.drawable.ic_video, getString(R.string.add_look_drone_video));
+					LookData look = LookController.createLookFromBitmapResource(getActivity().getResources(),
+							R.drawable.ic_video,getString(R.string.add_look_drone_video));
+					newLookFile = new File(look.getAbsolutePath());
 				} catch (IOException e) {
 					Utils.showErrorDialog(getActivity(), R.string.error_load_image);
 					Log.e(TAG, Log.getStackTraceString(e));
@@ -405,11 +407,23 @@ public class NewSpriteDialog extends DialogFragment {
 				newLookFile = new File(lookUri.getPath());
 			} else {
 				lookData = new LookData();
-				newLookFile = StorageHandler.getInstance().copyImage(projectManager.getCurrentProject().getName(),
-						projectManager.getCurrentScene().getName(), lookUri.getPath(), null);
+				String projectName = ProjectManager.getInstance().getCurrentProject().getName();
+				String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
+				String destinationDir = Utils.buildPath(Utils.buildScenePath(projectName, sceneName), Constants
+						.IMAGE_DIRECTORY);
+
+				newLookFile = null;
+				try {
+					newLookFile = StorageHandler.copyFile(lookUri.getPath(), destinationDir);
+				} catch (IOException e) {
+					e.printStackTrace();
+					dismiss();
+					 return false;
+					//TODO REFACTOR: handle error, maybe merge with the catch clauses below
+				}
+
 				if (lookUri.getPath().contains(Constants.TMP_LOOKS_PATH)) {
-					File oldFile = new File(lookUri.getPath());
-					oldFile.delete();
+					StorageHandler.deleteFile(lookUri.getPath());
 				}
 			}
 

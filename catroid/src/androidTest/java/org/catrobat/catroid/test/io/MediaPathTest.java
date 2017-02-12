@@ -53,6 +53,7 @@ import org.catrobat.catroid.content.bricks.WhenStartedBrick;
 import org.catrobat.catroid.exceptions.ProjectException;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.test.utils.TestUtils;
+import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;

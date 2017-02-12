@@ -90,6 +90,7 @@ import org.catrobat.catroid.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
@@ -767,8 +768,20 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
+			Iterator<Integer> iterator = adapter.getCheckedItems().iterator();
 
-			((SoundAdapter) adapter).onDestroyActionModeCopy(mode);
+			while (iterator.hasNext()) {
+				int position = iterator.next();
+				try {
+					SoundInfo copiedSound = SoundController.getInstance().copySound(soundInfoList.get(position));
+					soundInfoList.add(copiedSound);
+					updateSoundAdapter(copiedSound);
+				} catch (IOException e) {
+					//TODO REFACTOR: show toast if sound was not copied
+					e.printStackTrace();
+				}
+			}
+			clearCheckedSoundsAndEnableButtons();
 		}
 	};
 
@@ -858,10 +871,24 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				adapter.addCheckedItemIfNotExists(selectedSoundPosition);
-				SoundController.getInstance().deleteCheckedSounds(getActivity(), adapter, soundInfoList, mediaPlayer);
+				List<SoundInfo> deletedSounds = new ArrayList<>();
+				SoundController.getInstance().stopSoundAndUpdateList(mediaPlayer, soundInfoList, adapter);
+
+				for(int position : adapter.getCheckedItems()) {
+					SoundInfo toDelete = soundInfoList.get(position);
+					if(SoundController.getInstance().deleteSound(toDelete)) {
+						deletedSounds.add(toDelete);
+					}
+					//TODO REFACTOR: show toast if sound was not deleted
+				}
+
+				soundInfoList.removeAll(deletedSounds);
+
+				ProjectManager.getInstance().getCurrentSprite().setSoundList(soundInfoList);
+
 				adapter.notifyDataSetChanged();
 				clearCheckedSoundsAndEnableButtons();
+				activity.sendBroadcast(new Intent(ScriptActivity.ACTION_SOUND_DELETED));
 			}
 		});
 		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

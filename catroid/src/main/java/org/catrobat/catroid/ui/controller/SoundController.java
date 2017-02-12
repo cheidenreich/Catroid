@@ -70,9 +70,7 @@ import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 public final class SoundController {
 	public static final int REQUEST_SELECT_OR_RECORD_SOUND = 0;
@@ -417,40 +415,16 @@ public final class SoundController {
 		return null;
 	}
 
-	public SoundInfo copySound(SoundInfo selectedSoundInfo, List<SoundInfo> soundInfoList, SoundFragment fragment) {
-		try {
-			StorageHandler.getInstance().copySoundFile(selectedSoundInfo.getAbsolutePath());
-		} catch (IOException ioException) {
-			Log.e(TAG, Log.getStackTraceString(ioException));
-		}
-		return updateSoundAdapter(selectedSoundInfo.getTitle(), selectedSoundInfo.getSoundFileName(), soundInfoList,
-				fragment);
+	public SoundInfo copySound(SoundInfo sound) throws IOException {
+
+		File copiedFile = StorageHandler.copyFile(sound.getAbsolutePath());
+
+		String newSoundInfoTitle = Utils.getUniqueSoundName(sound, false);
+		return new SoundInfo(newSoundInfoTitle, copiedFile.getName());
 	}
 
-	public void copySound(int position, List<SoundInfo> soundInfoList, SoundBaseAdapter adapter) {
-		SoundInfo soundInfo = soundInfoList.get(position);
-		try {
-			StorageHandler.getInstance().copySoundFile(soundInfo.getAbsolutePath());
-		} catch (IOException ioException) {
-			Log.e(TAG, Log.getStackTraceString(ioException));
-		}
-		String newSoundInfoTitle = Utils.getUniqueSoundName(soundInfo, false);
-		updateSoundAdapter(soundInfo, adapter, newSoundInfoTitle, false, false);
-	}
-
-	private void deleteSound(int position, List<SoundInfo> soundInfoList, Activity activity) {
-		if (position < 0 || position >= soundInfoList.size()) {
-			Log.d(TAG, "attempted to delete a sound at a position not in soundInfoList");
-			return;
-		}
-		SoundInfo soundInfoToDelete = soundInfoList.get(position);
-		if (soundInfoToDelete.isBackpackSoundInfo() && !otherSoundInfoItemsHaveAFileReference(soundInfoToDelete)) {
-			StorageHandler.getInstance().deleteFile(soundInfoList.get(position).getAbsolutePath(), true);
-		}
-
-		soundInfoList.remove(position);
-		ProjectManager.getInstance().getCurrentSprite().setSoundList(soundInfoList);
-		activity.sendBroadcast(new Intent(ScriptActivity.ACTION_SOUND_DELETED));
+	public boolean deleteSound(SoundInfo sound) {
+		return StorageHandler.deleteFile(sound.getAbsolutePath());
 	}
 
 	public boolean otherSoundInfoItemsHaveAFileReference(SoundInfo soundInfoToCheck) {
@@ -463,15 +437,6 @@ public final class SoundController {
 			}
 		}
 		return false;
-	}
-
-	public void deleteCheckedSounds(Activity activity, SoundBaseAdapter adapter, List<SoundInfo> soundInfoList,
-			MediaPlayer mediaPlayer) {
-		SoundController.getInstance().stopSoundAndUpdateList(mediaPlayer, soundInfoList, adapter);
-		Iterator iterator = ((TreeSet) adapter.getCheckedItems()).descendingIterator();
-		while (iterator.hasNext()) {
-			deleteSound((int) iterator.next(), soundInfoList, activity);
-		}
 	}
 
 	private SoundInfo updateSoundBackPackAfterInsert(String title, SoundInfo currentSoundInfo, String
@@ -517,9 +482,9 @@ public final class SoundController {
 			} else {
 				BackPackListManager.getInstance().removeItemFromSoundBackPack(soundInfo);
 			}
-			if (!otherSoundInfoItemsHaveAFileReference(soundInfo)) {
-				StorageHandler.getInstance().deleteFile(soundInfo.getAbsoluteBackPackPath(), true);
-			}
+
+			//TODO REFACTOR: handle error if file not deleted:
+			StorageHandler.getInstance().deleteFile(soundInfo.getAbsoluteBackPackPath());
 		}
 
 		if (adapter != null) {

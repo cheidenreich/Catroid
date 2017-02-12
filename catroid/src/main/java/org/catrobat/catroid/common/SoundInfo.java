@@ -27,9 +27,11 @@ import android.util.Log;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
+import org.catrobat.catroid.ui.controller.SoundController;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 
 public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable {
@@ -72,15 +74,15 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 
 	@Override
 	public SoundInfo clone() {
-		SoundInfo cloneSoundInfo = new SoundInfo(this.name, this.fileName);
-
+		SoundInfo clonedSound = null;
 		try {
-			ProjectManager.getInstance().getFileChecksumContainer().incrementUsage(getAbsolutePath());
-		} catch (FileNotFoundException fileNotFoundexception) {
-			Log.e(TAG, Log.getStackTraceString(fileNotFoundexception));
+			clonedSound = SoundController.getInstance().copySound(this);
+		} catch (IOException e) {
+			//TODO REFACTOR: handle error
+			e.printStackTrace();
 		}
 
-		return cloneSoundInfo;
+		return clonedSound;
 	}
 
 	public String getAbsolutePath() {
