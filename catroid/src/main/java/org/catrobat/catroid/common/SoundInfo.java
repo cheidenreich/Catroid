@@ -27,12 +27,13 @@ import android.util.Log;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
-import org.catrobat.catroid.ui.controller.SoundController;
+import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.utils.Utils;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable {
 
@@ -56,15 +57,13 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 		if (!(obj instanceof SoundInfo)) {
 			return false;
 		}
+
 		if (obj == this) {
 			return true;
 		}
 
 		SoundInfo soundInfo = (SoundInfo) obj;
-		if (soundInfo.fileName.equals(this.fileName) && soundInfo.name.equals(this.name)) {
-			return true;
-		}
-		return false;
+		return soundInfo.getChecksum().equals(this.getChecksum()) && soundInfo.name.equals(this.name);
 	}
 
 	@Override
@@ -74,15 +73,15 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 
 	@Override
 	public SoundInfo clone() {
-		SoundInfo clonedSound = null;
 		try {
-			clonedSound = SoundController.getInstance().copySound(this);
+			File copiedFile = StorageHandler.copyFile(this.getAbsolutePath());
+			List<SoundInfo> scope = ProjectManager.getInstance().getCurrentSprite().getSoundList();
+			return new SoundInfo(Utils.getUniqueSoundName(this.name, scope), copiedFile.getName());
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error
 			e.printStackTrace();
+			return null;
 		}
-
-		return clonedSound;
 	}
 
 	public String getAbsolutePath() {

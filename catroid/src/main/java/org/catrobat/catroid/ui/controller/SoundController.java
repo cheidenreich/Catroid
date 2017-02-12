@@ -415,14 +415,6 @@ public final class SoundController {
 		return null;
 	}
 
-	public SoundInfo copySound(SoundInfo sound) throws IOException {
-
-		File copiedFile = StorageHandler.copyFile(sound.getAbsolutePath());
-
-		String newSoundInfoTitle = Utils.getUniqueSoundName(sound, false);
-		return new SoundInfo(newSoundInfoTitle, copiedFile.getName());
-	}
-
 	public boolean deleteSound(SoundInfo sound) {
 		return StorageHandler.deleteFile(sound.getAbsolutePath());
 	}

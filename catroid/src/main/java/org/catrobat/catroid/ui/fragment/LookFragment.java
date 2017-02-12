@@ -150,8 +150,13 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		public void onDestroyActionMode(ActionMode mode) {
 			for (int position : adapter.getCheckedItems()) {
 				try {
-					LookData copiedLook = LookController.getInstance().copyLook(lookDataList.get(position),
-							getString (R.string.copy_addition));
+					LookData lookData = lookDataList.get(position);
+					File copiedLookFile = StorageHandler.copyFile(lookData.getAbsolutePath());
+
+					String copiedLookName = lookData.getLookName() + "_" + R.string.copy_addition;
+					Utils.getUniqueLookName(copiedLookName, lookDataList);
+
+					LookData copiedLook = new LookData(copiedLookName, copiedLookFile.getName());
 
 					lookDataList.add(copiedLook);
 					updateLookAdapter(copiedLook);
@@ -160,7 +165,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 				}
 				catch (IOException ioException) {
 					Log.e(TAG, "Error copying look file.");
-					Utils.showErrorDialog(activity, R.string.error_load_image);
+					ToastUtil.showError(getActivity(), R.string.error_load_image);
 					Log.e(TAG, Log.getStackTraceString(ioException));
 				}
 			}

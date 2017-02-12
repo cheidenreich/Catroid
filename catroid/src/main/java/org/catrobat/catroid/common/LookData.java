@@ -38,6 +38,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
+import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.sensing.CollisionInformation;
 import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.utils.ImageEditing;
@@ -46,6 +47,7 @@ import org.catrobat.catroid.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 public class LookData implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
@@ -78,24 +80,16 @@ public class LookData implements Serializable, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (!(obj instanceof LookData)) {
+			return false;
+		}
 
 		if (obj == this) {
 			return true;
 		}
 
-		if (obj == null) {
-			return false;
-		}
-
-		if (!(obj instanceof LookData)) {
-			return false;
-		}
-
 		LookData lookData = (LookData) obj;
-		if (lookData.fileName.equals(this.fileName) && lookData.name.equals(this.name)) {
-			return true;
-		}
-		return false;
+		return lookData.getChecksum().equals(this.getChecksum()) && lookData.name.equals(this.name);
 	}
 
 	@Override
@@ -105,14 +99,15 @@ public class LookData implements Serializable, Cloneable {
 
 	@Override
 	public LookData clone() {
-		LookData clonedLook = null;
 		try {
-			clonedLook = LookController.getInstance().copyLook(this, "");
+			File copiedFile = StorageHandler.copyFile(this.getAbsolutePath());
+			List<LookData> scope = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
+			return new LookData(Utils.getUniqueLookName(this.name, scope), copiedFile.getName());
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error
 			e.printStackTrace();
+			return null;
 		}
-		return clonedLook;
 	}
 
 	public void resetLookData() {

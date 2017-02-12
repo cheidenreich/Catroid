@@ -691,15 +691,6 @@ public final class LookController {
 		return null;
 	}
 
-	public LookData copyLook(LookData look, String copyNameAddition) throws IOException {
-
-		//TODO REFACTOR: make name uniqe
-		String copiedLookName = look.getLookName() + "_" + copyNameAddition;
-		File copiedFile = StorageHandler.copyFile(look.getAbsolutePath());
-
-		return new LookData(copiedLookName, copiedFile.getName());
-	}
-
 	public void switchToScriptFragment(LookFragment fragment, ScriptActivity scriptActivity) {
 		scriptActivity.setCurrentFragment(ScriptActivity.FRAGMENT_SCRIPTS);
 

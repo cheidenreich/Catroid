@@ -84,6 +84,7 @@ import org.catrobat.catroid.ui.dialogs.NewSoundDialog;
 import org.catrobat.catroid.ui.dialogs.RenameSoundDialog;
 import org.catrobat.catroid.ui.dynamiclistview.DynamicListView;
 import org.catrobat.catroid.utils.SnackbarUtil;
+import org.catrobat.catroid.utils.ToastUtil;
 import org.catrobat.catroid.utils.UtilUi;
 import org.catrobat.catroid.utils.Utils;
 
@@ -768,20 +769,27 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
-			Iterator<Integer> iterator = adapter.getCheckedItems().iterator();
-
-			while (iterator.hasNext()) {
-				int position = iterator.next();
+			for (int position : adapter.getCheckedItems()) {
 				try {
-					SoundInfo copiedSound = SoundController.getInstance().copySound(soundInfoList.get(position));
+					SoundInfo soundInfo = soundInfoList.get(position);
+					File copiedLookFile = StorageHandler.copyFile(soundInfo.getAbsolutePath());
+
+					String copiedLookName = soundInfo.getTitle() + "_" + R.string.copy_addition;
+					Utils.getUniqueSoundName(copiedLookName, soundInfoList);
+
+					SoundInfo copiedSound = new SoundInfo(copiedLookName, copiedLookFile.getName());
+
 					soundInfoList.add(copiedSound);
 					updateSoundAdapter(copiedSound);
-				} catch (IOException e) {
-					//TODO REFACTOR: show toast if sound was not copied
-					e.printStackTrace();
+
+					activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
+				} catch (IOException ioException) {
+					Log.e(TAG, "Error copying look file.");
+					//TODO: ToastUtil.showError(getActivity(), R.string.error_copy_sound);
+					Log.e(TAG, Log.getStackTraceString(ioException));
 				}
+				clearCheckedSoundsAndEnableButtons();
 			}
-			clearCheckedSoundsAndEnableButtons();
 		}
 	};
 
