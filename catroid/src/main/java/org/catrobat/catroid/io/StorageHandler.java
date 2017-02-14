@@ -41,8 +41,8 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Backpack;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.NfcTagData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.BroadcastScript;
@@ -353,8 +353,8 @@ public final class StorageHandler {
 	}
 
 	private void setProgramXstreamAliases() {
-		xstream.alias("look", LookData.class);
-		xstream.alias("droneLook", DroneVideoLookData.class);
+		xstream.alias("look", LookInfo.class);
+		xstream.alias("droneLook", DroneVideoLookInfo.class);
 		xstream.alias("sound", SoundInfo.class);
 		xstream.alias("nfcTag", NfcTagData.class);
 		xstream.alias("userVariable", UserVariable.class);
@@ -1071,16 +1071,16 @@ public final class StorageHandler {
 		return copyFileBackPack(SOUND_DIRECTORY, BACKPACK_SOUND_DIRECTORY, inputFilePath, newTitle, copyFromBackpack);
 	}
 
-	public File copyImageBackPack(LookData selectedLookData, String newName, boolean copyFromBackpack)
+	public File copyImageBackPack(LookInfo selectedLookInfo, String newName, boolean copyFromBackpack)
 			throws IOException {
-		if (selectedLookData == null) {
+		if (selectedLookInfo == null) {
 			return null;
 		}
 		String inputFilePath;
 		if (copyFromBackpack) {
-			inputFilePath = selectedLookData.getAbsoluteBackPackPath();
+			inputFilePath = selectedLookInfo.getAbsoluteBackPackPath();
 		} else {
-			inputFilePath = selectedLookData.getAbsoluteProjectPath();
+			inputFilePath = selectedLookInfo.getAbsoluteProjectPath();
 		}
 		return copyFileBackPack(IMAGE_DIRECTORY, BACKPACK_IMAGE_DIRECTORY, inputFilePath, newName, copyFromBackpack);
 	}

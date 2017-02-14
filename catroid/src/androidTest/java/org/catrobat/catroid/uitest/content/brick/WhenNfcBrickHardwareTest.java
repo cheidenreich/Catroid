@@ -218,8 +218,8 @@ public class WhenNfcBrickHardwareTest extends BaseActivityInstrumentationTestCas
 		soundFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, "longsound.mp3",
 				RESOURCE_SOUND, getInstrumentation().getContext(), UiTestUtils.FileTypes.SOUND);
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle(soundName);
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName(soundName);
 
 		soundInfoList.add(soundInfo);
 		ProjectManager.getInstance().getFileChecksumContainer()

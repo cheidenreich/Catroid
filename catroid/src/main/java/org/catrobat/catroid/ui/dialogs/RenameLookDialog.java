@@ -25,7 +25,7 @@ package org.catrobat.catroid.ui.dialogs;
 import android.content.Intent;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.utils.Utils;
 
@@ -53,9 +53,9 @@ public class RenameLookDialog extends TextDialog {
 			return false;
 		}
 
-		LookData lookData = new LookData();
-		lookData.setLookName(newLookName);
-		newLookName = Utils.getUniqueLookName(lookData, false);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setName(newLookName);
+		newLookName = Utils.getUniqueLookName(lookInfo, false);
 
 		Intent intent = new Intent(ScriptActivity.ACTION_LOOK_RENAMED);
 		intent.putExtra(EXTRA_NEW_LOOK_NAME, newLookName);

@@ -24,7 +24,7 @@ package org.catrobat.catroid.uitest.stage;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
@@ -148,11 +148,11 @@ public class TransparentWhenBrickTest extends BaseActivityInstrumentationTestCas
 		StartScript startScriptCat = new StartScript();
 		SetLookBrick setLookCat = new SetLookBrick();
 
-		LookData lookDataCat = new LookData();
-		lookDataCat.setLookName(catFilename);
+		LookInfo lookInfoCat = new LookInfo();
+		lookInfoCat.setName(catFilename);
 
-		cat.getLookDataList().add(lookDataCat);
-		setLookCat.setLook(lookDataCat);
+		cat.getLookInfoList().add(lookInfoCat);
+		setLookCat.setLook(lookInfoCat);
 		startScriptCat.addBrick(setLookCat);
 		cat.addScript(startScriptCat);
 
@@ -168,11 +168,11 @@ public class TransparentWhenBrickTest extends BaseActivityInstrumentationTestCas
 		SetLookBrick setLookFish = new SetLookBrick();
 		setTransparencyBrick = new SetTransparencyBrick(0.0);
 
-		LookData lookDataFish = new LookData();
-		lookDataFish.setLookName(fishFilename);
+		LookInfo lookInfoFish = new LookInfo();
+		lookInfoFish.setName(fishFilename);
 
-		fish.getLookDataList().add(lookDataFish);
-		setLookFish.setLook(lookDataFish);
+		fish.getLookInfoList().add(lookInfoFish);
+		setLookFish.setLook(lookInfoFish);
 		startScriptFish.addBrick(setLookFish);
 		startScriptFish.addBrick(setTransparencyBrick);
 		fish.addScript(startScriptFish);
@@ -192,8 +192,8 @@ public class TransparentWhenBrickTest extends BaseActivityInstrumentationTestCas
 		File fishImageFile = UiTestUtils.saveFileToProject(project.getName(), project.getDefaultScene().getName(), fishFilename,
 				org.catrobat.catroid.test.R.drawable.fish, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.IMAGE);
-		lookDataCat.setLookFilename(catImageFile.getName());
-		lookDataFish.setLookFilename(fishImageFile.getName());
+		lookInfoCat.setFileName(catImageFile.getName());
+		lookInfoFish.setFileName(fishImageFile.getName());
 
 		ProjectManager.getInstance().setProject(project);
 		StorageHandler.getInstance().saveProject(project);

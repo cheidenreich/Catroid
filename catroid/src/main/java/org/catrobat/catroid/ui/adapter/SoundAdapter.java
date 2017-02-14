@@ -30,11 +30,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import org.catrobat.catroid.common.SoundInfo;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.controller.SoundController;
+import org.catrobat.catroid.ui.fragment.BackPackSoundListFragment;
 import org.catrobat.catroid.ui.fragment.SoundFragment;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -135,8 +135,8 @@ public class SoundAdapter extends SoundBaseAdapter implements ActionModeActivity
 	@Override
 	public void onBackpackSoundComplete(boolean startBackpackActivity) {
 		if (!checkedSounds.isEmpty() && startBackpackActivity) {
-			Intent intent = new Intent(soundFragment.getActivity(), BackPackActivity.class);
-			intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_SOUNDS);
+			Intent intent = new Intent(soundFragment.getActivity(), BackpackActivity.class);
+			intent.putExtra(BackpackActivity.FRAGMENT, BackPackSoundListFragment.class);
 			soundFragment.getActivity().startActivity(intent);
 		}
 		soundFragment.clearCheckedSoundsAndEnableButtons();

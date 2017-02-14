@@ -21,21 +21,16 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/context_menu_unpack_background"
+        android:title="@string/unpack_bg" />
 
     <item
-        android:id="@+id/unpacking"
-        android:showAsAction="never"
-        android:title="@string/unpack" />
+        android:id="@+id/context_menu_unpack_object"
+        android:title="@string/unpack_object" />
 
     <item
-        android:id="@+id/delete"
-        android:showAsAction="never"
-        android:title="@string/delete"/>
-
-    <item
-        android:id="@+id/show_details"
-        android:showAsAction="never"
-        android:title="@string/show_details"/>
-
+        android:id="@+id/context_menu_delete"
+        android:title="@string/delete" />
 </menu>

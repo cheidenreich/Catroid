@@ -28,8 +28,8 @@ import android.content.Context;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.SingleSprite;
@@ -95,18 +95,18 @@ public class DefaultProjectCreatorDrone extends DefaultProjectCreator {
 
 		Sprite sprite = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), backgroundName);
 
-		LookData backgroundLookData = new DroneVideoLookData();
-		backgroundLookData.setLookName(context.getString(R.string.add_look_drone_video));
-		backgroundLookData.setLookFilename(backgroundFile.getName());
-		sprite.getLookDataList().add(backgroundLookData);
+		LookInfo backgroundLookInfo = new DroneVideoLookInfo();
+		backgroundLookInfo.setName(context.getString(R.string.add_look_drone_video));
+		backgroundLookInfo.setFileName(backgroundFile.getName());
+		sprite.getLookInfoList().add(backgroundLookInfo);
 
 		Sprite backgroundSprite = defaultDroneProject.getDefaultScene().getSpriteList().get(0);
 
-		backgroundSprite.getLookDataList().add(backgroundLookData);
+		backgroundSprite.getLookInfoList().add(backgroundLookInfo);
 		Script backgroundStartScript = new StartScript();
 
 		SetLookBrick setLookBrick = new SetLookBrick();
-		setLookBrick.setLook(backgroundLookData);
+		setLookBrick.setLook(backgroundLookInfo);
 		backgroundStartScript.addBrick(setLookBrick);
 
 		backgroundSprite.addScript(backgroundStartScript);
@@ -257,8 +257,8 @@ public class DefaultProjectCreatorDrone extends DefaultProjectCreator {
 		whenProjectStartsScript.addBrick(setSizeBrick);
 		whenProjectStartsScript.addBrick(turnLeftBrick);
 
-		LookData lookData = new LookData(spriteName + " icon", lookFile.getName());
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo(spriteName + " icon", lookFile.getName());
+		sprite.getLookInfoList().add(lookInfo);
 
 		sprite.addScript(whenSpriteTappedScript);
 		sprite.addScript(whenProjectStartsScript);

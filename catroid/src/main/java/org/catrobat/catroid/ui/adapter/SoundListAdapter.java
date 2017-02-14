@@ -50,7 +50,7 @@ public class SoundListAdapter extends CheckBoxListAdapter<SoundInfo> {
 		ListItemViewHolder listItemViewHolder = (ListItemViewHolder) listItemView.getTag();
 		SoundInfo soundInfo = getItem(position);
 
-		listItemViewHolder.name.setText(soundInfo.getTitle());
+		listItemViewHolder.name.setText(soundInfo.getName());
 		listItemViewHolder.image.setImageResource(R.drawable.ic_media_play);
 
 		listItemViewHolder.details.setVisibility(View.VISIBLE);

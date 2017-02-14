@@ -108,9 +108,9 @@ public class PocketMusicTest extends BaseActivityInstrumentationTestCase<MainMen
 
 		for (int i = 0; i < soundFragment.getSoundInfoList().size(); i++) {
 			SoundInfo soundInfo = soundFragment.getSoundInfoList().get(i);
-			if (soundInfo.getSoundFileName().matches(".*MUS-.*\\.midi")) {
+			if (soundInfo.getFileName().matches(".*MUS-.*\\.midi")) {
 				assertEquals("Wrong Pocketmusic title.", solo.getString(R.string.pocketmusic_recorded_filename),
-						soundInfo.getTitle());
+						soundInfo.getName());
 				firstPocketMusicView = soundFragment.getListView().getChildAt(i);
 				break;
 			}

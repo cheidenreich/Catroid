@@ -115,7 +115,7 @@ public class PlaySoundBrick extends BrickBaseType implements OnItemSelectedListe
 				android.R.layout.simple_spinner_item);
 		arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		SoundInfo dummySoundInfo = new SoundInfo();
-		dummySoundInfo.setTitle(context.getString(R.string.new_broadcast_message));
+		dummySoundInfo.setName(context.getString(R.string.new_broadcast_message));
 		arrayAdapter.add(dummySoundInfo);
 		for (SoundInfo soundInfo : ProjectManager.getInstance().getCurrentSprite().getSoundList()) {
 			arrayAdapter.add(soundInfo);
@@ -230,7 +230,7 @@ public class PlaySoundBrick extends BrickBaseType implements OnItemSelectedListe
 		@Override
 		public long getItemId(int paramInt) {
 			SoundInfo currentSound = spinnerAdapter.getItem(paramInt);
-			if (!currentSound.getTitle().equals(context.getString(R.string.new_broadcast_message))) {
+			if (!currentSound.getName().equals(context.getString(R.string.new_broadcast_message))) {
 				oldSelectedSound = currentSound;
 			}
 			return spinnerAdapter.getItemId(paramInt);

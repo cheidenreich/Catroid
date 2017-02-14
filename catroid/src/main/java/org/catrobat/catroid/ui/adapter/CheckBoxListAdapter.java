@@ -115,6 +115,12 @@ public abstract class CheckBoxListAdapter<T> extends ArrayAdapter<T> {
 		return checkedItems;
 	}
 
+	public void addToCheckedItems(T item) {
+		if (!checkedItems.contains(item)) {
+			checkedItems.add(item);
+		}
+	}
+
 	public int swapItems(int position1, int position2) {
 		Collections.swap(itemList, position1, position2);
 		notifyDataSetChanged();
@@ -172,9 +178,7 @@ public abstract class CheckBoxListAdapter<T> extends ArrayAdapter<T> {
 					if (selectMode == ListView.CHOICE_MODE_SINGLE) {
 						setAllItemsCheckedTo(false);
 					}
-					if (!checkedItems.contains(listItem)) {
-						checkedItems.add(listItem);
-					}
+					addToCheckedItems(listItem);
 				} else {
 					checkedItems.remove(listItem);
 				}

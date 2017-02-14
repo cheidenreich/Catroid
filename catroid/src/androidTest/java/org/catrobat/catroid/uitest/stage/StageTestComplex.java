@@ -24,7 +24,7 @@ package org.catrobat.catroid.uitest.stage;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
@@ -184,12 +184,12 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		// yellow Sprite
 		Sprite yellowSprite = new SingleSprite("yellowSprite");
 		StartScript yellowStartScript = new StartScript();
-		LookData yellowLookData = new LookData();
+		LookInfo yellowLookInfo = new LookInfo();
 		String yellowImageName = "yellow_image.bmp";
 
-		yellowLookData.setLookName(yellowImageName);
+		yellowLookInfo.setName(yellowImageName);
 
-		yellowSprite.getLookDataList().add(yellowLookData);
+		yellowSprite.getLookInfoList().add(yellowLookInfo);
 
 		yellowStartScript.addBrick(new PlaceAtBrick(-21, 21));
 
@@ -204,12 +204,12 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		// blue Sprite
 		Sprite blueSprite = new SingleSprite("blueSprite");
 		StartScript blueStartScript = new StartScript();
-		LookData blueLookData = new LookData();
+		LookInfo blueLookInfo = new LookInfo();
 		String blueImageName = "blue_image.bmp";
 
-		blueLookData.setLookName(blueImageName);
+		blueLookInfo.setName(blueImageName);
 
-		blueSprite.getLookDataList().add(blueLookData);
+		blueSprite.getLookInfoList().add(blueLookInfo);
 
 		blueStartScript.addBrick(new PlaceAtBrick(21, 21));
 
@@ -224,12 +224,12 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		// green Sprite
 		Sprite greenSprite = new SingleSprite("greenSprite");
 		StartScript greenStartScript = new StartScript();
-		LookData greenLookData = new LookData();
+		LookInfo greenLookInfo = new LookInfo();
 		String greenImageName = "green_image.bmp";
 
-		greenLookData.setLookName(greenImageName);
+		greenLookInfo.setName(greenImageName);
 
-		greenSprite.getLookDataList().add(greenLookData);
+		greenSprite.getLookInfoList().add(greenLookInfo);
 
 		greenStartScript.addBrick(new PlaceAtBrick(21, -21));
 
@@ -244,12 +244,12 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		// red Sprite
 		Sprite redSprite = new SingleSprite("redSprite");
 		StartScript redStartScript = new StartScript();
-		LookData redLookData = new LookData();
+		LookInfo redLookInfo = new LookInfo();
 		String redImageName = "red_image.bmp";
 
-		redLookData.setLookName(redImageName);
+		redLookInfo.setName(redImageName);
 
-		redSprite.getLookDataList().add(redLookData);
+		redSprite.getLookInfoList().add(redLookInfo);
 
 		redStartScript.addBrick(new PlaceAtBrick(-21, -21));
 
@@ -268,12 +268,12 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		// black Sprite
 		Sprite blackSprite = new SingleSprite("blackSprite");
 		StartScript blackStartScript = new StartScript();
-		LookData blackLookData = new LookData();
+		LookInfo blackLookInfo = new LookInfo();
 		String blackImageName = "black_image.bmp";
 
-		blackLookData.setLookName(blackImageName);
+		blackLookInfo.setName(blackImageName);
 
-		blackSprite.getLookDataList().add(blackLookData);
+		blackSprite.getLookInfoList().add(blackLookInfo);
 
 		blackStartScript.addBrick(new PlaceAtBrick(-50, 50));
 
@@ -310,11 +310,11 @@ public class StageTestComplex extends BaseActivityInstrumentationTestCase<MainMe
 		File blackImageFile = UiTestUtils.saveFileToProject(project.getName(), project.getDefaultScene().getName(), blackImageName,
 				org.catrobat.catroid.test.R.raw.black_image, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.IMAGE);
-		yellowLookData.setLookFilename(yellowImageFile.getName());
-		greenLookData.setLookFilename(greenImageFile.getName());
-		blueLookData.setLookFilename(blueImageFile.getName());
-		redLookData.setLookFilename(redImageFile.getName());
-		blackLookData.setLookFilename(blackImageFile.getName());
+		yellowLookInfo.setFileName(yellowImageFile.getName());
+		greenLookInfo.setFileName(greenImageFile.getName());
+		blueLookInfo.setFileName(blueImageFile.getName());
+		redLookInfo.setFileName(redImageFile.getName());
+		blackLookInfo.setFileName(blackImageFile.getName());
 
 		StorageHandler.getInstance().saveProject(project);
 		ProjectManager.getInstance().setProject(project);

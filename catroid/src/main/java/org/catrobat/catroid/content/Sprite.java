@@ -37,7 +37,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.BrickValues;
 import org.catrobat.catroid.common.BroadcastSequenceMap;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.NfcTagData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.bricks.Brick;
@@ -56,7 +56,6 @@ import org.catrobat.catroid.io.XStreamFieldKeyOrder;
 import org.catrobat.catroid.physics.PhysicsLook;
 import org.catrobat.catroid.physics.PhysicsWorld;
 import org.catrobat.catroid.stage.StageActivity;
-import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.ui.fragment.SpriteFactory;
 
 import java.io.Serializable;
@@ -81,7 +80,6 @@ public class Sprite implements Serializable, Cloneable {
 	private static SpriteFactory spriteFactory = new SpriteFactory();
 
 	public transient Look look = new Look(this);
-	public transient boolean isBackpackObject = false;
 	public transient PenConfiguration penConfiguration = new PenConfiguration();
 	private transient boolean convertToSingleSprite = false;
 	private transient boolean convertToGroupItemSprite = false;
@@ -89,7 +87,7 @@ public class Sprite implements Serializable, Cloneable {
 	@XStreamAsAttribute
 	private String name;
 	private List<Script> scriptList = new ArrayList<>();
-	private List<LookData> lookList = new ArrayList<>();
+	private List<LookInfo> lookList = new ArrayList<>();
 	private List<SoundInfo> soundList = new ArrayList<>();
 	private List<UserBrick> userBricks = new ArrayList<>();
 	private List<NfcTagData> nfcTagList = new ArrayList<>();
@@ -176,8 +174,8 @@ public class Sprite implements Serializable, Cloneable {
 		} else {
 			look = new Look(this);
 		}
-		for (LookData lookData : lookList) {
-			lookData.resetLookData();
+		for (LookInfo lookInfo : lookList) {
+			lookInfo.resetLookData();
 		}
 		penConfiguration = new PenConfiguration();
 	}
@@ -317,7 +315,6 @@ public class Sprite implements Serializable, Cloneable {
 		final Sprite cloneSprite = createSpriteInstance();
 
 		cloneSprite.setName(this.getName());
-		cloneSprite.isBackpackObject = false;
 		cloneSprite.convertToSingleSprite = false;
 		cloneSprite.convertToGroupItemSprite = false;
 		cloneSprite.isMobile = false;
@@ -383,7 +380,6 @@ public class Sprite implements Serializable, Cloneable {
 		final Sprite cloneSprite = createSpriteInstance();
 		cloneSprite.setName(this.name);
 
-		cloneSprite.isBackpackObject = false;
 		cloneSprite.convertToSingleSprite = false;
 		cloneSprite.convertToGroupItemSprite = false;
 		cloneSprite.isMobile = this.isMobile;
@@ -491,16 +487,16 @@ public class Sprite implements Serializable, Cloneable {
 	}
 
 	private void cloneLook(Sprite cloneSprite) {
-		int currentLookDataIndex = this.lookList.indexOf(this.look.getLookData());
+		int currentLookDataIndex = this.lookList.indexOf(this.look.getLookInfo());
 		if (currentLookDataIndex != -1) {
-			cloneSprite.look.setLookData(cloneSprite.lookList.get(currentLookDataIndex));
+			cloneSprite.look.setLookInfo(cloneSprite.lookList.get(currentLookDataIndex));
 		}
 		cloneSprite.look = this.look.copyLookForSprite(cloneSprite);
 	}
 
 	private void cloneLooks(Sprite cloneSprite) {
-		List<LookData> cloneLookList = new ArrayList<>();
-		for (LookData element : this.lookList) {
+		List<LookInfo> cloneLookList = new ArrayList<>();
+		for (LookInfo element : this.lookList) {
 			cloneLookList.add(element.clone());
 		}
 		cloneSprite.lookList = cloneLookList;
@@ -595,14 +591,14 @@ public class Sprite implements Serializable, Cloneable {
 		look.addAction(whenParallelAction);
 	}
 
-	public ParallelAction createBackgroundChangedAction(LookData lookData) {
+	public ParallelAction createBackgroundChangedAction(LookInfo lookInfo) {
 		ParallelAction whenParallelAction = ActionFactory.parallel();
 		for (Script s : scriptList) {
 			if (s instanceof WhenBackgroundChangesScript
-					&& ((WhenBackgroundChangesScript) s).getLook().equals(lookData)) {
+					&& ((WhenBackgroundChangesScript) s).getLook().equals(lookInfo)) {
 				SequenceAction sequence = createActionSequence(s);
 				SequenceAction sequenceWithNotifyAtEnd = ActionFactory.sequence(sequence,
-						ActionFactory.createBackgroundNotifyAction(lookData));
+						ActionFactory.createBackgroundNotifyAction(lookInfo));
 				whenParallelAction.addAction(sequenceWithNotifyAtEnd);
 			}
 		}
@@ -611,11 +607,11 @@ public class Sprite implements Serializable, Cloneable {
 		return whenParallelAction;
 	}
 
-	public int getNumberOfWhenBackgroundChangesScripts(LookData lookData) {
+	public int getNumberOfWhenBackgroundChangesScripts(LookInfo lookInfo) {
 		int numberOfScripts = 0;
 		for (Script s : scriptList) {
 			if (s instanceof WhenBackgroundChangesScript
-					&& ((WhenBackgroundChangesScript) s).getLook().equals(lookData)) {
+					&& ((WhenBackgroundChangesScript) s).getLook().equals(lookInfo)) {
 				numberOfScripts++;
 			}
 		}
@@ -688,26 +684,26 @@ public class Sprite implements Serializable, Cloneable {
 		return scriptList.remove(script);
 	}
 
-	public List<LookData> getLookDataList() {
+	public List<LookInfo> getLookInfoList() {
 		return lookList;
 	}
 
-	public void setLookDataList(List<LookData> list) {
+	public void setLookDataList(List<LookInfo> list) {
 		lookList = list;
 	}
 
-	public boolean existLookDataByName(LookData look) {
-		for (LookData lookdata : lookList) {
-			if (lookdata.getLookName().equals(look.getLookName())) {
+	public boolean existLookDataByName(LookInfo look) {
+		for (LookInfo lookdata : lookList) {
+			if (lookdata.getName().equals(look.getName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean existLookDataByFileName(LookData look) {
-		for (LookData lookdata : lookList) {
-			if (lookdata.getLookFileName().equals(look.getLookFileName())) {
+	public boolean existLookDataByFileName(LookInfo look) {
+		for (LookInfo lookdata : lookList) {
+			if (lookdata.getFileName().equals(look.getFileName())) {
 				return true;
 			}
 		}
@@ -731,8 +727,8 @@ public class Sprite implements Serializable, Cloneable {
 			}
 		}
 
-		for (LookData lookData : getLookDataList()) {
-			resources |= lookData.getRequiredResources();
+		for (LookInfo lookInfo : getLookInfoList()) {
+			resources |= lookInfo.getRequiredResources();
 		}
 
 		return resources;
@@ -779,9 +775,9 @@ public class Sprite implements Serializable, Cloneable {
 		}
 	}
 
-	public boolean containsLookData(LookData lookData) {
-		for (LookData lookOfSprite : lookList) {
-			if (lookOfSprite.equals(lookData)) {
+	public boolean containsLookData(LookInfo lookInfo) {
+		for (LookInfo lookOfSprite : lookList) {
+			if (lookOfSprite.equals(lookInfo)) {
 				return true;
 			}
 		}
@@ -790,7 +786,7 @@ public class Sprite implements Serializable, Cloneable {
 
 	public boolean existSoundInfoByName(SoundInfo sound) {
 		for (SoundInfo soundInfo : soundList) {
-			if (soundInfo.getTitle().equals(sound.getTitle())) {
+			if (soundInfo.getName().equals(sound.getName())) {
 				return true;
 			}
 		}
@@ -799,7 +795,7 @@ public class Sprite implements Serializable, Cloneable {
 
 	public boolean existSoundInfoByFileName(SoundInfo sound) {
 		for (SoundInfo soundInfo : soundList) {
-			if (soundInfo.getSoundFileName().equals(sound.getSoundFileName())) {
+			if (soundInfo.getFileName().equals(sound.getFileName())) {
 				return true;
 			}
 		}
@@ -921,8 +917,8 @@ public class Sprite implements Serializable, Cloneable {
 	}
 
 	public void createCollisionPolygons() {
-		for (LookData lookData : getLookDataList()) {
-			lookData.getCollisionInformation().calculate();
+		for (LookInfo lookInfo : getLookInfoList()) {
+			lookInfo.getCollisionInformation().calculate();
 		}
 	}
 

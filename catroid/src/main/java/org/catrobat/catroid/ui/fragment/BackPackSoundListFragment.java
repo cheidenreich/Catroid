@@ -22,68 +22,55 @@
  */
 package org.catrobat.catroid.ui.fragment;
 
-import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.Constants;
+import org.catrobat.catroid.io.backpack.BackpackSoundController;
 import org.catrobat.catroid.common.SoundInfo;
-import org.catrobat.catroid.ui.BottomBar;
+import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.adapter.CheckBoxListAdapter;
 import org.catrobat.catroid.ui.adapter.SoundListAdapter;
 import org.catrobat.catroid.ui.controller.BackPackListManager;
-import org.catrobat.catroid.ui.controller.SoundController;
+import org.catrobat.catroid.utils.ToastUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 public class BackPackSoundListFragment extends BackPackActivityFragment implements CheckBoxListAdapter
-		.ListItemClickHandler, CheckBoxListAdapter.ListItemLongClickHandler {
+		.ListItemClickHandler<SoundInfo>, CheckBoxListAdapter.ListItemLongClickHandler {
 
-	public static final String TAG = BackPackSoundListFragment.class.getSimpleName();
+	public static final String TAG = BackPackLookListFragment.class.getSimpleName();
+	public static final String SHARED_PREFERENCE_NAME = "showSoundDetails";
+	private static final String BUNDLE_ARGUMENTS_ITEM_TO_EDIT = "soundToEdit";
 
 	private SoundListAdapter soundAdapter;
-	private ListView listView;
-
-	private MediaPlayer mediaPlayer;
-
-	private SoundInfo soundInfoToEdit;
-	private int selectedSoundPosition = Constants.NO_POSITION;
+	private SoundInfo soundToEdit;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View backPackSoundListFragment = inflater.inflate(R.layout.fragment_sound_backpack, container, false);
-		listView = (ListView) backPackSoundListFragment.findViewById(android.R.id.list);
-
-		return backPackSoundListFragment;
+		return inflater.inflate(R.layout.fragment_backpack, container, false);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		registerForContextMenu(listView);
-
-		singleItemTitle = getString(R.string.sound);
-		multipleItemsTitle = getString(R.string.sounds);
+		registerForContextMenu(getListView());
+		itemIdentifier = R.plurals.sound;
+		deleteDialogTitle = R.plurals.delete_dialog_sound;
 
 		if (savedInstanceState != null) {
-			soundInfoToEdit = (SoundInfo) savedInstanceState
-					.getSerializable(SoundController.BUNDLE_ARGUMENTS_SELECTED_SOUND);
+			soundToEdit = (SoundInfo) savedInstanceState.getSerializable(BUNDLE_ARGUMENTS_ITEM_TO_EDIT);
 		}
 
 		initializeList();
 		checkEmptyBackgroundBackPack();
-		BottomBar.hideBottomBar(getActivity());
 	}
 
 	private void initializeList() {
@@ -98,128 +85,64 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(SoundController.BUNDLE_ARGUMENTS_SELECTED_SOUND, soundInfoToEdit);
+		outState.putSerializable(BUNDLE_ARGUMENTS_ITEM_TO_EDIT, soundToEdit);
 		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		mediaPlayer = new MediaPlayer();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
-				.getApplicationContext());
-
-		setShowDetails(settings.getBoolean(SoundController.SHARED_PREFERENCE_NAME, false));
+		loadShowDetailsPreferences(SHARED_PREFERENCE_NAME);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-
 		BackPackListManager.getInstance().saveBackpack();
-		SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getInstance().getBackPackedSounds());
-		soundAdapter.notifyDataSetChanged();
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
-				.getApplicationContext());
-		SharedPreferences.Editor editor = settings.edit();
-
-		editor.putBoolean(SoundController.SHARED_PREFERENCE_NAME, getShowDetails());
-		editor.commit();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		mediaPlayer.reset();
-		mediaPlayer.release();
-		mediaPlayer = null;
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		if (BackPackListManager.getInstance().getBackPackedSounds().isEmpty()) {
-			menu.findItem(R.id.unpacking).setVisible(false);
-		}
-
-		super.onPrepareOptionsMenu(menu);
+		saveCurrentProject();
+		putShowDetailsPreferences(SHARED_PREFERENCE_NAME);
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle(soundToEdit.getName());
 		super.onCreateContextMenu(menu, view, menuInfo);
-
-		if (SoundController.getInstance().isSoundPlaying(mediaPlayer)) {
-			SoundController.getInstance().stopSound(mediaPlayer, BackPackListManager.getInstance().getBackPackedSounds());
-		}
-
-		soundInfoToEdit = soundAdapter.getItem(selectedSoundPosition);
-		menu.setHeaderTitle(soundInfoToEdit.getTitle());
-
-		getActivity().getMenuInflater().inflate(R.menu.context_menu_unpacking, menu);
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.context_menu_unpacking:
-				unpackCheckedItems(true);
-				break;
-			case R.id.context_menu_delete:
-				deleteCheckedItems(true);
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
-
-	@Override
-	public void handleOnItemClick(int position, View view, Object listItem) {
-		selectedSoundPosition = position;
-		soundInfoToEdit = soundAdapter.getItem(position);
-		listView.showContextMenuForChild(view);
+	public void handleOnItemClick(int position, View view, SoundInfo listItem) {
+		soundToEdit = listItem;
+		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
 	public void handleOnItemLongClick(int position, View view) {
-		selectedSoundPosition = position;
-		soundInfoToEdit = soundAdapter.getItem(position);
-		listView.showContextMenuForChild(view);
-	}
-
-	public void pauseSound(SoundInfo soundInfo) {
-		mediaPlayer.pause();
-		soundInfo.isPlaying = false;
+		soundToEdit = soundAdapter.getItem(position);
+		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
-	protected void showDeleteDialog(boolean singleItem) {
-	}
-
-	@Override
-	protected void deleteCheckedItems(boolean singleItem) {
-	}
-
-	protected void unpackCheckedItems(boolean singleItem) {
-		if (singleItem) {
-			unpackSound();
-			showUnpackingCompleteToast(1);
-			return;
-		}
+	public void deleteCheckedItems() {
 		for (SoundInfo soundInfo : soundAdapter.getCheckedItems()) {
-			soundInfoToEdit = soundInfo;
-			unpackSound();
+			if (StorageHandler.deleteFile(soundInfo.getAbsolutePath())) {
+				soundAdapter.remove(soundInfo);
+			} else {
+				ToastUtil.showError(getActivity(), R.string.error_delete_sound);
+			}
 		}
-		showUnpackingCompleteToast(soundAdapter.getCheckedItems().size());
-		clearCheckedItems();
 	}
 
-	private void unpackSound() {
-		SoundController.getInstance().unpack(soundInfoToEdit, false, false);
+	@Override
+	protected void unpackCheckedItems() {
+		for (SoundInfo soundInfo : soundAdapter.getCheckedItems()) {
+			try {
+				SoundInfo unpackedSoundInfo = BackpackSoundController.unpack(soundInfo);
+				ProjectManager.getInstance().getCurrentSprite().getSoundList().add(unpackedSoundInfo);
+			} catch (IOException e) {
+				ToastUtil.showError(getActivity(), R.string.error_unpack_sound);
+			}
+		}
+
+		clearCheckedItems();
 	}
 }

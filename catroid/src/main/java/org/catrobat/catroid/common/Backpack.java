@@ -37,14 +37,14 @@ public class Backpack implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public List<SoundInfo> backpackedSounds = new CopyOnWriteArrayList<>();
-	public List<LookData> backpackedLooks = new CopyOnWriteArrayList<>();
+	public List<LookInfo> backpackedLooks = new CopyOnWriteArrayList<>();
 	public HashMap<String, List<Script>> backpackedScripts = new HashMap<>();
 	public HashMap<String, List<UserBrick>> backpackedUserBricks = new HashMap<>();
 	public List<Sprite> backpackedSprites = new CopyOnWriteArrayList<>();
 	public List<Scene> backpackedScenes = new CopyOnWriteArrayList<>();
 
 	public List<SoundInfo> hiddenBackpackedSounds = new CopyOnWriteArrayList<>();
-	public List<LookData> hiddenBackpackedLooks = new CopyOnWriteArrayList<>();
+	public List<LookInfo> hiddenBackpackedLooks = new CopyOnWriteArrayList<>();
 	public HashMap<String, List<Script>> hiddenBackpackedScripts = new HashMap<>();
 	public List<Sprite> hiddenBackpackedSprites = new CopyOnWriteArrayList<>();
 	public List<Scene> hiddenBackpackedScenes = new CopyOnWriteArrayList<>();

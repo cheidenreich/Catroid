@@ -27,17 +27,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.utils.UtilFile;
 
 import java.io.File;
 import java.util.List;
 
-public class LookListAdapter extends CheckBoxListAdapter<LookData> {
+public class LookListAdapter extends CheckBoxListAdapter<LookInfo> {
 
 	public static final String TAG = LookListAdapter.class.getSimpleName();
 
-	public LookListAdapter(Context context, int resource, List<LookData> listItems) {
+	public LookListAdapter(Context context, int resource, List<LookInfo> listItems) {
 		super(context, resource, listItems);
 	}
 
@@ -46,21 +46,21 @@ public class LookListAdapter extends CheckBoxListAdapter<LookData> {
 		View listItemView = super.getView(position, convertView, parent);
 
 		ListItemViewHolder listItemViewHolder = (ListItemViewHolder) listItemView.getTag();
-		LookData lookData = getItem(position);
+		LookInfo lookInfo = getItem(position);
 
-		listItemViewHolder.name.setText(lookData.getLookName());
-		listItemViewHolder.image.setImageBitmap(lookData.getThumbnailBitmap());
+		listItemViewHolder.name.setText(lookInfo.getName());
+		listItemViewHolder.image.setImageBitmap(lookInfo.getThumbnailBitmap());
 
 		if (showDetails) {
 			listItemViewHolder.details.setVisibility(View.VISIBLE);
 
 			listItemViewHolder.leftBottomDetails.setText(R.string.look_measure);
-			int[] measure = lookData.getMeasure();
+			int[] measure = lookInfo.getMeasure();
 			String measureString = measure[0] + " x " + measure[1];
 			listItemViewHolder.rightBottomDetails.setText(measureString);
 
 			listItemViewHolder.leftTopDetails.setText(R.string.size);
-			listItemViewHolder.rightTopDetails.setText(UtilFile.getSizeAsString(new File(lookData.getAbsolutePath())));
+			listItemViewHolder.rightTopDetails.setText(UtilFile.getSizeAsString(new File(lookInfo.getAbsolutePath())));
 		}
 
 		return listItemView;

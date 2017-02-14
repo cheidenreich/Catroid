@@ -25,7 +25,7 @@ package org.catrobat.catroid.content;
 import android.util.Log;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,8 +77,8 @@ public class GroupSprite extends Sprite {
 		Log.i("GroupSprite", "Creating Collision Polygons for all Sprites of group!");
 		List<Sprite> groupSprites = getSpritesFromGroupWithGroupName(getName());
 		for (Sprite sprite : groupSprites) {
-			for (LookData lookData : sprite.getLookDataList()) {
-				lookData.getCollisionInformation().calculate();
+			for (LookInfo lookInfo : sprite.getLookInfoList()) {
+				lookInfo.getCollisionInformation().calculate();
 			}
 		}
 	}

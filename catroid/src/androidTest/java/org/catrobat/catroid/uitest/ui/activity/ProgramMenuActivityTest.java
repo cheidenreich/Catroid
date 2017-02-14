@@ -32,7 +32,7 @@ import com.robotium.solo.Solo;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -250,19 +250,19 @@ public class ProgramMenuActivityTest extends BaseActivityInstrumentationTestCase
 				org.catrobat.catroid.test.R.drawable.catroid_sunglasses, getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
 
 		ProjectManager projectManager = ProjectManager.getInstance();
-		List<LookData> lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		LookData lookData = new LookData();
-		lookData.setLookFilename(imageFile.getName());
-		lookData.setLookName("Catroid sun");
-		lookDataList.add(lookData);
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		List<LookInfo> lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(imageFile.getName());
+		lookInfo.setName("Catroid sun");
+		lookInfoList.add(lookInfo);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
 		File soundFile = UiTestUtils.saveFileToProject(project.getName(), project.getDefaultScene().getName(), "longsound.mp3",
 				org.catrobat.catroid.test.R.raw.longsound, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.SOUND);
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle("longsound");
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName("longsound");
 
 		List<SoundInfo> soundInfoList = ProjectManager.getInstance().getCurrentSprite().getSoundList();
 		soundInfoList.add(soundInfo);

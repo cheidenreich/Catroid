@@ -31,7 +31,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.camera.CameraManager;
 import org.catrobat.catroid.common.BrickValues;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.BroadcastEvent.BroadcastType;
 import org.catrobat.catroid.content.actions.AddItemToUserListAction;
@@ -164,9 +164,9 @@ import org.catrobat.catroid.physics.PhysicsObject;
 
 public class ActionFactory extends Actions {
 
-	public static Action createBackgroundNotifyAction(LookData lookData) {
+	public static Action createBackgroundNotifyAction(LookInfo lookInfo) {
 		BackgroundNotifyAction action = Actions.action(BackgroundNotifyAction.class);
-		action.setLookData(lookData);
+		action.setLookInfo(lookInfo);
 		return action;
 	}
 
@@ -578,15 +578,15 @@ public class ActionFactory extends Actions {
 		return action;
 	}
 
-	public Action createSetLookAction(Sprite sprite, LookData lookData) {
+	public Action createSetLookAction(Sprite sprite, LookInfo lookInfo) {
 		SetLookAction action = Actions.action(SetLookAction.class);
 		action.setSprite(sprite);
-		action.setLookData(lookData);
+		action.setLookData(lookInfo);
 		return action;
 	}
 
-	public Action createSetLookAction(Sprite sprite, LookData lookData, boolean wait) {
-		SetLookAction action = (SetLookAction) createSetLookAction(sprite, lookData);
+	public Action createSetLookAction(Sprite sprite, LookInfo lookInfo, boolean wait) {
+		SetLookAction action = (SetLookAction) createSetLookAction(sprite, lookInfo);
 		action.setWait(wait);
 		return action;
 	}

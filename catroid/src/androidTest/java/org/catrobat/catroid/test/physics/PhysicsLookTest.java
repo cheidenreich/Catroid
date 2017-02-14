@@ -33,7 +33,7 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
@@ -100,15 +100,15 @@ public class PhysicsLookTest extends InstrumentationTestCase {
 	public void testShapeComputationOfLook() {
 		PhysicsShapeBuilder physicsShapeBuilder = PhysicsShapeBuilder.getInstance();
 
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
+		sprite.getLookInfoList().add(lookInfo);
 		Pixmap pixmap = null;
 		pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
+		lookInfo.setPixmap(pixmap);
 
-		Shape[] shapes = physicsShapeBuilder.getScaledShapes(lookData, sprite.look.getSizeInUserInterfaceDimensionUnit() / 100f);
+		Shape[] shapes = physicsShapeBuilder.getScaledShapes(lookInfo, sprite.look.getSizeInUserInterfaceDimensionUnit() / 100f);
 
 		assertTrue("shapes are 0", shapes.length > 0);
 		physicsShapeBuilder.reset();
@@ -145,12 +145,12 @@ public class PhysicsLookTest extends InstrumentationTestCase {
 	}
 
 	public void testSetScale() {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImageFilename);
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImageFilename);
+		sprite.getLookInfoList().add(lookInfo);
 		Pixmap pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
+		lookInfo.setPixmap(pixmap);
 
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 		PhysicsLook physicsLook = new PhysicsLook(sprite, physicsWorld);
@@ -158,7 +158,7 @@ public class PhysicsLookTest extends InstrumentationTestCase {
 		Shape[] shapes = (Shape[]) Reflection.getPrivateField(physicsObject, "shapes");
 		assertEquals("Shapes are not null", null, shapes);
 
-		physicsLook.setLookData(lookData);
+		physicsLook.setLookInfo(lookInfo);
 
 		Queue<Float> vertexXQueue = new LinkedList<Float>();
 		Queue<Float> vertexYQueue = new LinkedList<Float>();
@@ -246,13 +246,13 @@ public class PhysicsLookTest extends InstrumentationTestCase {
 	}
 
 	public void testSetLookDataWithNullPixmap() {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
 
 		sprite.look = new PhysicsLook(sprite, physicsWorld);
 		try {
-			sprite.look.setLookData(lookData);
+			sprite.look.setLookInfo(lookInfo);
 		} catch (Exception exception) {
 			Log.e(TAG, "unexpected exception", exception);
 			fail("unexpected exception");
@@ -293,10 +293,10 @@ public class PhysicsLookTest extends InstrumentationTestCase {
 						+ look.getRotation() + ".",
 				physicsLook.getRotation(), look.getRotation());
 
-		assertEquals("physicsLook getLookData()"
-						+ physicsLook.getLookData() + " differs from look value"
-						+ look.getLookData() + ".",
-				physicsLook.getLookData(), look.getLookData());
+		assertEquals("physicsLook getLookInfo()"
+						+ physicsLook.getLookInfo() + " differs from look value"
+						+ look.getLookInfo() + ".",
+				physicsLook.getLookInfo(), look.getLookInfo());
 
 		assertEquals("physicsLook getAllActionsAreFinished()"
 						+ physicsLook.getAllActionsAreFinished() + " differs from look value"

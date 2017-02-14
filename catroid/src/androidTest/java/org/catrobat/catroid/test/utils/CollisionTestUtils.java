@@ -29,7 +29,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 
 import junit.framework.Assert;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.ActionFactory;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
@@ -45,13 +45,13 @@ public final class CollisionTestUtils {
 		throw new AssertionError();
 	}
 
-	public static LookData generateLookData(File testImage) {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
+	public static LookInfo generateLookData(File testImage) {
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
 		Pixmap pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
-		return lookData;
+		lookInfo.setPixmap(pixmap);
+		return lookInfo;
 	}
 
 	public static void initializeSprite(Sprite sprite, int resourceId, String filename, Context context, Project
@@ -70,15 +70,15 @@ public final class CollisionTestUtils {
 			Assert.fail("Couldn't load file, exception thrown!");
 		}
 
-		LookData lookData = generateLookData(file);
-		Assert.assertNotNull("lookData is null", lookData);
-		CollisionInformation collisionInformation = lookData.getCollisionInformation();
+		LookInfo lookInfo = generateLookData(file);
+		Assert.assertNotNull("lookInfo is null", lookInfo);
+		CollisionInformation collisionInformation = lookInfo.getCollisionInformation();
 		collisionInformation.loadOrCreateCollisionPolygon();
 
-		sprite.look.setLookData(lookData);
-		sprite.getLookDataList().add(lookData);
-		sprite.look.setHeight(sprite.look.getLookData().getPixmap().getHeight());
-		sprite.look.setWidth(sprite.look.getLookData().getPixmap().getWidth());
+		sprite.look.setLookInfo(lookInfo);
+		sprite.getLookInfoList().add(lookInfo);
+		sprite.look.setHeight(sprite.look.getLookInfo().getPixmap().getHeight());
+		sprite.look.setWidth(sprite.look.getLookInfo().getPixmap().getWidth());
 		sprite.look.setPositionInUserInterfaceDimensionUnit(0, 0);
 	}
 }

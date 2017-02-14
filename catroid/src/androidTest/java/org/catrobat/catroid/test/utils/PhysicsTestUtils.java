@@ -28,7 +28,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.SingleSprite;
 import org.catrobat.catroid.physics.PhysicsObject;
 import org.catrobat.catroid.physics.PhysicsWorld;
@@ -98,12 +98,12 @@ public final class PhysicsTestUtils {
 		return Utils.md5Checksum(filename) + "_" + filename;
 	}
 
-	public static LookData generateLookData(File testImage) {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
+	public static LookInfo generateLookData(File testImage) {
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
 		Pixmap pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
-		return lookData;
+		lookInfo.setPixmap(pixmap);
+		return lookInfo;
 	}
 }

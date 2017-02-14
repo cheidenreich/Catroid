@@ -28,7 +28,7 @@ import android.util.Log;
 import com.badlogic.gdx.math.Vector2;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.CollisionScript;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
@@ -192,18 +192,18 @@ public class PhysicsSpriteCloneTest extends InstrumentationTestCase {
 
 		String rectangle125x125FileName = PhysicsTestUtils.getInternalImageFilenameFromFilename("rectangle_125x125.png");
 		File rectangle125x125File = null;
-		LookData lookdata;
+		LookInfo lookdata;
 		try {
 			rectangle125x125File = TestUtils.saveFileToProject(TestUtils.DEFAULT_TEST_PROJECT_NAME, project.getDefaultScene().getName(),
 					rectangle125x125FileName, RECTANGLE125X125_RES_ID, getInstrumentation().getContext(),
 					TestUtils.TYPE_IMAGE_FILE);
 			lookdata = PhysicsTestUtils.generateLookData(rectangle125x125File);
-			sprite.look.setLookData(lookdata);
+			sprite.look.setLookInfo(lookdata);
 		} catch (IOException e) {
 			Log.e(TAG, "IOException caught", e);
 		}
 		assertNotNull("File must not be null.", rectangle125x125File);
-		assertNotNull("Lookdata must not be null.", sprite.look.getLookData());
+		assertNotNull("Lookdata must not be null.", sprite.look.getLookInfo());
 
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 

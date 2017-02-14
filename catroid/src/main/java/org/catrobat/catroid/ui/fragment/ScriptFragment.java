@@ -64,7 +64,7 @@ import org.catrobat.catroid.content.commands.ChangeFormulaCommand;
 import org.catrobat.catroid.content.commands.CommandFactory;
 import org.catrobat.catroid.content.commands.OnFormulaChangedListener;
 import org.catrobat.catroid.formulaeditor.Formula;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.UserBrickScriptActivity;
@@ -759,8 +759,8 @@ public class ScriptFragment extends ScriptActivityFragment implements OnCategory
 	}
 
 	private void openBackPack() {
-		Intent intent = new Intent(getActivity(), BackPackActivity.class);
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_SCRIPTS);
+		Intent intent = new Intent(getActivity(), BackpackActivity.class);
+		intent.putExtra(BackpackActivity.FRAGMENT, BackPackScriptListFragment.class);
 		startActivity(intent);
 	}
 

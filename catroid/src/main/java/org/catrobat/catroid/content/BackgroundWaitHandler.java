@@ -25,7 +25,7 @@ package org.catrobat.catroid.content;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.actions.SetLookAction;
 
 import java.util.ArrayList;
@@ -34,9 +34,9 @@ import java.util.List;
 
 public final class BackgroundWaitHandler {
 
-	private static HashMap<LookData, Integer> numberOfRunningScriptsOfLookData = new HashMap<>();
-	private static HashMap<Sprite, HashMap<LookData, ParallelAction>> actionsOfLookDataPerSprite = new HashMap<>();
-	private static HashMap<LookData, ArrayList<SetLookAction>> observingActions = new HashMap<>();
+	private static HashMap<LookInfo, Integer> numberOfRunningScriptsOfLookData = new HashMap<>();
+	private static HashMap<Sprite, HashMap<LookInfo, ParallelAction>> actionsOfLookDataPerSprite = new HashMap<>();
+	private static HashMap<LookInfo, ArrayList<SetLookAction>> observingActions = new HashMap<>();
 
 	private BackgroundWaitHandler() {
 		throw new AssertionError();
@@ -48,27 +48,27 @@ public final class BackgroundWaitHandler {
 		observingActions.clear();
 	}
 
-	public static synchronized void decrementRunningScripts(LookData lookData) {
-		Integer counter = numberOfRunningScriptsOfLookData.get(lookData);
+	public static synchronized void decrementRunningScripts(LookInfo lookInfo) {
+		Integer counter = numberOfRunningScriptsOfLookData.get(lookInfo);
 		if (counter != null) {
-			numberOfRunningScriptsOfLookData.put(lookData, --counter);
+			numberOfRunningScriptsOfLookData.put(lookInfo, --counter);
 			if (counter == 0) {
-				notifyObservingActions(lookData);
+				notifyObservingActions(lookInfo);
 			}
 		}
 	}
 
-	public static void addObserver(LookData lookData, SetLookAction action) {
-		ArrayList<SetLookAction> actions = observingActions.get(lookData);
+	public static void addObserver(LookInfo lookInfo, SetLookAction action) {
+		ArrayList<SetLookAction> actions = observingActions.get(lookInfo);
 		if (actions == null) {
 			actions = new ArrayList<>();
-			observingActions.put(lookData, actions);
+			observingActions.put(lookInfo, actions);
 		}
 		actions.add(action);
 	}
 
-	public static void notifyObservingActions(LookData lookData) {
-		ArrayList<SetLookAction> actions = observingActions.get(lookData);
+	public static void notifyObservingActions(LookInfo lookInfo) {
+		ArrayList<SetLookAction> actions = observingActions.get(lookInfo);
 		if (actions == null) {
 			return;
 		}
@@ -79,36 +79,36 @@ public final class BackgroundWaitHandler {
 		actions.clear();
 	}
 
-	private static void resetNumberOfReceivers(LookData lookData) {
+	private static void resetNumberOfReceivers(LookInfo lookInfo) {
 		List<Sprite> spriteList = ProjectManager.getInstance().getCurrentProject().getSpriteListWithClones();
 
 		Integer scriptsToRun = 0;
 		for (Sprite sprite : spriteList) {
-			scriptsToRun += sprite.getNumberOfWhenBackgroundChangesScripts(lookData);
+			scriptsToRun += sprite.getNumberOfWhenBackgroundChangesScripts(lookInfo);
 		}
-		numberOfRunningScriptsOfLookData.put(lookData, scriptsToRun);
+		numberOfRunningScriptsOfLookData.put(lookInfo, scriptsToRun);
 		if (scriptsToRun == 0) {
-			notifyObservingActions(lookData);
+			notifyObservingActions(lookInfo);
 		}
 	}
 
-	public static void fireBackgroundChangedEvent(LookData lookData) {
-		numberOfRunningScriptsOfLookData.put(lookData, 0);
-		resetNumberOfReceivers(lookData);
+	public static void fireBackgroundChangedEvent(LookInfo lookInfo) {
+		numberOfRunningScriptsOfLookData.put(lookInfo, 0);
+		resetNumberOfReceivers(lookInfo);
 
 		List<Sprite> spriteList = ProjectManager.getInstance().getCurrentProject().getSpriteListWithClones();
 
 		for (Sprite sprite : spriteList) {
-			HashMap<LookData, ParallelAction> mapOfSprite = actionsOfLookDataPerSprite.get(sprite);
+			HashMap<LookInfo, ParallelAction> mapOfSprite = actionsOfLookDataPerSprite.get(sprite);
 			if (mapOfSprite == null) {
 				mapOfSprite = new HashMap<>();
 				actionsOfLookDataPerSprite.put(sprite, mapOfSprite);
 			}
 
-			ParallelAction action = mapOfSprite.get(lookData);
+			ParallelAction action = mapOfSprite.get(lookInfo);
 			if (action == null) {
-				action = sprite.createBackgroundChangedAction(lookData);
-				mapOfSprite.put(lookData, action);
+				action = sprite.createBackgroundChangedAction(lookInfo);
+				mapOfSprite.put(lookInfo, action);
 			} else {
 				Look.actionsToRestartAdd(action);
 			}

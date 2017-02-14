@@ -32,6 +32,7 @@
     <string name="name_consists_of_spaces_only">The name cannot consist of spaces only.</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="dialog_confirm_delete">This cannot be undone!</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="copy">Copy</string>
@@ -248,8 +249,8 @@
 
     <!-- Terms of Use Dialog -->
     <string name="dialog_terms_of_use_title">Terms of use and services</string>
-    <string name="dialog_terms_of_use_info">In order to 
-    be allowed to use Pocket Code and other executables offered by the Catrobat project, you 
+    <string name="dialog_terms_of_use_info">In order to
+    be allowed to use Pocket Code and other executables offered by the Catrobat project, you
     must agree to our Terms of use and services and strictly follow them when you use Pocket
     Code and our other executables. Please see the link below for their precise formulation.\n</string>
     <string name="dialog_terms_of_use_link_text">Terms of Use and services</string>
@@ -267,10 +268,10 @@
 
     <!-- About Dialog -->
     <string name="dialog_about_title">About Pocket Code</string>
-    <string name="dialog_about_license_info">Pocket Code is a programming 
-        environment and interpreter for Android devices for the visual 
+    <string name="dialog_about_license_info">Pocket Code is a programming
+        environment and interpreter for Android devices for the visual
         programming language Catrobat.\n\n
-        The source code of Pocket Code is mainly licensed under the GNU AGPL v3 License. 
+        The source code of Pocket Code is mainly licensed under the GNU AGPL v3 License.
         For further details on the license see the link below.\n</string>
     <string name="dialog_about_pocketcode_license_link_text">Pocket Code Source Code License</string>
     <string name="dialog_about_catrobat_link_text">About Catrobat</string>
@@ -294,7 +295,6 @@
     <string name="spritelist_background_headline">Background</string>
     <string name="dialog_confirm_delete_object_title">Delete this Object?</string>
     <string name="dialog_confirm_delete_multiple_objects_title">Delete these Objects?</string>
-    <string name="dialog_confirm_delete_object_message">This cannot be undone!</string>
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>
     <string name="backpack_replace_object">The object %1$s already exists in the backpack. Do you want to replace it?</string>
@@ -332,6 +332,46 @@
     <!--  -->
 
 
+    <!-- Backpack Activity -->
+    <plurals name="scene">
+        <item quantity="one">Scene</item>
+        <item quantity="other">Scenes</item>
+    </plurals>
+    <plurals name="delete_dialog_scene">
+        <item quantity="one">Delete this Scene?</item>
+        <item quantity="other">Delete these Scenes?</item>
+    </plurals>
+    <plurals name="sprite">
+        <item quantity="one">Object</item>
+        <item quantity="other">Objects</item>
+    </plurals>
+        <plurals name="delete_dialog_sprite">
+        <item quantity="one">Delete this Object?</item>
+        <item quantity="other">Delete these Objects?</item>
+    </plurals>
+    <plurals name="look">
+        <item quantity="one">Look</item>
+        <item quantity="other">Looks</item>
+    </plurals>
+    <plurals name="delete_dialog_look">
+        <item quantity="one">Delete this Look?</item>
+        <item quantity="other">Delete these Looks?</item>
+    </plurals>
+    <plurals name="sound">
+        <item quantity="one">Sound</item>
+        <item quantity="other">Sounds</item>
+    </plurals>
+    <plurals name="delete_dialog_sound">
+        <item quantity="one">Delete this Sound?</item>
+        <item quantity="other">Delete these Sounds?</item>
+    </plurals>
+    <string name="error_unpack_scene">Something went wrong while unpacking a scene.</string>
+    <string name="error_unpack_sprite">Something went wrong while unpacking an object.</string>
+    <string name="error_unpack_look">Something went wrong while unpacking a look.</string>
+    <string name="error_unpack_sound">Something went wrong while unpacking a sound.</string>
+    <!--  -->
+
+
     <!-- Script fragment -->
     <string name="fragment_script_text_description">Tap \"+\" to add Scripts</string>
     <string name="dialog_confirm_delete_brick_title">Delete this Brick?</string>
@@ -339,7 +379,6 @@
     <string name="dialog_confirm_delete_multiple_bricks_title">Delete these Bricks?</string>
     <string name="dialog_confirm_delete_backpack_group_title">Delete this Group?</string>
     <string name="dialog_confirm_delete_multiple_backpack_groups_title">Delete these Groups?</string>
-    <string name="dialog_confirm_delete_brick_message">This cannot be undone!</string>
 
     <plurals name="number_of_bricks_to_delete">
         <item quantity="one">Delete %d Brick</item>
@@ -369,7 +408,6 @@
     <string name="look_measure">Measure:</string>
     <string name="dialog_confirm_delete_look_title">Delete this Look?</string>
     <string name="dialog_confirm_delete_multiple_looks_title">Delete these Looks?</string>
-    <string name="dialog_confirm_delete_look_message">This cannot be undone!</string>
     <string name="lookname">Look name:</string>
     <string name="backpack_replace_look">The look %1$s already exists in the backpack. Do you want to replace it?</string>
     <string name="backpack_replace_look_multiple">Looks already exist in the backpack. Do you want to replace them?</string>
@@ -388,7 +426,6 @@
     <string name="length">Length:</string>
     <string name="dialog_confirm_delete_sound_title">Delete this Sound?</string>
     <string name="dialog_confirm_delete_multiple_sounds_title">Delete these Sounds?</string>
-    <string name="dialog_confirm_delete_sound_message">This cannot be undone!</string>
     <string name="sound_name">Sound name:</string>
     <string name="new_sound_name">Sound name:</string>
     <string name="rename_sound_overwrite">Sound with this name already exists. Please choose a different one!</string>
@@ -405,7 +442,6 @@
     <string name="delete_nfctag_dialog">Delete nfctag?</string>
     <string name="dialog_confirm_delete_nfctag_title">Delete this nfctag?</string>
     <string name="dialog_confirm_delete_multiple_nfctags_title">Delete these nfctags?</string>
-    <string name="dialog_confirm_delete_nfctag_message">This can not be undone!</string>
     <string name="nfctag_name">nfctag name:</string>
     <string name="nfctag">NFC Tag</string>
     <string name="nfctags">NFC Tags</string>
@@ -935,6 +971,10 @@
     <!--  -->
 
     <!-- Error messages -->
+    <string name="error_delete_scene">Something went wrong while deleting a scene!</string>
+    <string name="error_delete_sprite">Something went wrong while deleting a sprite!</string>
+    <string name="error_delete_look">Something went wrong while deleting a look!</string>
+    <string name="error_delete_sound">Something went wrong while deleting a sound!</string>
     <string name="error_no_writiable_external_storage_available">Pocket Code requires writable external storage like a SD card in order to run, but none was found.\nYou can fix this by making the external storage writable or inserting a SD card, then try again.</string>
     <string name="error_no_program_name_entered">Please enter a program name.</string>
     <string name="error_no_userbrick_name_entered">Please enter a brick name.</string>

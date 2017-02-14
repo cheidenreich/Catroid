@@ -49,8 +49,8 @@ public class SpriteListAdapter extends CheckBoxListAdapter<Sprite> implements Dr
 		Sprite sprite = getItem(position);
 		Bitmap lookData = null;
 
-		if (!sprite.getLookDataList().isEmpty()) {
-			lookData = sprite.getLookDataList().get(0).getThumbnailBitmap();
+		if (!sprite.getLookInfoList().isEmpty()) {
+			lookData = sprite.getLookInfoList().get(0).getThumbnailBitmap();
 		}
 
 		listItemViewHolder.name.setText(sprite.getName());
@@ -65,7 +65,7 @@ public class SpriteListAdapter extends CheckBoxListAdapter<Sprite> implements Dr
 					.concat(" ").concat(Integer.toString(sprite.getNumberOfBricks())));
 
 			listItemViewHolder.leftTopDetails.setText(getContext().getResources().getString(R.string.number_of_looks)
-					.concat(" ").concat(Integer.toString(sprite.getLookDataList().size())));
+					.concat(" ").concat(Integer.toString(sprite.getLookInfoList().size())));
 			listItemViewHolder.rightTopDetails.setText(getContext().getResources().getString(R.string.number_of_sounds)
 					.concat(" ").concat(Integer.toString(sprite.getSoundList().size())));
 		}

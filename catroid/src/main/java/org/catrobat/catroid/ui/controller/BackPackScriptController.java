@@ -23,14 +23,10 @@
 package org.catrobat.catroid.ui.controller;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
@@ -51,9 +47,6 @@ import org.catrobat.catroid.content.bricks.UserVariableBrick;
 import org.catrobat.catroid.formulaeditor.DataContainer;
 import org.catrobat.catroid.formulaeditor.UserList;
 import org.catrobat.catroid.formulaeditor.UserVariable;
-import org.catrobat.catroid.ui.BackPackActivity;
-import org.catrobat.catroid.ui.ScriptActivity;
-import org.catrobat.catroid.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,15 +125,15 @@ public final class BackPackScriptController {
 				}
 			}
 			if (handleInsertFromScriptBackPack) {
-				String textForUnPacking = activity.getResources().getQuantityString(R.plurals
-						.unpacking_items_plural, 1);
-				ToastUtil.showSuccess(activity, selectedScriptGroupBackPack + " " + textForUnPacking);
-
-				SharedPreferences sharedPreferences = PreferenceManager
-						.getDefaultSharedPreferences(activity);
-				sharedPreferences.edit().putInt(Constants.NUMBER_OF_BRICKS_INSERTED_FROM_BACKPACK, numberOfBricks).commit();
-				((BackPackActivity) activity)
-						.returnToScriptActivity(ScriptActivity.FRAGMENT_SCRIPTS);
+//				String textForUnPacking = activity.getResources().getQuantityString(R.plurals
+//						.unpacking_items_plural, 1);
+//				ToastUtil.showSuccess(activity, selectedScriptGroupBackPack + " " + textForUnPacking);
+//
+//				SharedPreferences sharedPreferences = PreferenceManager
+//						.getDefaultSharedPreferences(activity);
+//				sharedPreferences.edit().putInt(Constants.NUMBER_OF_BRICKS_INSERTED_FROM_BACKPACK, numberOfBricks).commit();
+//				((BackPackActivity) activity)
+//						.returnToScriptActivity(ScriptActivity.FRAGMENT_SCRIPTS);
 			}
 		}
 	}
@@ -180,9 +173,9 @@ public final class BackPackScriptController {
 
 	private void handleLookBrickUnpacking(Brick brickOfScript, boolean deleteUnpackedItems) {
 		SetLookBrick brick = (SetLookBrick) brickOfScript;
-		LookData newLookData = LookController.getInstance().unpack(brick.getLook(), deleteUnpackedItems, true);
-		if (newLookData != null) {
-			brick.setLook(newLookData);
+		LookInfo newLookInfo = LookController.getInstance().unpack(brick.getLook(), deleteUnpackedItems, true);
+		if (newLookInfo != null) {
+			brick.setLook(newLookInfo);
 		}
 	}
 

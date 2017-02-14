@@ -364,23 +364,6 @@ public final class ProjectManager implements OnLoadProjectCompleteListener, OnCh
 		return currentScene;
 	}
 
-	/**
-	 * Returns the image directory path for the current scene within the current project
-	 * @return image directory path
-	 */
-	public String getImageDirectory(){
-		return getImageDirectory(getCurrentProject(), getCurrentScene());
-	}
-
-	/**
-	 * Returns the image directory path for the given scene within the given project
-	 * @param project Project for the image directory
-	 * @param scene Scene for the image directory
-	 * @return image directory path
-	 */
-	public String getImageDirectory(Project project, Scene scene) {
-		return Utils.buildPath(Utils.buildScenePath(project.getName(), scene.getName()), Constants.IMAGE_DIRECTORY);
-	}
 
 	public boolean isCurrentProjectLandscapeMode() {
 		int virtualScreenWidth = getCurrentProject().getXmlHeader().virtualScreenWidth;

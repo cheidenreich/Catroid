@@ -30,7 +30,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.MessageContainer;
 import org.catrobat.catroid.content.BroadcastScript;
 import org.catrobat.catroid.content.CollisionScript;
@@ -104,11 +104,11 @@ public class DefaultProjectCreatorPhysics extends DefaultProjectCreator {
 						+ Constants.IMAGE_STANDARD_EXTENSION, R.drawable.physics_background_480_800, context, true,
 				backgroundImageScaleFactor);
 
-		LookData backgroundLookData = new LookData(backgroundName, backgroundFile.getName());
+		LookInfo backgroundLookInfo = new LookInfo(backgroundName, backgroundFile.getName());
 
 		// Background sprite
 		Sprite backgroundSprite = defaultPhysicsProject.getDefaultScene().getSpriteList().get(0);
-		backgroundSprite.getLookDataList().add(backgroundLookData);
+		backgroundSprite.getLookInfoList().add(backgroundLookInfo);
 
 		Sprite ball = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), "Ball");
 		Sprite leftButton = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), "Left button");
@@ -276,9 +276,9 @@ public class DefaultProjectCreatorPhysics extends DefaultProjectCreator {
 		File file = UtilFile.copyImageFromResourceIntoProject(projectName, sceneName, fileName, fileId, context, true,
 				backgroundImageScaleFactor);
 
-		LookData lookData = new LookData(fileName, file.getName());
-		List<LookData> looks = sprite.getLookDataList();
-		looks.add(lookData);
+		LookInfo lookInfo = new LookInfo(fileName, file.getName());
+		List<LookInfo> looks = sprite.getLookInfoList();
+		looks.add(lookInfo);
 
 		Script startScript = new StartScript();
 
@@ -331,12 +331,12 @@ public class DefaultProjectCreatorPhysics extends DefaultProjectCreator {
 		String filename = "button_pressed";
 		File file = UtilFile.copyImageFromResourceIntoProject(projectName, sceneName, filename, R.drawable
 				.physics_button_pressed, context, true, backgroundImageScaleFactor);
-		LookData lookData = new LookData(filename, file.getName());
-		List<LookData> looks = sprite.getLookDataList();
-		looks.add(lookData);
+		LookInfo lookInfo = new LookInfo(filename, file.getName());
+		List<LookInfo> looks = sprite.getLookInfoList();
+		looks.add(lookInfo);
 
 		SetLookBrick lookBrick = new SetLookBrick();
-		lookBrick.setLook(lookData);
+		lookBrick.setLook(lookInfo);
 
 		WaitBrick waitBrick = new WaitBrick(200);
 

@@ -26,7 +26,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
@@ -84,12 +84,12 @@ public class StageTestSimple {
 		// blue Sprite
 		Sprite blueSprite = new SingleSprite("blueSprite");
 		StartScript blueStartScript = new StartScript();
-		LookData blueLookData = new LookData();
+		LookInfo blueLookInfo = new LookInfo();
 		String blueImageName = "blue_image.bmp";
 
-		blueLookData.setLookName(blueImageName);
+		blueLookInfo.setName(blueImageName);
 
-		blueSprite.getLookDataList().add(blueLookData);
+		blueSprite.getLookInfoList().add(blueLookInfo);
 
 		blueStartScript.addBrick(new PlaceAtBrick(0, 0));
 		blueStartScript.addBrick(new SetSizeToBrick(5000));
@@ -103,7 +103,7 @@ public class StageTestSimple {
 				org.catrobat.catroid.test.R.raw.blue_image, InstrumentationRegistry.getContext(),
 				UiTestUtils.FileTypes.IMAGE);
 
-		blueLookData.setLookFilename(blueImageFile.getName());
+		blueLookInfo.setFileName(blueImageFile.getName());
 
 		StorageHandler.getInstance().saveProject(project);
 		ProjectManager.getInstance().setProject(project);

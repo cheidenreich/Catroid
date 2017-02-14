@@ -29,7 +29,7 @@ import android.util.Log;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
@@ -141,23 +141,23 @@ public class DefaultProjectCreatorDefault extends DefaultProjectCreator {
 					projectName, backgroundFile.getName(), birdWingUpFile.getName(), birdWingDownFile.getName(),
 					soundFile1.getName(), soundFile2.getName()));
 
-			LookData backgroundLookData = new LookData(backgroundName, backgroundFile.getName());
+			LookInfo backgroundLookInfo = new LookInfo(backgroundName, backgroundFile.getName());
 
 			Sprite backgroundSprite = defaultProject.getDefaultScene().getSpriteList().get(0);
-			backgroundSprite.getLookDataList().add(backgroundLookData);
+			backgroundSprite.getLookInfoList().add(backgroundLookInfo);
 
-			LookData birdWingUpLookData = new LookData(birdWingUpLookName, birdWingUpFile.getName());
-			LookData birdWingDownLookData = new LookData(birdWingDownLookName, birdWingDownFile.getName());
+			LookInfo birdWingUpLookInfo = new LookInfo(birdWingUpLookName, birdWingUpFile.getName());
+			LookInfo birdWingDownLookInfo = new LookInfo(birdWingDownLookName, birdWingDownFile.getName());
 
-			LookData cloudLookData = new LookData(cloudName, cloudFile.getName());
+			LookInfo cloudLookInfo = new LookInfo(cloudName, cloudFile.getName());
 
 			SoundInfo soundInfo1 = new SoundInfo(tweet1, soundFile1.getName());
 			SoundInfo soundInfo2 = new SoundInfo(tweet2, soundFile2.getName());
 
 			Sprite cloudSprite1 = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), cloudSpriteName1);
 			Sprite cloudSprite2 = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), cloudSpriteName2);
-			cloudSprite1.getLookDataList().add(cloudLookData);
-			cloudSprite2.getLookDataList().add(cloudLookData.clone());
+			cloudSprite1.getLookInfoList().add(cloudLookInfo);
+			cloudSprite2.getLookInfoList().add(cloudLookInfo.clone());
 
 			Script cloudSpriteScript1 = new StartScript();
 			Script cloudSpriteScript2 = new StartScript();
@@ -198,8 +198,8 @@ public class DefaultProjectCreatorDefault extends DefaultProjectCreator {
 			defaultProject.getDefaultScene().addSprite(cloudSprite2);
 
 			Sprite birdSprite = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), birdLookName);
-			birdSprite.getLookDataList().add(birdWingUpLookData);
-			birdSprite.getLookDataList().add(birdWingDownLookData);
+			birdSprite.getLookInfoList().add(birdWingUpLookInfo);
+			birdSprite.getLookInfoList().add(birdWingDownLookInfo);
 			birdSprite.getSoundList().add(soundInfo1);
 			birdSprite.getSoundList().add(soundInfo2);
 			Script birdStartScript = new StartScript();

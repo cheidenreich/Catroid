@@ -27,9 +27,10 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.catrobat.catroid.common.LookData;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.common.LookInfo;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.controller.LookController;
+import org.catrobat.catroid.ui.fragment.BackPackLookListFragment;
 import org.catrobat.catroid.ui.fragment.LookFragment;
 
 import java.util.ArrayList;
@@ -43,9 +44,9 @@ public class LookAdapter extends LookBaseAdapter implements ActionModeActivityAd
 
 	private LookFragment lookFragment;
 
-	private HashMap<LookData, Integer> idMap = new HashMap<>();
+	private HashMap<LookInfo, Integer> idMap = new HashMap<>();
 
-	public LookAdapter(final Context context, int resource, int textViewResourceId, List<LookData> items,
+	public LookAdapter(final Context context, int resource, int textViewResourceId, List<LookInfo> items,
 			boolean showDetails) {
 		super(context, resource, textViewResourceId, items, showDetails, false);
 		for (int i = 0; i < items.size(); ++i) {
@@ -59,7 +60,7 @@ public class LookAdapter extends LookBaseAdapter implements ActionModeActivityAd
 			return INVALID_ID;
 		}
 
-		LookData item = getItem(position);
+		LookInfo item = getItem(position);
 		if (!idMap.containsKey(item)) {
 			idMap.clear();
 			for (int i = 0; i < getCount(); i++) {
@@ -105,22 +106,22 @@ public class LookAdapter extends LookBaseAdapter implements ActionModeActivityAd
 	}
 
 	public void onDestroyActionModeBackPack() {
-		List<LookData> lookDataListToBackpack = new ArrayList<>();
+		List<LookInfo> lookInfoListToBackpack = new ArrayList<>();
 		for (Integer position : checkedLookPositions) {
-			lookDataListToBackpack.add(lookDataItems.get(position));
+			lookInfoListToBackpack.add(lookInfoItems.get(position));
 		}
 
-		boolean looksAlreadyInBackpack = LookController.getInstance().checkLookReplaceInBackpack(lookDataListToBackpack);
+		boolean looksAlreadyInBackpack = LookController.getInstance().checkLookReplaceInBackpack(lookInfoListToBackpack);
 
-		if (!lookDataListToBackpack.isEmpty()) {
+		if (!lookInfoListToBackpack.isEmpty()) {
 			if (!looksAlreadyInBackpack) {
-				for (LookData lookDataToBackpack : lookDataListToBackpack) {
-					LookController.getInstance().backPackVisibleLook(lookDataToBackpack);
+				for (LookInfo lookInfoToBackpack : lookInfoListToBackpack) {
+					LookController.getInstance().backPackVisibleLook(lookInfoToBackpack);
 					onBackpackLookComplete(true);
 				}
 			} else {
 				LookController.getInstance().setOnBackpackLookCompleteListener(this);
-				LookController.getInstance().showBackPackReplaceDialog(lookDataListToBackpack, lookFragment.getActivity());
+				LookController.getInstance().showBackPackReplaceDialog(lookInfoListToBackpack, lookFragment.getActivity());
 			}
 		} else {
 			lookFragment.clearCheckedLooksAndEnableButtons();
@@ -134,8 +135,8 @@ public class LookAdapter extends LookBaseAdapter implements ActionModeActivityAd
 	@Override
 	public void onBackpackLookComplete(boolean startBackpackActivity) {
 		if (!checkedLookPositions.isEmpty() && startBackpackActivity) {
-			Intent intent = new Intent(lookFragment.getActivity(), BackPackActivity.class);
-			intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_LOOKS);
+			Intent intent = new Intent(lookFragment.getActivity(), BackpackActivity.class);
+			intent.putExtra(BackpackActivity.FRAGMENT, BackPackLookListFragment.class);
 			lookFragment.getActivity().startActivity(intent);
 		}
 		lookFragment.clearCheckedLooksAndEnableButtons();

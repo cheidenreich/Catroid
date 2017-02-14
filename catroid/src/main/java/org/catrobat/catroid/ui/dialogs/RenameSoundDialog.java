@@ -54,7 +54,7 @@ public class RenameSoundDialog extends TextDialog {
 		}
 
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setTitle(newSoundTitle);
+		soundInfo.setName(newSoundTitle);
 		newSoundTitle = Utils.getUniqueSoundName(soundInfo, false);
 
 		Intent intent = new Intent(ScriptActivity.ACTION_SOUND_RENAMED);

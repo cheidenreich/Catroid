@@ -243,8 +243,8 @@ public class StageDialogTest extends BaseActivityInstrumentationTestCase<MainMen
 				UiTestUtils.FileTypes.SOUND);
 
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle(soundFile.getName());
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName(soundFile.getName());
 		playSoundBrick.setSoundInfo(soundInfo);
 
 		firstSprite.getSoundList().add(soundInfo);

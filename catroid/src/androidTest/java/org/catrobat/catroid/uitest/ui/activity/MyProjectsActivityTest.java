@@ -44,7 +44,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ProjectData;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Scene;
@@ -187,7 +187,7 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		}
 
 		Project activeProject = ProjectManager.getInstance().getCurrentProject();
-		List<LookData> catroidLookList = activeProject.getDefaultScene().getSpriteList().get(1).getLookDataList();
+		List<LookInfo> catroidLookList = activeProject.getDefaultScene().getSpriteList().get(1).getLookInfoList();
 
 		String defaultSpriteName = solo.getString(R.string.default_project_sprites_bird_name);
 		String delete = solo.getString(R.string.delete);
@@ -208,8 +208,8 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 			if (i != 4) {
 				File imageFile;
 
-				for (LookData currentLookData : catroidLookList) {
-					imageFile = new File(currentLookData.getAbsolutePath());
+				for (LookInfo currentLookInfo : catroidLookList) {
+					imageFile = new File(currentLookInfo.getAbsolutePath());
 					assertTrue("Imagefile should not be deleted", imageFile.exists());
 				}
 			}
@@ -219,8 +219,8 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 
 		File imageFile;
 
-		for (LookData currentLookData : catroidLookList) {
-			imageFile = new File(currentLookData.getAbsolutePath());
+		for (LookInfo currentLookInfo : catroidLookList) {
+			imageFile = new File(currentLookInfo.getAbsolutePath());
 			assertFalse("Imagefile should be deleted", imageFile.exists());
 		}
 	}
@@ -1553,9 +1553,9 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		solo.waitForText(UiTestUtils.COPIED_PROJECT_NAME);
 
 		Project oldProject = ProjectManager.getInstance().getCurrentProject();
-		List<LookData> lookDataListOldProject = oldProject.getDefaultScene().getSpriteList().get(1).getLookDataList();
-		LookData lookDataOldProject = lookDataListOldProject.get(0);
-		String oldChecksum = lookDataOldProject.getChecksum();
+		List<LookInfo> lookInfoListOldProject = oldProject.getDefaultScene().getSpriteList().get(1).getLookInfoList();
+		LookInfo lookInfoOldProject = lookInfoListOldProject.get(0);
+		String oldChecksum = lookInfoOldProject.getChecksum();
 
 		solo.sleep(200);
 		solo.waitForText(UiTestUtils.COPIED_PROJECT_NAME);
@@ -1571,9 +1571,9 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		assertTrue("The sprite name should be: 'testSprite'", solo.searchText("testSprite", 1, false));
 
 		Project copiedProject = ProjectManager.getInstance().getCurrentProject();
-		List<LookData> lookDataListCopiedProject = copiedProject.getDefaultScene().getSpriteList().get(1).getLookDataList();
-		LookData lookDataCopiedProject = lookDataListCopiedProject.get(0);
-		String copiedLookChecksum = lookDataCopiedProject.getChecksum();
+		List<LookInfo> lookInfoListCopiedProject = copiedProject.getDefaultScene().getSpriteList().get(1).getLookInfoList();
+		LookInfo lookInfoCopiedProject = lookInfoListCopiedProject.get(0);
+		String copiedLookChecksum = lookInfoCopiedProject.getChecksum();
 
 		assertTrue("Checksum should be the same", oldChecksum.equals(copiedLookChecksum));
 	}
@@ -2075,8 +2075,8 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 
 	private void createProjectWithBackgrounds() {
 
-		LookData backgroundGreen;
-		LookData backgroundRed;
+		LookInfo backgroundGreen;
+		LookInfo backgroundRed;
 		ProjectManager projectManager = ProjectManager.getInstance();
 
 		UiTestUtils.createEmptyProject();
@@ -2088,20 +2088,20 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 				StageListener.SCREENSHOT_MANUAL_FILE_NAME, IMAGE_RESOURCE_5, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.IMAGE);
 
-		List<LookData> lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		List<LookInfo> lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
-		backgroundGreen = new LookData();
-		backgroundGreen.setLookFilename(imageFile1.getName());
-		backgroundGreen.setLookName("backgroundGreen");
-		lookDataList.add(backgroundGreen);
+		backgroundGreen = new LookInfo();
+		backgroundGreen.setFileName(imageFile1.getName());
+		backgroundGreen.setName("backgroundGreen");
+		lookInfoList.add(backgroundGreen);
 
 		projectManager.getFileChecksumContainer().addChecksum(backgroundGreen.getChecksum(),
 				backgroundGreen.getAbsolutePath());
 
-		backgroundRed = new LookData();
-		backgroundRed.setLookFilename(imageFile2.getName());
-		backgroundRed.setLookName("backgroundRed");
-		lookDataList.add(backgroundRed);
+		backgroundRed = new LookInfo();
+		backgroundRed.setFileName(imageFile2.getName());
+		backgroundRed.setName("backgroundRed");
+		lookInfoList.add(backgroundRed);
 
 		projectManager.getFileChecksumContainer().addChecksum(backgroundRed.getChecksum(),
 				backgroundRed.getAbsolutePath());
@@ -2197,12 +2197,12 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		File imageFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, project1.getDefaultScene().getName(), "catroid_sunglasses.png",
 				IMAGE_RESOURCE_1, getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
 
-		List<LookData> lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		LookData lookData = new LookData();
-		lookData.setLookFilename(imageFile.getName());
-		lookData.setLookName("testname");
-		lookDataList.add(lookData);
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		List<LookInfo> lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(imageFile.getName());
+		lookInfo.setName("testname");
+		lookInfoList.add(lookInfo);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
 		StorageHandler.getInstance().saveProject(project1);
 
@@ -2241,12 +2241,12 @@ public class MyProjectsActivityTest extends BaseActivityInstrumentationTestCase<
 		File imageFile = UiTestUtils.saveFileToProject(UiTestUtils.JUST_ONE_DOT_PROJECT_NAME, project4.getDefaultScene().getName(), "catroid_sunglasses.png",
 				IMAGE_RESOURCE_1, getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
 
-		List<LookData> lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		LookData lookData = new LookData();
-		lookData.setLookFilename(imageFile.getName());
-		lookData.setLookName("testname");
-		lookDataList.add(lookData);
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		List<LookInfo> lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(imageFile.getName());
+		lookInfo.setName("testname");
+		lookInfoList.add(lookInfo);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
 		StorageHandler.getInstance().saveProject(project4);
 

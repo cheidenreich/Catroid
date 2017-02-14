@@ -36,7 +36,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.io.StorageHandler;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.ProjectActivity;
 import org.catrobat.catroid.ui.adapter.CheckBoxListAdapter;
@@ -46,6 +46,7 @@ import org.catrobat.catroid.ui.controller.BackPackSceneController;
 import org.catrobat.catroid.ui.dialogs.RenameItemDialog;
 import org.catrobat.catroid.ui.dragndrop.DragAndDropListView;
 import org.catrobat.catroid.utils.SnackbarUtil;
+import org.catrobat.catroid.utils.ToastUtil;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
@@ -190,8 +191,8 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 	}
 
 	public void switchToBackPack() {
-		Intent intent = new Intent(getActivity(), BackPackActivity.class);
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_SCENES);
+		Intent intent = new Intent(getActivity(), BackpackActivity.class);
+		intent.putExtra(BackpackActivity.FRAGMENT, BackPackSceneListFragment.class);
 		startActivity(intent);
 	}
 
@@ -216,7 +217,7 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 			ProjectManager.getInstance().saveProject(getActivity());
 			checkSceneCountAfterDeletion();
 		} else {
-			showError(R.string.error_scene_not_deleted);
+			ToastUtil.showError(getActivity(), R.string.error_scene_not_deleted);
 		}
 	}
 
@@ -248,7 +249,7 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 		if (success) {
 			ProjectManager.getInstance().saveProject(getActivity());
 		} else {
-			showError(R.string.error_scene_not_copied);
+			ToastUtil.showError(getActivity(), R.string.error_scene_not_copied);
 		}
 
 		clearCheckedItems();
@@ -326,7 +327,7 @@ public class SceneListFragment extends ListActivityFragment implements CheckBoxL
 			return;
 		}
 
-		showError(R.string.error_scene_backpack);
+		ToastUtil.showError(getActivity(), R.string.error_scene_backpack);
 	}
 
 	public void showProgressCircle() {

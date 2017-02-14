@@ -139,8 +139,8 @@ public class PhysicsWorld {
 
 	public void changeLook(PhysicsObject physicsObject, Look look) {
 		Shape[] shapes = null;
-		if (look.getLookData() != null && look.getLookData().getLookFileName() != null) {
-			shapes = physicsShapeBuilder.getScaledShapes(look.getLookData(),
+		if (look.getLookInfo() != null && look.getLookInfo().getFileName() != null) {
+			shapes = physicsShapeBuilder.getScaledShapes(look.getLookInfo(),
 					look.getSizeInUserInterfaceDimensionUnit() / 100f);
 		}
 		physicsObject.setShape(shapes);

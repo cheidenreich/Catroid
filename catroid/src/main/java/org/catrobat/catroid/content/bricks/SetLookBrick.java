@@ -40,7 +40,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.controller.LookController;
@@ -51,9 +51,9 @@ import java.util.List;
 
 public class SetLookBrick extends BrickBaseType implements OnLookDataListChangedAfterNewListener {
 	private static final long serialVersionUID = 1L;
-	protected LookData look;
+	protected LookInfo look;
 	private transient View prototypeView;
-	private transient LookData oldSelectedLook;
+	private transient LookInfo oldSelectedLook;
 
 	protected transient boolean wait;
 
@@ -61,11 +61,11 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 		wait = false;
 	}
 
-	public void setLook(LookData lookData) {
-		this.look = lookData;
+	public void setLook(LookInfo lookInfo) {
+		this.look = lookInfo;
 	}
 
-	public LookData getLook() {
+	public LookInfo getLook() {
 		return this.look;
 	}
 
@@ -78,7 +78,7 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 			return copyBrick;
 		}
 
-		for (LookData data : sprite.getLookDataList()) {
+		for (LookInfo data : sprite.getLookInfoList()) {
 			if (look != null && data != null && data.getAbsolutePath().equals(look.getAbsolutePath())) {
 				copyBrick.look = data;
 				break;
@@ -105,7 +105,7 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 
 		final Spinner lookBrickSpinner = (Spinner) view.findViewById(R.id.brick_set_look_spinner);
 
-		final ArrayAdapter<LookData> spinnerAdapter = createLookAdapter(context);
+		final ArrayAdapter<LookInfo> spinnerAdapter = createLookAdapter(context);
 
 		SpinnerAdapterWrapper spinnerAdapterWrapper = new SpinnerAdapterWrapper(context, spinnerAdapter);
 
@@ -118,7 +118,7 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 				if (position == 0) {
 					look = null;
 				} else {
-					look = (LookData) parent.getItemAtPosition(position);
+					look = (LookInfo) parent.getItemAtPosition(position);
 					oldSelectedLook = look;
 				}
 			}
@@ -142,14 +142,14 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 		return view;
 	}
 
-	private ArrayAdapter<LookData> createLookAdapter(Context context) {
-		ArrayAdapter<LookData> arrayAdapter = new ArrayAdapter<LookData>(context, android.R.layout.simple_spinner_item);
+	private ArrayAdapter<LookInfo> createLookAdapter(Context context) {
+		ArrayAdapter<LookInfo> arrayAdapter = new ArrayAdapter<LookInfo>(context, android.R.layout.simple_spinner_item);
 		arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		LookData dummyLookData = new LookData();
-		dummyLookData.setLookName(context.getString(R.string.new_broadcast_message));
-		arrayAdapter.add(dummyLookData);
-		for (LookData lookData : getSprite().getLookDataList()) {
-			arrayAdapter.add(lookData);
+		LookInfo dummyLookInfo = new LookInfo();
+		dummyLookInfo.setName(context.getString(R.string.new_broadcast_message));
+		arrayAdapter.add(dummyLookInfo);
+		for (LookInfo lookInfo : getSprite().getLookInfoList()) {
+			arrayAdapter.add(lookInfo);
 		}
 		return arrayAdapter;
 	}
@@ -187,13 +187,13 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 	}
 
 	private void setSpinnerSelection(Spinner spinner) {
-		if (getSprite().getLookDataList().contains(look)) {
+		if (getSprite().getLookInfoList().contains(look)) {
 			oldSelectedLook = look;
-			spinner.setSelection(getSprite().getLookDataList().indexOf(look) + 1, true);
+			spinner.setSelection(getSprite().getLookInfoList().indexOf(look) + 1, true);
 		} else {
 			if (spinner.getAdapter() != null && spinner.getAdapter().getCount() > 1) {
-				if (getSprite().getLookDataList().indexOf(oldSelectedLook) >= 0) {
-					spinner.setSelection(getSprite().getLookDataList()
+				if (getSprite().getLookInfoList().indexOf(oldSelectedLook) >= 0) {
+					spinner.setSelection(getSprite().getLookInfoList()
 							.indexOf(oldSelectedLook) + 1, true);
 				} else {
 					spinner.setSelection(1, true);
@@ -215,11 +215,11 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 	private class SpinnerAdapterWrapper implements SpinnerAdapter {
 
 		protected Context context;
-		protected ArrayAdapter<LookData> spinnerAdapter;
+		protected ArrayAdapter<LookInfo> spinnerAdapter;
 
 		private boolean isTouchInDropDownView;
 
-		public SpinnerAdapterWrapper(Context context, ArrayAdapter<LookData> spinnerAdapter) {
+		public SpinnerAdapterWrapper(Context context, ArrayAdapter<LookInfo> spinnerAdapter) {
 			this.context = context;
 			this.spinnerAdapter = spinnerAdapter;
 
@@ -248,8 +248,8 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 
 		@Override
 		public long getItemId(int paramInt) {
-			LookData currentLook = spinnerAdapter.getItem(paramInt);
-			if (!currentLook.getLookName().equals(context.getString(R.string.new_broadcast_message))) {
+			LookInfo currentLook = spinnerAdapter.getItem(paramInt);
+			if (!currentLook.getName().equals(context.getString(R.string.new_broadcast_message))) {
 				oldSelectedLook = currentLook;
 			}
 			return spinnerAdapter.getItemId(paramInt);
@@ -311,9 +311,9 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 	}
 
 	@Override
-	public void onLookDataListChangedAfterNew(LookData lookData) {
-		look = lookData;
-		oldSelectedLook = lookData;
+	public void onLookDataListChangedAfterNew(LookInfo lookInfo) {
+		look = lookInfo;
+		oldSelectedLook = lookInfo;
 	}
 
 	@Override
@@ -322,8 +322,8 @@ public class SetLookBrick extends BrickBaseType implements OnLookDataListChanged
 			return;
 		}
 		look = LookController.getInstance().backPackHiddenLook(this.getLook());
-		if (sprite != null && !sprite.getLookDataList().contains(look)) {
-			sprite.getLookDataList().add(look);
+		if (sprite != null && !sprite.getLookInfoList().contains(look)) {
+			sprite.getLookInfoList().add(look);
 		}
 	}
 

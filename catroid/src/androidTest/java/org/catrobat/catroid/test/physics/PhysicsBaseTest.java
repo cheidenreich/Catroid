@@ -25,7 +25,7 @@ package org.catrobat.catroid.test.physics;
 import android.test.InstrumentationTestCase;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
@@ -69,11 +69,11 @@ public class PhysicsBaseTest extends InstrumentationTestCase {
 				rectangle125x125FileName, RECTANGLE125X125_RES_ID, getInstrumentation().getContext(),
 				TestUtils.TYPE_IMAGE_FILE);
 
-		LookData lookdata = PhysicsTestUtils.generateLookData(rectangle125x125File);
-		sprite.look.setLookData(lookdata);
+		LookInfo lookdata = PhysicsTestUtils.generateLookData(rectangle125x125File);
+		sprite.look.setLookInfo(lookdata);
 		sprite.setActionFactory(new ActionPhysicsFactory());
 
-		assertTrue("getLookData is null", sprite.look.getLookData() != null);
+		assertTrue("getLookInfo is null", sprite.look.getLookInfo() != null);
 
 		stabilizePhysicsWorld(physicsWorld);
 	}

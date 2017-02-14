@@ -40,7 +40,6 @@ import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.sensing.CollisionInformation;
-import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.utils.ImageEditing;
 import org.catrobat.catroid.utils.Utils;
 
@@ -49,9 +48,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-public class LookData implements Serializable, Cloneable {
+public class LookInfo implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
-	private static final String TAG = LookData.class.getSimpleName();
+	private static final String TAG = LookInfo.class.getSimpleName();
 
 	@XStreamAsAttribute
 	protected String name;
@@ -67,12 +66,12 @@ public class LookData implements Serializable, Cloneable {
 	private transient CollisionInformation collisionInformation = null;
 	public transient boolean isBackpackLookData = false;
 
-	public LookData() {
+	public LookInfo() {
 	}
 
-	public LookData(String name, String fileName) {
-		setLookName(name);
-		setLookFilename(fileName);
+	public LookInfo(String name, String fileName) {
+		setName(name);
+		setFileName(fileName);
 	}
 
 	public void draw(Batch batch, float alpha) {
@@ -80,7 +79,7 @@ public class LookData implements Serializable, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof LookData)) {
+		if (!(obj instanceof LookInfo)) {
 			return false;
 		}
 
@@ -88,8 +87,8 @@ public class LookData implements Serializable, Cloneable {
 			return true;
 		}
 
-		LookData lookData = (LookData) obj;
-		return lookData.getChecksum().equals(this.getChecksum()) && lookData.name.equals(this.name);
+		LookInfo lookInfo = (LookInfo) obj;
+		return lookInfo.getChecksum().equals(this.getChecksum()) && lookInfo.name.equals(this.name);
 	}
 
 	@Override
@@ -98,11 +97,11 @@ public class LookData implements Serializable, Cloneable {
 	}
 
 	@Override
-	public LookData clone() {
+	public LookInfo clone() {
 		try {
 			File copiedFile = StorageHandler.copyFile(this.getAbsolutePath());
-			List<LookData> scope = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
-			return new LookData(Utils.getUniqueLookName(this.name, scope), copiedFile.getName());
+			List<LookInfo> scope = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
+			return new LookInfo(Utils.getUniqueLookName(this.name, scope), copiedFile.getName());
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error
 			e.printStackTrace();
@@ -170,27 +169,28 @@ public class LookData implements Serializable, Cloneable {
 		}
 	}
 
-	public String getLookName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setLookName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void setLookFilename(String fileName) {
+	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 
-	public String getLookFileName() {
+	public String getFileName() {
 		return fileName;
 	}
 
 	public String getChecksum() {
-		if (fileName == null) {
-			return null;
+		File file = new File(getAbsolutePath());
+		if (!file.exists()) {
+			throw new NullPointerException("SoundFile does not exist!");
 		}
-		return Utils.md5Checksum(new File(getAbsolutePath()));
+		return Utils.md5Checksum(file);
 	}
 
 	String getPathToImageDirectory() {
@@ -201,7 +201,7 @@ public class LookData implements Serializable, Cloneable {
 	private String getSceneNameByLookData() {
 		for (Scene scene : ProjectManager.getInstance().getCurrentProject().getSceneList()) {
 			for (Sprite sprite : scene.getSpriteList()) {
-				if (sprite.getLookDataList().contains(this)) {
+				if (sprite.getLookInfoList().contains(this)) {
 					return scene.getName();
 				}
 			}

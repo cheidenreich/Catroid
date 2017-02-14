@@ -31,7 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
@@ -85,10 +85,10 @@ public class LookTest extends InstrumentationTestCase {
 		project.getDefaultScene().addSprite(sprite);
 		ProjectManager.getInstance().setProject(project);
 
-		LookData lookData = new LookData();
-		lookData.setLookFilename(fileName);
-		lookData.setLookName(fileName);
-		look.setLookData(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(fileName);
+		lookInfo.setName(fileName);
+		look.setLookInfo(lookInfo);
 		assertEquals("Wrong image path!", Constants.DEFAULT_ROOT + "/" + projectName + "/" + project.getDefaultScene().getName() + "/" + Constants.IMAGE_DIRECTORY
 				+ "/" + fileName, look.getImagePath());
 	}

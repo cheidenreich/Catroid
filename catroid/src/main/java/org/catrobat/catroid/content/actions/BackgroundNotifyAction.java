@@ -24,20 +24,20 @@ package org.catrobat.catroid.content.actions;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.BackgroundWaitHandler;
 
 public class BackgroundNotifyAction extends Action {
 
-	private LookData lookData;
+	private LookInfo lookInfo;
 
 	@Override
 	public boolean act(float delta) {
-		BackgroundWaitHandler.decrementRunningScripts(lookData);
+		BackgroundWaitHandler.decrementRunningScripts(lookInfo);
 		return true;
 	}
 
-	public void setLookData(LookData lookData) {
-		this.lookData = lookData;
+	public void setLookInfo(LookInfo lookInfo) {
+		this.lookInfo = lookInfo;
 	}
 }

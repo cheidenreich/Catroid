@@ -29,7 +29,7 @@ import android.widget.Spinner;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -57,7 +57,7 @@ public class SetLookBrickTest extends BaseActivityInstrumentationTestCase<MainMe
 	private String lookName2 = "testLook2";
 	private File lookFile;
 	private File lookFile2;
-	private List<LookData> lookDataList;
+	private List<LookInfo> lookInfoList;
 	private String testFile = "testFile";
 
 	private File paintroidImageFile;
@@ -110,7 +110,7 @@ public class SetLookBrickTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.waitForActivity(StageActivity.class.getSimpleName());
 		solo.sleep(1000);
 		Look look = ProjectManager.getInstance().getCurrentProject().getDefaultScene().getSpriteList().get(0).look;
-		assertEquals("look not set", look.getImagePath(), lookDataList.get(0).getAbsolutePath());
+		assertEquals("look not set", look.getImagePath(), lookInfoList.get(0).getAbsolutePath());
 		solo.goBack();
 		solo.goBack();
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
@@ -124,7 +124,7 @@ public class SetLookBrickTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.waitForActivity(StageActivity.class.getSimpleName());
 		solo.sleep(1000);
 		look = ProjectManager.getInstance().getCurrentProject().getDefaultScene().getSpriteList().get(0).look;
-		assertEquals("look not set", look.getImagePath(), lookDataList.get(1).getAbsolutePath());
+		assertEquals("look not set", look.getImagePath(), lookInfoList.get(1).getAbsolutePath());
 	}
 
 	public void testSpinnerUpdatesDelete() {
@@ -176,13 +176,13 @@ public class SetLookBrickTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testAdapterUpdateInScriptActivity() {
-		String look1ImagePath = lookDataList.get(0).getAbsolutePath();
-		String look2ImagePath = lookDataList.get(1).getAbsolutePath();
+		String look1ImagePath = lookInfoList.get(0).getAbsolutePath();
+		String look2ImagePath = lookInfoList.get(1).getAbsolutePath();
 		assertTrue(lookName + " is not selected in Spinner", solo.isSpinnerTextSelected(lookName));
 
 		UiTestUtils.clickOnBottomBar(solo, R.id.button_play);
 		solo.waitForActivity(StageActivity.class.getSimpleName());
-		String lookPath = ProjectManager.getInstance().getCurrentSprite().getLookDataList().get(0).getAbsolutePath();
+		String lookPath = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().get(0).getAbsolutePath();
 		assertEquals("Wrong image shown in stage --> Problem with Adapter update in Script", look1ImagePath, lookPath);
 		solo.goBack();
 		solo.goBack();
@@ -259,26 +259,26 @@ public class SetLookBrickTest extends BaseActivityInstrumentationTestCase<MainMe
 		projectManager.setProject(project);
 		projectManager.setCurrentSprite(firstSprite);
 		projectManager.setCurrentScript(testScript);
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
 		lookFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, project.getDefaultScene().getName(), "image.png", RESOURCE_LOOK,
 				getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
-		LookData lookData = new LookData();
-		lookData.setLookFilename(lookFile.getName());
-		lookData.setLookName(lookName);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(lookFile.getName());
+		lookInfo.setName(lookName);
 
 		lookFile2 = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, project.getDefaultScene().getName(), "image2.png", RESOURCE_LOOK2,
 				getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
-		LookData lookData2 = new LookData();
-		lookData2.setLookFilename(lookFile2.getName());
-		lookData2.setLookName(lookName2);
+		LookInfo lookInfo2 = new LookInfo();
+		lookInfo2.setFileName(lookFile2.getName());
+		lookInfo2.setName(lookName2);
 
-		lookDataList.add(lookData);
-		lookDataList.add(lookData2);
+		lookInfoList.add(lookInfo);
+		lookInfoList.add(lookInfo2);
 		ProjectManager.getInstance().getFileChecksumContainer()
-				.addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+				.addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 		ProjectManager.getInstance().getFileChecksumContainer()
-				.addChecksum(lookData2.getChecksum(), lookData2.getAbsolutePath());
+				.addChecksum(lookInfo2.getChecksum(), lookInfo2.getAbsolutePath());
 	}
 
 	private void clickOnContextMenuItem(String lookName, String menuItemName) {

@@ -29,7 +29,7 @@ import android.util.Log;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ProjectData;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
@@ -342,17 +342,17 @@ public class MergeTask {
 	private void addSoundsAndLooks(Sprite sprite) {
 		Sprite spriteInto = mergeResult.getSpriteBySpriteName(sprite.getName());
 
-		for (LookData look : sprite.getLookDataList()) {
+		for (LookInfo look : sprite.getLookInfoList()) {
 			if (!spriteInto.existLookDataByName(look) && !spriteInto.existLookDataByFileName(look)) {
-				spriteInto.getLookDataList().add(look.clone());
+				spriteInto.getLookInfoList().add(look.clone());
 			} else if (spriteInto.existLookDataByName(look) && !spriteInto.existLookDataByFileName(look)) {
 				for (int i = 2; i < 100; i++) {
-					look.setLookName(look.getLookName() + "_" + i);
+					look.setName(look.getName() + "_" + i);
 					if (!spriteInto.existLookDataByName(look)) {
 						break;
 					}
 				}
-				spriteInto.getLookDataList().add(look.clone());
+				spriteInto.getLookInfoList().add(look.clone());
 			}
 		}
 

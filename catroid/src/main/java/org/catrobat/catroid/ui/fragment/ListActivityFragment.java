@@ -241,7 +241,7 @@ public abstract class ListActivityFragment extends CheckBoxListFragment implemen
 	protected void showDeleteDialog(int titleId) {
 		AlertDialog.Builder builder = new CustomAlertDialogBuilder(getActivity());
 		builder.setTitle(titleId);
-		builder.setMessage(R.string.dialog_confirm_delete_object_message);
+		builder.setMessage(R.string.dialog_confirm_delete);
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {

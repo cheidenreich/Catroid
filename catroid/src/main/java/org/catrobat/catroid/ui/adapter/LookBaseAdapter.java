@@ -27,15 +27,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class LookBaseAdapter extends ArrayAdapter<LookData> implements ActionModeActivityAdapterInterface {
+public class LookBaseAdapter extends ArrayAdapter<LookInfo> implements ActionModeActivityAdapterInterface {
 
-	protected List<LookData> lookDataItems;
+	protected List<LookInfo> lookInfoItems;
 	protected Context context;
 
 	private OnLookEditListener onLookEditListener;
@@ -50,12 +50,12 @@ public class LookBaseAdapter extends ArrayAdapter<LookData> implements ActionMod
 		this.backPackAdapter = backPackAdapter;
 	}
 
-	public LookBaseAdapter(final Context context, int resource, int textViewResourceId, List<LookData> items,
+	public LookBaseAdapter(final Context context, int resource, int textViewResourceId, List<LookInfo> items,
 			boolean showDetails, boolean backPackAdapter) {
 		super(context, resource, textViewResourceId, items);
 		this.context = context;
 		this.showDetails = showDetails;
-		this.lookDataItems = items;
+		this.lookInfoItems = items;
 		this.selectMode = ListView.CHOICE_MODE_NONE;
 		this.backPackAdapter = backPackAdapter;
 	}
@@ -98,8 +98,8 @@ public class LookBaseAdapter extends ArrayAdapter<LookData> implements ActionMod
 		return checkedLookPositions;
 	}
 
-	public List<LookData> getLookDataItems() {
-		return lookDataItems;
+	public List<LookInfo> getLookInfoItems() {
+		return lookInfoItems;
 	}
 
 	public void addCheckedItem(int position) {

@@ -26,7 +26,7 @@ import android.util.Log;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -91,11 +91,11 @@ public class TouchAxisTest extends BaseActivityInstrumentationTestCase<MainMenuA
 		Script startScript = new StartScript();
 		SetLookBrick setAlphaLookBrick = new SetLookBrick();
 
-		LookData touchLookData = new LookData();
-		touchLookData.setLookName(alphaTestImageName);
-		touchSprite.getLookDataList().add(touchLookData);
+		LookInfo touchLookInfo = new LookInfo();
+		touchLookInfo.setName(alphaTestImageName);
+		touchSprite.getLookInfoList().add(touchLookInfo);
 
-		setAlphaLookBrick.setLook(touchLookData);
+		setAlphaLookBrick.setLook(touchLookInfo);
 
 		startScript.addBrick(setAlphaLookBrick);
 		touchSprite.addScript(startScript);
@@ -113,7 +113,7 @@ public class TouchAxisTest extends BaseActivityInstrumentationTestCase<MainMenuA
 		File alphaTestImage = UiTestUtils.saveFileToProject(testProject.getName(), testProject.getDefaultScene().getName(), alphaTestImageName,
 				org.catrobat.catroid.test.R.raw.alpha_test_image, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.IMAGE);
-		touchLookData.setLookFilename(alphaTestImage.getName());
+		touchLookInfo.setFileName(alphaTestImage.getName());
 
 		StorageHandler.getInstance().saveProject(testProject);
 		ProjectManager.getInstance().setProject(testProject);

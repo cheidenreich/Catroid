@@ -27,7 +27,7 @@ import android.util.Log;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.physics.box2d.Shape;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,20 +57,20 @@ public final class PhysicsShapeBuilder {
 		imageShapesMap = new HashMap<>();
 	}
 
-	public synchronized Shape[] getScaledShapes(LookData lookData, float scaleFactor) throws RuntimeException {
+	public synchronized Shape[] getScaledShapes(LookInfo lookInfo, float scaleFactor) throws RuntimeException {
 		if (scaleFactor < 0) {
 			throw new RuntimeException("scaleFactor can not be smaller than 0");
-		} else if (lookData == null) {
-			throw new RuntimeException("get shape for null lookData not possible");
+		} else if (lookInfo == null) {
+			throw new RuntimeException("get shape for null lookInfo not possible");
 		}
 
-		Pixmap pixmap = lookData.getPixmap();
+		Pixmap pixmap = lookInfo.getPixmap();
 		if (pixmap == null) {
 			Log.e(TAG, "pixmap should not be null");
 			return null;
 		}
 
-		String imageIdentifier = lookData.getChecksum();
+		String imageIdentifier = lookInfo.getChecksum();
 		if (!imageShapesMap.containsKey(imageIdentifier)) {
 			imageShapesMap.put(imageIdentifier, new ImageShapes(pixmap));
 		}

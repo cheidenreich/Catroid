@@ -41,7 +41,7 @@ import com.robotium.solo.WebElement;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.SingleSprite;
 import org.catrobat.catroid.content.Sprite;
@@ -98,16 +98,16 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	private String delete;
 	private String deleteDialogTitle;
 
-	private LookData lookData;
-	private LookData lookData2;
-	private LookData lookData3;
+	private LookInfo lookInfo;
+	private LookInfo lookInfo2;
+	private LookInfo lookInfo3;
 
 	private File imageFile;
 	private File imageFile2;
 	private File imageFileJpg;
 	private File paintroidImageFile;
 
-	private List<LookData> lookDataList;
+	private List<LookInfo> lookInfoList;
 
 	private CheckBox firstCheckBox;
 	private CheckBox secondCheckBox;
@@ -138,7 +138,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		secondTestLookNamePacked = SECOND_TEST_LOOK_NAME;
 		secondTestLookNamePackedAndUnpacked = SECOND_TEST_LOOK_NAME + "1";
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
 		//Bitmap bm = BitmapFactory.decodeResource(getInstrumentation().getContext().getResources(), RESOURCE_IMAGE);
 
@@ -152,23 +152,23 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		paintroidImageFile = UiTestUtils.createTestMediaFile(Constants.DEFAULT_ROOT + "/testFile.png",
 				org.catrobat.catroid.test.R.drawable.catroid_banzai, getInstrumentation().getContext());
 
-		lookData = new LookData();
-		lookData.setLookFilename(imageFile.getName());
-		lookData.setLookName(FIRST_TEST_LOOK_NAME);
-		lookDataList.add(lookData);
+		lookInfo = new LookInfo();
+		lookInfo.setFileName(imageFile.getName());
+		lookInfo.setName(FIRST_TEST_LOOK_NAME);
+		lookInfoList.add(lookInfo);
 
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
-		lookData2 = new LookData();
-		lookData2.setLookFilename(imageFile2.getName());
-		lookData2.setLookName(SECOND_TEST_LOOK_NAME);
-		lookDataList.add(lookData2);
+		lookInfo2 = new LookInfo();
+		lookInfo2.setFileName(imageFile2.getName());
+		lookInfo2.setName(SECOND_TEST_LOOK_NAME);
+		lookInfoList.add(lookInfo2);
 
-		projectManager.getFileChecksumContainer().addChecksum(lookData2.getChecksum(), lookData2.getAbsolutePath());
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo2.getChecksum(), lookInfo2.getAbsolutePath());
 
-		lookData3 = new LookData();
-		lookData3.setLookFilename(imageFileJpg.getName());
-		lookData3.setLookName(THIRD_TEST_LOOK_NAME);
+		lookInfo3 = new LookInfo();
+		lookInfo3.setFileName(imageFileJpg.getName());
+		lookInfo3.setName(THIRD_TEST_LOOK_NAME);
 
 		UtilUi.updateScreenWidthAndHeight(solo.getCurrentActivity());
 		projectManager.getCurrentProject().getXmlHeader().virtualScreenWidth = ScreenValues.SCREEN_WIDTH;
@@ -371,9 +371,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 	public void testBackPackAndUnPackFromDifferentSprites() {
 		UiTestUtils.createTestProjectWithTwoSprites(UiTestUtils.DEFAULT_TEST_PROJECT_NAME);
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		lookDataList.add(lookData);
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		lookInfoList.add(lookInfo);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
 		LookAdapter adapter = getLookAdapter();
 
@@ -447,7 +447,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 	public void testBackPackActionModeIfNothingSelected() {
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
-		int expectedNumberOfLooks = lookDataList.size();
+		int expectedNumberOfLooks = lookInfoList.size();
 		assertTrue("Bottom bar is visible", solo.getView(R.id.bottom_bar).getVisibility() == View.GONE);
 		checkIfCheckboxesAreCorrectlyChecked(false, false);
 		UiTestUtils.acceptAndCloseActionMode(solo);
@@ -496,9 +496,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		LookListAdapter adapter = getBackPackLookAdapter();
 		int oldCount = adapter.getCount();
-		List<LookData> backPackLookDataList = BackPackListManager.getInstance().getBackPackedLooks();
-		String pathOfFirstBackPackedLook = backPackLookDataList.get(0).getAbsolutePath();
-		String pathOfSecondBackPackedLook = backPackLookDataList.get(1).getAbsolutePath();
+		List<LookInfo> backPackLookInfoList = BackPackListManager.getInstance().getBackPackedLooks();
+		String pathOfFirstBackPackedLook = backPackLookInfoList.get(0).getAbsolutePath();
+		String pathOfSecondBackPackedLook = backPackLookInfoList.get(1).getAbsolutePath();
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfSecondBackPackedLook));
 
@@ -509,7 +509,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		assertEquals("Not all looks were backpacked", 2, oldCount);
 		assertEquals("Look wasn't deleted in backpack", 1, newCount);
-		assertEquals("Count of the backpack lookDataList is not correct", newCount, backPackLookDataList.size());
+		assertEquals("Count of the backpack lookInfoList is not correct", newCount, backPackLookInfoList.size());
 		assertFalse("Backpack look file exists, but shouldn't", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfSecondBackPackedLook));
 	}
@@ -519,9 +519,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		LookListAdapter adapter = getBackPackLookAdapter();
 		int oldCount = adapter.getCount();
-		List<LookData> backPackLookDataList = BackPackListManager.getInstance().getBackPackedLooks();
-		String pathOfFirstBackPackedLook = backPackLookDataList.get(0).getAbsolutePath();
-		String pathOfSecondBackPackedLook = backPackLookDataList.get(1).getAbsolutePath();
+		List<LookInfo> backPackLookInfoList = BackPackListManager.getInstance().getBackPackedLooks();
+		String pathOfFirstBackPackedLook = backPackLookInfoList.get(0).getAbsolutePath();
+		String pathOfSecondBackPackedLook = backPackLookInfoList.get(1).getAbsolutePath();
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
 		assertTrue("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfSecondBackPackedLook));
 
@@ -534,7 +534,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		assertEquals("Not all looks were backpacked", 2, oldCount);
 		assertEquals("Look wasn't deleted in backpack", 0, newCount);
-		assertEquals("Count of the backpack lookDataList is not correct", newCount, backPackLookDataList.size());
+		assertEquals("Count of the backpack lookInfoList is not correct", newCount, backPackLookInfoList.size());
 		assertFalse("Backpack look file exists, but shouldn't", UiTestUtils.fileExists(pathOfFirstBackPackedLook));
 		assertFalse("Backpack look file doesn't exist", UiTestUtils.fileExists(pathOfSecondBackPackedLook));
 	}
@@ -741,7 +741,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		if (solo.searchText(testLookName + "_" + solo.getString(R.string.copy_addition), 1, true)) {
 			assertEquals("Old count was not correct", 2, oldCount);
 			assertEquals("New count is not correct - copy should be added", 3, newCount);
-			assertEquals("Count of the lookDataList is not correct", newCount, lookDataList.size());
+			assertEquals("Count of the lookInfoList is not correct", newCount, lookInfoList.size());
 		} else {
 			fail("Copy look didn't work");
 		}
@@ -749,12 +749,12 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 	public void testDeleteLookContextMenu() {
 		Sprite firstSprite = projectManager.getCurrentProject().getDefaultScene().getSpriteList().get(0);
-		LookData lookToDelete = firstSprite.getLookDataList().get(1);
+		LookInfo lookToDelete = firstSprite.getLookInfoList().get(1);
 
-		Log.d(TAG, "Look to delete: " + lookToDelete.getLookName());
+		Log.d(TAG, "Look to delete: " + lookToDelete.getName());
 
 		String testLookName = SECOND_TEST_LOOK_NAME;
-		assertEquals("The two names should be equal", testLookName, lookToDelete.getLookName());
+		assertEquals("The two names should be equal", testLookName, lookToDelete.getName());
 
 		LookAdapter adapter = getLookAdapter();
 		assertNotNull("Could not get Adapter", adapter);
@@ -770,7 +770,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		assertEquals("Old count was not correct", 2, oldCount);
 		assertEquals("New count is not correct - one look should be deleted", 1, newCount);
-		assertEquals("Count of the lookDataList is not correct", newCount, lookDataList.size());
+		assertEquals("Count of the lookInfoList is not correct", newCount, lookInfoList.size());
 
 		Log.d(TAG, "path: " + lookToDelete.getAbsolutePath());
 		File deletedFile = new File(lookToDelete.getAbsolutePath());
@@ -795,20 +795,20 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.goBack();
 		solo.clickOnText(solo.getString(R.string.backgrounds));
 
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(0).getLookName(), FIRST_TEST_LOOK_NAME);
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(1).getLookName(), SECOND_TEST_LOOK_NAME);
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(2).getLookName(), "TestLook0");
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(3).getLookName(), "TestLook1");
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(4).getLookName(), "TestLook2");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(0).getName(), FIRST_TEST_LOOK_NAME);
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(1).getName(), SECOND_TEST_LOOK_NAME);
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(2).getName(), "TestLook0");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(3).getName(), "TestLook1");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(4).getName(), "TestLook2");
 
 		ArrayList<Integer> yPositionList = UiTestUtils.getListItemYPositions(solo, 1);
 		UiTestUtils.longClickAndDrag(solo, 10, yPositionList.get(1), 10, yPositionList.get(4) + 100, 20);
 
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(0).getLookName(), FIRST_TEST_LOOK_NAME);
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(1).getLookName(), "TestLook0");
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(2).getLookName(), "TestLook1");
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(3).getLookName(), SECOND_TEST_LOOK_NAME);
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(4).getLookName(), "TestLook2");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(0).getName(), FIRST_TEST_LOOK_NAME);
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(1).getName(), "TestLook0");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(2).getName(), "TestLook1");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(3).getName(), SECOND_TEST_LOOK_NAME);
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(4).getName(), "TestLook2");
 	}
 
 	public void testDragAndDropUp() {
@@ -819,20 +819,20 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.goBack();
 		solo.clickOnText(solo.getString(R.string.backgrounds));
 
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(0).getLookName(), FIRST_TEST_LOOK_NAME);
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(1).getLookName(), SECOND_TEST_LOOK_NAME);
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(2).getLookName(), "TestLook0");
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(3).getLookName(), "TestLook1");
-		assertEquals("Wrong List before DragAndDropTest", lookDataList.get(4).getLookName(), "TestLook2");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(0).getName(), FIRST_TEST_LOOK_NAME);
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(1).getName(), SECOND_TEST_LOOK_NAME);
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(2).getName(), "TestLook0");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(3).getName(), "TestLook1");
+		assertEquals("Wrong List before DragAndDropTest", lookInfoList.get(4).getName(), "TestLook2");
 
 		ArrayList<Integer> yPositionList = UiTestUtils.getListItemYPositions(solo, 1);
 		UiTestUtils.longClickAndDrag(solo, 10, yPositionList.get(4), 10, yPositionList.get(1) - 100, 20);
 
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(0).getLookName(), FIRST_TEST_LOOK_NAME);
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(1).getLookName(), SECOND_TEST_LOOK_NAME);
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(2).getLookName(), "TestLook2");
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(3).getLookName(), "TestLook0");
-		assertEquals("Wrong List after DragAndDropTest", lookDataList.get(4).getLookName(), "TestLook1");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(0).getName(), FIRST_TEST_LOOK_NAME);
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(1).getName(), SECOND_TEST_LOOK_NAME);
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(2).getName(), "TestLook2");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(3).getName(), "TestLook0");
+		assertEquals("Wrong List after DragAndDropTest", lookInfoList.get(4).getName(), "TestLook1");
 	}
 
 	public void testShowAndHideDetails() {
@@ -859,7 +859,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 	public void testGetImageFromMediaLibrary() {
 		String mediaLibraryText = solo.getString(R.string.add_look_media_library);
-		int numberLooksBefore = ProjectManager.getInstance().getCurrentSprite().getLookDataList().size();
+		int numberLooksBefore = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().size();
 
 		UiTestUtils.clickOnBottomBar(solo, R.id.button_add);
 		solo.waitForText(mediaLibraryText);
@@ -877,9 +877,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		solo.waitForFragmentByTag(LookFragment.TAG);
 		solo.sleep(TIME_TO_WAIT);
-		int numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookDataList().size();
+		int numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().size();
 		assertEquals("No Look was added from Media Library!", numberLooksBefore + 1, numberLooksAfter);
-		String newLookName = ProjectManager.getInstance().getCurrentSprite().getLookDataList().get(numberLooksBefore).getLookName();
+		String newLookName = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().get(numberLooksBefore).getName();
 		assertEquals("Temp File was not deleted!", false, UiTestUtils.checkTempFileFromMediaLibrary(Constants
 				.TMP_LOOKS_PATH, newLookName));
 		solo.sleep(TIME_TO_WAIT);
@@ -902,10 +902,10 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.clickOnText(solo.getString(R.string.ok));
 		solo.waitForFragmentByTag(LookFragment.TAG);
 		solo.sleep(TIME_TO_WAIT);
-		numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookDataList().size();
+		numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().size();
 		assertEquals("Look was added from Media Library!", numberLooksBefore + 1, numberLooksAfter);
-		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookDataList().get(numberLooksBefore)
-				.getLookName();
+		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().get(numberLooksBefore)
+				.getName();
 		assertEquals("Temp File was not deleted!", false, UiTestUtils.checkTempFileFromMediaLibrary(Constants
 				.TMP_LOOKS_PATH, newLookName));
 		solo.sleep(TIME_TO_WAIT);
@@ -932,11 +932,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.waitForDialogToClose();
 		solo.waitForFragmentByTag(LookFragment.TAG);
 		solo.sleep(TIME_TO_WAIT);
-		numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookDataList().size();
+		numberLooksAfter = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().size();
 		assertEquals("Second Look was not added from Media Library!", numberLooksBefore + 2, numberLooksAfter);
-		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookDataList().get(numberLooksBefore).getLookName();
+		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().get(numberLooksBefore).getName();
 		assertEquals("Temp File was not deleted!", false, UiTestUtils.checkTempFileFromMediaLibrary(Constants.TMP_LOOKS_PATH, newLookName));
-		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookDataList().get(numberLooksBefore + 1).getLookName();
+		newLookName = ProjectManager.getInstance().getCurrentSprite().getLookInfoList().get(numberLooksBefore + 1).getName();
 		assertEquals("Temp File was not deleted!", false, UiTestUtils.checkTempFileFromMediaLibrary(Constants.TMP_LOOKS_PATH, newLookName));
 	}
 
@@ -986,11 +986,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		assertTrue("Checksum not in checksumcontainer",
 				projectManager.getFileChecksumContainer().containsChecksum(checksumPaintroidImageFile));
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
 		boolean isInLookDataList = false;
-		for (LookData lookData : lookDataList) {
-			if (lookData.getChecksum().equalsIgnoreCase(checksumPaintroidImageFile)) {
+		for (LookInfo lookInfo : lookInfoList) {
+			if (lookInfo.getChecksum().equalsIgnoreCase(checksumPaintroidImageFile)) {
 				isInLookDataList = true;
 			}
 		}
@@ -998,7 +998,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testGetImageFromGalleryNullData() {
-		int numberOfLookDatasBeforeIntent = lookDataList.size();
+		int numberOfLookDatasBeforeIntent = lookInfoList.size();
 
 		Bundle bundleForGallery = new Bundle();
 		bundleForGallery.putString("filePath", paintroidImageFile.getAbsolutePath());
@@ -1013,9 +1013,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.waitForActivity(ScriptActivity.class.getSimpleName(), 2000);
 		solo.assertCurrentActivity("Should be in ScriptActivity", ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		int numberOfLookDatasAfterReturning = lookDataList.size();
-		assertEquals("Wrong size of lookDataList", numberOfLookDatasBeforeIntent, numberOfLookDatasAfterReturning);
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		int numberOfLookDatasAfterReturning = lookInfoList.size();
+		assertEquals("Wrong size of lookInfoList", numberOfLookDatasBeforeIntent, numberOfLookDatasAfterReturning);
 	}
 
 	public void testGetImageFromPaintroid() {
@@ -1035,11 +1035,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		assertTrue("Checksum not in checksumcontainer",
 				projectManager.getFileChecksumContainer().containsChecksum(md5ChecksumPaintroidImageFile));
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
 		boolean isInLookDataList = false;
-		for (LookData lookData : lookDataList) {
-			if (lookData.getChecksum().equalsIgnoreCase(md5ChecksumPaintroidImageFile)) {
+		for (LookInfo lookInfo : lookInfoList) {
+			if (lookInfo.getChecksum().equalsIgnoreCase(md5ChecksumPaintroidImageFile)) {
 				isInLookDataList = true;
 			}
 		}
@@ -1059,11 +1059,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(200);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		LookData lookData = lookDataList.get(0);
-		String md5ChecksumImageFileAfterIntent = Utils.md5Checksum(new File(lookData.getAbsolutePath()));
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		LookInfo lookInfo = lookInfoList.get(0);
+		String md5ChecksumImageFileAfterIntent = Utils.md5Checksum(new File(lookInfo.getAbsolutePath()));
 
-		assertEquals("Wrong size of lookDataList", 2, lookDataList.size());
+		assertEquals("Wrong size of lookInfoList", 2, lookInfoList.size());
 		assertEquals("Picture changed", md5ChecksumImageFileBeforeIntent, md5ChecksumImageFileAfterIntent);
 	}
 
@@ -1090,8 +1090,8 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testEditImageWithPaintroid() {
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 
 		String md5ChecksumPaintroidImageFile = Utils.md5Checksum(paintroidImageFile);
 		String md5ChecksumImageFile = Utils.md5Checksum(imageFile);
@@ -1108,15 +1108,15 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(5000);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		lookData = lookDataList.get(0);
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		lookInfo = lookInfoList.get(0);
 
-		assertNotSame("Picture did not change", Utils.md5Checksum(new File(lookData.getAbsolutePath())),
+		assertNotSame("Picture did not change", Utils.md5Checksum(new File(lookInfo.getAbsolutePath())),
 				md5ChecksumPaintroidImageFile);
 
 		boolean isInLookDataListPaintroidImage = false;
 		boolean isInLookDataListSunnglasses = false;
-		for (LookData lookDatas : lookDataList) {
+		for (LookInfo lookDatas : lookInfoList) {
 			if (lookDatas.getChecksum().equalsIgnoreCase(md5ChecksumPaintroidImageFile)) {
 				isInLookDataListPaintroidImage = true;
 			}
@@ -1144,11 +1144,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testPaintroidImagefileExtension() {
-		String lookDataModifiedHash = lookData3.getLookFileName();
+		String lookDataModifiedHash = lookInfo3.getFileName();
 		lookDataModifiedHash = "THIS_IS_A_MODIFIED_HASH_AND_HERE_ARE_SOME_DUMMIE_CHARS";
-		lookData3.setLookFilename(lookDataModifiedHash);
+		lookInfo3.setFileName(lookDataModifiedHash);
 
-		getLookFragment().setSelectedLookData(lookData3);
+		getLookFragment().setSelectedLookInfo(lookInfo3);
 
 		Bundle bundleForPaintroid = new Bundle();
 		bundleForPaintroid.putString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT, imageFileJpg.getAbsolutePath());
@@ -1161,14 +1161,14 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(500);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		assertTrue("Copied file does not have correct fileextension", lookData3.getLookFileName().endsWith(".png"));
+		assertTrue("Copied file does not have correct fileextension", lookInfo3.getFileName().endsWith(".png"));
 	}
 
 	public void testEditImageWithPaintroidNoChanges() {
-		int oldNumberOfLookDatas = lookDataList.size();
+		int oldNumberOfLookDatas = lookInfoList.size();
 
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 		String md5ChecksumImageFile = Utils.md5Checksum(imageFile);
 
 		Bundle bundleForPaintroid = new Bundle();
@@ -1182,23 +1182,23 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(200);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		lookData = lookDataList.get(0);
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		lookInfo = lookInfoList.get(0);
 
 		assertEquals("Picture did change, although it shouldn't change",
-				Utils.md5Checksum(new File(lookData.getAbsolutePath())), md5ChecksumImageFile);
+				Utils.md5Checksum(new File(lookInfo.getAbsolutePath())), md5ChecksumImageFile);
 
-		int newNumberOfLookDatas = lookDataList.size();
-		assertEquals("Size of lookDataList has changed", oldNumberOfLookDatas, newNumberOfLookDatas);
+		int newNumberOfLookDatas = lookInfoList.size();
+		assertEquals("Size of lookInfoList has changed", oldNumberOfLookDatas, newNumberOfLookDatas);
 		assertEquals("Too many references for checksum", 1,
 				projectManager.getFileChecksumContainer().getUsage(md5ChecksumImageFile));
 	}
 
 	public void testEditImageWithPaintroidNoPath() {
-		int oldNumberOfLookDatas = lookDataList.size();
+		int oldNumberOfLookDatas = lookInfoList.size();
 
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 		String md5ChecksumImageFile = Utils.md5Checksum(imageFile);
 
 		Bundle bundleForPaintroid = new Bundle();
@@ -1212,23 +1212,23 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(200);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		lookData = lookDataList.get(0);
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		lookInfo = lookInfoList.get(0);
 
 		assertEquals("Picture changed, although it shouldn't change",
-				Utils.md5Checksum(new File(lookData.getAbsolutePath())), md5ChecksumImageFile);
+				Utils.md5Checksum(new File(lookInfo.getAbsolutePath())), md5ChecksumImageFile);
 
-		int newNumberOfLookDatas = lookDataList.size();
-		assertEquals("LookData was added", oldNumberOfLookDatas, newNumberOfLookDatas);
+		int newNumberOfLookDatas = lookInfoList.size();
+		assertEquals("LookInfo was added", oldNumberOfLookDatas, newNumberOfLookDatas);
 		assertEquals("Too many references for checksum", 1,
 				projectManager.getFileChecksumContainer().getUsage(md5ChecksumImageFile));
 	}
 
 	public void testEditImageWithPaintroidToSomethingAlreadyUsed() throws IOException {
-		int oldNumberOfLookDatas = lookDataList.size();
+		int oldNumberOfLookDatas = lookInfoList.size();
 
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 
 		String md5ChecksumImageFile = Utils.md5Checksum(imageFile);
 		String md5ChecksumPaintroidImageFile = Utils.md5Checksum(paintroidImageFile);
@@ -1245,14 +1245,14 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(4000);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		lookData = lookDataList.get(0);
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		lookInfo = lookInfoList.get(0);
 
-		int newNumberOfLookDatas = lookDataList.size();
+		int newNumberOfLookDatas = lookInfoList.size();
 
-		assertNotSame("Picture did not change", Utils.md5Checksum(new File(lookData.getAbsolutePath())),
+		assertNotSame("Picture did not change", Utils.md5Checksum(new File(lookInfo.getAbsolutePath())),
 				md5ChecksumImageFile);
-		assertEquals("LookData was added, although this shouldn't be possible", oldNumberOfLookDatas,
+		assertEquals("LookInfo was added, although this shouldn't be possible", oldNumberOfLookDatas,
 				newNumberOfLookDatas);
 		assertEquals("Too many references for checksum", 0,
 				projectManager.getFileChecksumContainer().getUsage(md5ChecksumImageFile));
@@ -1264,21 +1264,21 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		File tempImageFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(),
 				"catroid_sunglasses2.png", RESOURCE_IMAGE, getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
 
-		LookData lookDataToAdd = new LookData();
-		lookDataToAdd.setLookFilename(tempImageFile.getName());
-		lookDataToAdd.setLookName("justforthistest");
+		LookInfo lookInfoToAdd = new LookInfo();
+		lookInfoToAdd.setFileName(tempImageFile.getName());
+		lookInfoToAdd.setName("justforthistest");
 
-		lookDataList.add(lookDataToAdd);
-		projectManager.getFileChecksumContainer().addChecksum(lookDataToAdd.getChecksum(),
-				lookDataToAdd.getAbsolutePath());
+		lookInfoList.add(lookInfoToAdd);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfoToAdd.getChecksum(),
+				lookInfoToAdd.getAbsolutePath());
 		getLookAdapter().hardSetIdMapForTesting();
 		solo.goBack();
 		solo.clickOnText(solo.getString(R.string.backgrounds));
 
 		solo.sleep(200);
 
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 		String md5ChecksumImageFile = Utils.md5Checksum(imageFile);
 
 		Bundle bundleForPaintroid = new Bundle();
@@ -1293,7 +1293,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(4000);
 		solo.waitForActivity(ScriptActivity.class.getSimpleName());
 
-		assertEquals("Wrong number of lookDatas", 3, lookDataList.size());
+		assertEquals("Wrong number of lookDatas", 3, lookInfoList.size());
 		assertTrue("New added image has been deleted", tempImageFile.exists());
 		assertEquals("Wrong number of checksum references of sunnglasses picture", 1, projectManager
 				.getFileChecksumContainer().getUsage(md5ChecksumImageFile));
@@ -1537,9 +1537,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		// If an already existing name was entered a counter should be appended
 		String expectedNewLookName = newLookName + "1";
 		solo.sleep(300);
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		assertEquals("Look is not correctly renamed in lookDataList (1 should be appended)", expectedNewLookName,
-				lookDataList.get(checkboxIndex).getLookName());
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		assertEquals("Look is not correctly renamed in lookInfoList (1 should be appended)", expectedNewLookName,
+				lookInfoList.get(checkboxIndex).getName());
 		assertTrue("Look not renamed in actual view", solo.searchText(expectedNewLookName, true));
 	}
 
@@ -1590,7 +1590,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testDeleteActionModeIfNothingSelected() {
-		int expectedNumberOfLooks = lookDataList.size();
+		int expectedNumberOfLooks = lookInfoList.size();
 
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
@@ -1606,7 +1606,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testDeleteActionModeIfSomethingSelectedAndPressingBack() {
-		int expectedNumberOfLooks = lookDataList.size();
+		int expectedNumberOfLooks = lookInfoList.size();
 
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
 
@@ -1625,7 +1625,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testDeleteActionMode() {
-		int currentNumberOfLooks = lookDataList.size();
+		int currentNumberOfLooks = lookInfoList.size();
 		int expectedNumberOfLooks = currentNumberOfLooks - 1;
 
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
@@ -1641,9 +1641,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 
 		checkIfNumberOfLooksIsEqual(expectedNumberOfLooks);
 
-		assertTrue("Unselected look '" + FIRST_TEST_LOOK_NAME + "' has been deleted!", lookDataList.contains(lookData));
+		assertTrue("Unselected look '" + FIRST_TEST_LOOK_NAME + "' has been deleted!", lookInfoList.contains(lookInfo));
 
-		assertFalse("Selected look '" + SECOND_TEST_LOOK_NAME + "' was not deleted!", lookDataList.contains(lookData2));
+		assertFalse("Selected look '" + SECOND_TEST_LOOK_NAME + "' was not deleted!", lookInfoList.contains(lookInfo2));
 
 		assertFalse("Look '" + SECOND_TEST_LOOK_NAME + "' has been deleted but is still showing!",
 				solo.waitForText(SECOND_TEST_LOOK_NAME, 0, 200, false, false));
@@ -1700,9 +1700,9 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		clickSingleItemActionMode(FIRST_TEST_LOOK_NAME, R.id.copy, copy);
 		solo.sleep(300);
 
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 
-		int currentNumberOfLooks = lookDataList.size();
+		int currentNumberOfLooks = lookInfoList.size();
 		assertEquals("Wrong number of looks", 5, currentNumberOfLooks);
 
 		UiTestUtils.openActionMode(solo, delete, R.id.delete);
@@ -1805,7 +1805,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testCopyActionModeIfNothingSelected() {
-		int expectedNumberOfLooks = lookDataList.size();
+		int expectedNumberOfLooks = lookInfoList.size();
 
 		UiTestUtils.openActionMode(solo, copy, R.id.copy);
 
@@ -1820,7 +1820,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testCopyActionModeIfSomethingSelectedAndPressingBack() {
-		int expectedNumberOfLooks = lookDataList.size();
+		int expectedNumberOfLooks = lookInfoList.size();
 
 		UiTestUtils.openActionMode(solo, copy, R.id.copy);
 
@@ -1838,7 +1838,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testCopyActionMode() {
-		int currentNumberOfLooks = lookDataList.size();
+		int currentNumberOfLooks = lookInfoList.size();
 		int expectedNumberOfLooks = currentNumberOfLooks + 2;
 
 		String copiedLookAddition = "_" + solo.getString(R.string.copy_addition);
@@ -1870,7 +1870,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testCopySelectAll() {
-		int currentNumberOfLooks = lookDataList.size();
+		int currentNumberOfLooks = lookInfoList.size();
 		UiTestUtils.openActionMode(solo, solo.getString(R.string.copy), R.id.copy);
 		solo.waitForActivity("ScriptActivity");
 		String selectAll = solo.getString(R.string.select_all).toUpperCase(Locale.getDefault());
@@ -1889,11 +1889,11 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.sleep(200);
 		checkVisibilityOfViews(VISIBLE, VISIBLE, VISIBLE, GONE);
 
-		LookData lookData = lookDataList.get(0);
-		getLookFragment().setSelectedLookData(lookData);
+		LookInfo lookInfo = lookInfoList.get(0);
+		getLookFragment().setSelectedLookInfo(lookInfo);
 
 		String pathToImageFile = imageFile.getAbsolutePath();
-		int[] fileResolutionBeforeCrop = lookData.getMeasure();
+		int[] fileResolutionBeforeCrop = lookInfo.getMeasure();
 		int[] displayedResolutionBeforeCrop = getDisplayedMeasure();
 
 		int sampleSize = 2;
@@ -1910,7 +1910,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 		solo.waitForActivity(MainMenuActivity.class.getSimpleName());
 		UiTestUtils.getIntoLooksFromMainMenu(solo, true);
 
-		int[] fileResolutionAfterCrop = lookData.getMeasure();
+		int[] fileResolutionAfterCrop = lookInfo.getMeasure();
 		int[] displayedResolutionAfterCrop = getDisplayedMeasure();
 
 		assertTrue("Bitmap resolution in file was not cropped",
@@ -1973,7 +1973,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	public void testEmptyActionModeDialogs() {
-		lookDataList.clear();
+		lookInfoList.clear();
 		UiTestUtils.createEmptyProject();
 
 		UiTestUtils.openBackPackActionModeWhenEmpty(solo);
@@ -2134,8 +2134,8 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	private String getLookName(int lookIndex) {
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		return lookDataList.get(lookIndex).getLookName();
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		return lookInfoList.get(lookIndex).getName();
 	}
 
 	private void checkIfCheckboxesAreCorrectlyChecked(boolean firstCheckboxExpectedChecked,
@@ -2148,7 +2148,7 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	private void checkAllCheckboxes() {
-		boolean skipFirst = solo.getCurrentViews(CheckBox.class).size() > projectManager.getCurrentSprite().getLookDataList().size();
+		boolean skipFirst = solo.getCurrentViews(CheckBox.class).size() > projectManager.getCurrentSprite().getLookInfoList().size();
 		for (CheckBox checkBox : solo.getCurrentViews(CheckBox.class)) {
 			if (skipFirst) {
 				continue;
@@ -2158,8 +2158,8 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	private void checkIfNumberOfLooksIsEqual(int expectedNumber) {
-		lookDataList = projectManager.getCurrentSprite().getLookDataList();
-		assertEquals("Number of looks is not as expected", expectedNumber, lookDataList.size());
+		lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
+		assertEquals("Number of looks is not as expected", expectedNumber, lookInfoList.size());
 	}
 
 	private void deleteLook(String lookName) {
@@ -2171,8 +2171,8 @@ public class LookFragmentTest extends BaseActivityInstrumentationTestCase<MainMe
 	}
 
 	private void addLookWithName(String lookName) {
-		LookData lookDataToAdd = lookData.clone();
-		lookDataToAdd.setLookName(lookName);
-		lookDataList.add(lookDataToAdd);
+		LookInfo lookInfoToAdd = lookInfo.clone();
+		lookInfoToAdd.setName(lookName);
+		lookInfoList.add(lookInfoToAdd);
 	}
 }

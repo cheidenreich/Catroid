@@ -47,8 +47,8 @@ import com.google.common.io.Files;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.SingleSprite;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.PointToBrick.SpinnerAdapterWrapper;
@@ -361,7 +361,7 @@ public class NewSpriteDialog extends DialogFragment {
 			@Override
 			public void onClick(View view) {
 				try {
-					LookData look = LookController.createLookFromBitmapResource(getActivity().getResources(),
+					LookInfo look = LookController.createLookFromBitmapResource(getActivity().getResources(),
 							R.drawable.ic_video,getString(R.string.add_look_drone_video));
 					newLookFile = new File(look.getAbsolutePath());
 				} catch (IOException e) {
@@ -399,14 +399,14 @@ public class NewSpriteDialog extends DialogFragment {
 			return false;
 		}
 
-		LookData lookData;
+		LookInfo lookInfo;
 
 		try {
 			if (isDroneVideo) {
-				lookData = new DroneVideoLookData();
+				lookInfo = new DroneVideoLookInfo();
 				newLookFile = new File(lookUri.getPath());
 			} else {
-				lookData = new LookData();
+				lookInfo = new LookInfo();
 				String projectName = ProjectManager.getInstance().getCurrentProject().getName();
 				String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
 				String destinationDir = Utils.buildPath(Utils.buildScenePath(projectName, sceneName), Constants
@@ -430,8 +430,8 @@ public class NewSpriteDialog extends DialogFragment {
 			String imageFileName = newLookFile.getName();
 			Utils.rewriteImageFileForStage(getActivity(), newLookFile);
 
-			lookData.setLookName(newSpriteName);
-			lookData.setLookFilename(imageFileName);
+			lookInfo.setName(newSpriteName);
+			lookInfo.setFileName(imageFileName);
 		} catch (IOException ioException) {
 			Utils.showErrorDialog(getActivity(), R.string.error_load_image);
 			Log.e(TAG, Log.getStackTraceString(ioException));
@@ -449,7 +449,7 @@ public class NewSpriteDialog extends DialogFragment {
 		sprite = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), newSpriteName);
 		projectManager.addSprite(sprite);
 
-		sprite.getLookDataList().add(lookData);
+		sprite.getLookInfoList().add(lookInfo);
 
 		if (requestedAction == ActionAfterFinished.ACTION_UPDATE_SPINNER && spinnerAdapter != null) {
 			Intent broadcastIntent;

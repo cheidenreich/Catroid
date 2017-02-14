@@ -76,10 +76,10 @@ public class DefaultProjectHandlerTest extends AndroidTestCase {
 		assertEquals("Number of Scripts in cloudSprite2 is incorrect.", 1, spriteList.get(2).getNumberOfScripts());
 		assertEquals("Number of Scripts in birdSprite is incorrect.", 3, spriteList.get(3).getNumberOfScripts());
 
-		assertEquals("Number of Looks in background is incorrect.", 1, spriteList.get(0).getLookDataList().size());
-		assertEquals("Number of Looks in cloudSprite1 is incorrect.", 1, spriteList.get(1).getLookDataList().size());
-		assertEquals("Number of Looks in cloudSprite2 is incorrect.", 1, spriteList.get(2).getLookDataList().size());
-		assertEquals("Number of Looks in birdSprite is incorrect.", 2, spriteList.get(3).getLookDataList().size());
+		assertEquals("Number of Looks in background is incorrect.", 1, spriteList.get(0).getLookInfoList().size());
+		assertEquals("Number of Looks in cloudSprite1 is incorrect.", 1, spriteList.get(1).getLookInfoList().size());
+		assertEquals("Number of Looks in cloudSprite2 is incorrect.", 1, spriteList.get(2).getLookInfoList().size());
+		assertEquals("Number of Looks in birdSprite is incorrect.", 2, spriteList.get(3).getLookInfoList().size());
 	}
 
 	public void testDefaultProjectScreenshot() throws IOException {

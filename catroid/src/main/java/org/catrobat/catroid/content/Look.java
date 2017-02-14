@@ -41,8 +41,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.utils.TouchUtil;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class Look extends Image {
 	protected boolean imageChanged = false;
 	protected boolean brightnessChanged = false;
 	protected boolean colorChanged = false;
-	protected LookData lookData;
+	protected LookInfo lookInfo;
 	protected Sprite sprite;
 	protected float alpha = 1f;
 	protected float brightness = 1f;
@@ -191,8 +191,8 @@ public class Look extends Image {
 			super.setVisible(true);
 		}
 
-		if (lookData instanceof DroneVideoLookData && lookData != null) {
-			lookData.draw(batch, alpha);
+		if (lookInfo instanceof DroneVideoLookInfo && lookInfo != null) {
+			lookInfo.draw(batch, alpha);
 		}
 
 		if (isLookVisible() && this.getDrawable() != null) {
@@ -233,14 +233,14 @@ public class Look extends Image {
 
 	protected void checkImageChanged() {
 		if (imageChanged) {
-			if (lookData == null) {
+			if (lookInfo == null) {
 				setBounds(getX() + getWidth() / 2f, getY() + getHeight() / 2f, 0f, 0f);
 				setDrawable(null);
 				imageChanged = false;
 				return;
 			}
 
-			pixmap = lookData.getPixmap();
+			pixmap = lookInfo.getPixmap();
 			float newX = getX() - (pixmap.getWidth() - getWidth()) / 2f;
 			float newY = getY() - (pixmap.getHeight() - getHeight()) / 2f;
 
@@ -258,7 +258,7 @@ public class Look extends Image {
 				colorChanged = false;
 			}
 
-			TextureRegion region = lookData.getTextureRegion();
+			TextureRegion region = lookInfo.getTextureRegion();
 			TextureRegionDrawable drawable = new TextureRegionDrawable(region);
 			setDrawable(drawable);
 
@@ -271,17 +271,17 @@ public class Look extends Image {
 		this.imageChanged = true;
 	}
 
-	public LookData getLookData() {
-		return lookData;
+	public LookInfo getLookInfo() {
+		return lookInfo;
 	}
 
-	public void setLookData(LookData lookData) {
-		this.lookData = lookData;
+	public void setLookInfo(LookInfo lookInfo) {
+		this.lookInfo = lookInfo;
 		imageChanged = true;
 
 		boolean isBackgroundLook = getZIndex() == Constants.Z_INDEX_BACKGROUND;
 		if (isBackgroundLook) {
-			BackgroundWaitHandler.fireBackgroundChangedEvent(lookData);
+			BackgroundWaitHandler.fireBackgroundChangedEvent(lookInfo);
 		}
 	}
 
@@ -291,10 +291,10 @@ public class Look extends Image {
 
 	public String getImagePath() {
 		String path;
-		if (this.lookData == null) {
+		if (this.lookInfo == null) {
 			path = "";
 		} else {
-			path = this.lookData.getAbsolutePath();
+			path = this.lookInfo.getAbsolutePath();
 		}
 		return path;
 	}
@@ -377,7 +377,7 @@ public class Look extends Image {
 		boolean differentModeButFlipped = mode != Look.ROTATION_STYLE_LEFT_RIGHT_ONLY && sprite.look.isFlipped();
 		boolean facingLeftButNotFlipped = mode == Look.ROTATION_STYLE_LEFT_RIGHT_ONLY && orientedLeft;
 		if (differentModeButFlipped || facingLeftButNotFlipped) {
-			getLookData().getTextureRegion().flip(true, false);
+			getLookInfo().getTextureRegion().flip(true, false);
 		}
 	}
 
@@ -439,8 +439,8 @@ public class Look extends Image {
 				boolean orientedRight = realRotation >= 0;
 				boolean orientedLeft = realRotation < 0;
 				boolean needsFlipping = (isFlipped() && orientedRight) || (!isFlipped() && orientedLeft);
-				if (needsFlipping && lookData != null) {
-					lookData.getTextureRegion().flip(true, false);
+				if (needsFlipping && lookInfo != null) {
+					lookInfo.getTextureRegion().flip(true, false);
 				}
 				break;
 			case ROTATION_STYLE_ALL_AROUND:
@@ -457,7 +457,7 @@ public class Look extends Image {
 	}
 
 	public boolean isFlipped() {
-		return (lookData != null && lookData.getTextureRegion().isFlipX());
+		return (lookInfo != null && lookInfo.getTextureRegion().isFlipX());
 	}
 
 	public void changeDirectionInUserInterfaceDimensionUnit(float changeDegrees) {
@@ -652,13 +652,13 @@ public class Look extends Image {
 
 	public Polygon[] getCurrentCollisionPolygon() {
 		Polygon[] originalPolygons;
-		if (getLookData() == null) {
+		if (getLookInfo() == null) {
 			originalPolygons = new Polygon[0];
 		} else {
-			if (getLookData().getCollisionInformation().collisionPolygons == null) {
-				getLookData().getCollisionInformation().loadOrCreateCollisionPolygon();
+			if (getLookInfo().getCollisionInformation().collisionPolygons == null) {
+				getLookInfo().getCollisionInformation().loadOrCreateCollisionPolygon();
 			}
-			originalPolygons = getLookData().getCollisionInformation().collisionPolygons;
+			originalPolygons = getLookInfo().getCollisionInformation().collisionPolygons;
 		}
 
 		Polygon[] transformedPolygons = new Polygon[originalPolygons.length];

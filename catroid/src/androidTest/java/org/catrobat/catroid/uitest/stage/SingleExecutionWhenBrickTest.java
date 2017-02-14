@@ -24,7 +24,7 @@ package org.catrobat.catroid.uitest.stage;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.BroadcastScript;
 import org.catrobat.catroid.content.Project;
@@ -137,11 +137,11 @@ public class SingleExecutionWhenBrickTest extends BaseActivityInstrumentationTes
 		StartScript yellowStartScript = new StartScript();
 		SetLookBrick yellowLookBrick = new SetLookBrick();
 		SetSizeToBrick yellowSetSizeToBrick = new SetSizeToBrick(200d);
-		LookData yellowLookData = new LookData();
+		LookInfo yellowLookInfo = new LookInfo();
 		String yellowImageName = "yellow_image.bmp";
-		yellowLookData.setLookName(yellowImageName);
-		yellowSprite.getLookDataList().add(yellowLookData);
-		yellowLookBrick.setLook(yellowLookData);
+		yellowLookInfo.setName(yellowImageName);
+		yellowSprite.getLookInfoList().add(yellowLookInfo);
+		yellowLookBrick.setLook(yellowLookInfo);
 		yellowStartScript.addBrick(yellowLookBrick);
 		yellowStartScript.addBrick(yellowSetSizeToBrick);
 		yellowSprite.addScript(yellowStartScript);
@@ -159,14 +159,14 @@ public class SingleExecutionWhenBrickTest extends BaseActivityInstrumentationTes
 		SetLookBrick blueLookBrick = new SetLookBrick();
 		SetSizeToBrick blueSetSizeToBrick = new SetSizeToBrick(200d);
 		BroadcastWaitBrick broadcastWaitBrick = new BroadcastWaitBrick(broadcastMessage);
-		LookData blueLookData = new LookData();
+		LookInfo blueLookInfo = new LookInfo();
 		String blueImageName = "blue_image.bmp";
 
-		blueLookData.setLookName(blueImageName);
+		blueLookInfo.setName(blueImageName);
 
-		blueSprite.getLookDataList().add(blueLookData);
+		blueSprite.getLookInfoList().add(blueLookInfo);
 
-		blueLookBrick.setLook(blueLookData);
+		blueLookBrick.setLook(blueLookInfo);
 		blueStartScript.addBrick(blueLookBrick);
 		blueStartScript.addBrick(blueSetSizeToBrick);
 		blueStartScript.addBrick(new PlaceAtBrick(100, 200));
@@ -182,14 +182,14 @@ public class SingleExecutionWhenBrickTest extends BaseActivityInstrumentationTes
 		StartScript greenStartScript = new StartScript();
 		SetLookBrick greenLookBrick = new SetLookBrick();
 		SetSizeToBrick greenSetSizeToBrick = new SetSizeToBrick(200d);
-		LookData greenLookData = new LookData();
+		LookInfo greenLookInfo = new LookInfo();
 		String greenImageName = "green_image.bmp";
 
-		greenLookData.setLookName(greenImageName);
+		greenLookInfo.setName(greenImageName);
 
-		greenSprite.getLookDataList().add(greenLookData);
+		greenSprite.getLookInfoList().add(greenLookInfo);
 
-		greenLookBrick.setLook(greenLookData);
+		greenLookBrick.setLook(greenLookInfo);
 		greenStartScript.addBrick(greenLookBrick);
 		greenStartScript.addBrick(greenSetSizeToBrick);
 		greenStartScript.addBrick(new PlaceAtBrick(-100, 200));
@@ -224,11 +224,11 @@ public class SingleExecutionWhenBrickTest extends BaseActivityInstrumentationTes
 				org.catrobat.catroid.test.R.raw.green_image, getInstrumentation().getContext(),
 				UiTestUtils.FileTypes.IMAGE);
 
-		yellowLookData.setLookFilename(yellowImageFile.getName());
+		yellowLookInfo.setFileName(yellowImageFile.getName());
 
-		blueLookData.setLookFilename(blueImageFile.getName());
+		blueLookInfo.setFileName(blueImageFile.getName());
 
-		greenLookData.setLookFilename(greenImageFile.getName());
+		greenLookInfo.setFileName(greenImageFile.getName());
 		StorageHandler.getInstance().saveProject(projectWhenBrick);
 		ProjectManager.getInstance().setProject(projectWhenBrick);
 	}

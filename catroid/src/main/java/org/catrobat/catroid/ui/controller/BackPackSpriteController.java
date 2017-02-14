@@ -29,7 +29,7 @@ import android.content.res.Resources;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
@@ -37,7 +37,6 @@ import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.PlaySoundBrick;
 import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.ui.dialogs.CustomAlertDialogBuilder;
-import org.catrobat.catroid.utils.Utils;
 
 import java.util.List;
 
@@ -139,13 +138,11 @@ public final class BackPackSpriteController {
 
 		Sprite backPackSprite = spriteToEdit.cloneForBackPack();
 
-		String newSpriteName = Utils.getUniqueSpriteName(spriteToEdit);
-		backPackSprite.setName(newSpriteName);
-		backPackSprite.isBackpackObject = true;
+		backPackSprite.setName("REFACTOR_ME");
 
-		for (LookData lookData : spriteToEdit.getLookDataList()) {
-			if (!lookDataIsUsedInScript(lookData, ProjectManager.getInstance().getCurrentSprite())) {
-				backPackSprite.getLookDataList().add(LookController.getInstance().backPackHiddenLook(lookData));
+		for (LookInfo lookInfo : spriteToEdit.getLookInfoList()) {
+			if (!lookDataIsUsedInScript(lookInfo, ProjectManager.getInstance().getCurrentSprite())) {
+				backPackSprite.getLookInfoList().add(LookController.getInstance().backPackHiddenLook(lookInfo));
 			}
 		}
 		for (SoundInfo soundInfo : spriteToEdit.getSoundList()) {
@@ -170,16 +167,15 @@ public final class BackPackSpriteController {
 		}
 
 		Sprite unpackedSprite = selectedSprite.cloneForBackPack();
-		String newSpriteName = Utils.getUniqueSpriteName(selectedSprite);
-		unpackedSprite.setName(newSpriteName);
+		unpackedSprite.setName("REFACTOR_ME");
 
 		Sprite currentSprite = ProjectManager.getInstance().getCurrentSprite();
 
 		ProjectManager.getInstance().setCurrentSprite(unpackedSprite);
 
-		for (LookData lookData : selectedSprite.getLookDataList()) {
-			if (!lookDataIsUsedInScript(lookData, selectedSprite)) {
-				LookController.getInstance().unpack(lookData, delete, true);
+		for (LookInfo lookInfo : selectedSprite.getLookInfoList()) {
+			if (!lookDataIsUsedInScript(lookInfo, selectedSprite)) {
+				LookController.getInstance().unpack(lookInfo, delete, true);
 			}
 		}
 		for (SoundInfo soundInfo : selectedSprite.getSoundList()) {
@@ -213,9 +209,9 @@ public final class BackPackSpriteController {
 		return unpackedSprite;
 	}
 
-	private boolean lookDataIsUsedInScript(LookData lookData, Sprite sprite) {
+	private boolean lookDataIsUsedInScript(LookInfo lookInfo, Sprite sprite) {
 		for (Brick brick : sprite.getListWithAllBricks()) {
-			if (brick instanceof SetLookBrick && ((SetLookBrick) brick).getLook().equals(lookData)) {
+			if (brick instanceof SetLookBrick && ((SetLookBrick) brick).getLook().equals(lookInfo)) {
 				return true;
 			}
 		}

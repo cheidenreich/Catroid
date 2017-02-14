@@ -41,7 +41,7 @@ import com.robotium.solo.Solo;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.BroadcastScript;
 import org.catrobat.catroid.content.CollisionScript;
@@ -790,7 +790,7 @@ public class ProjectActivityTest extends BaseActivityInstrumentationTestCase<Mai
 		Sprite currentSprite = projectManager.getCurrentSprite();
 		int scriptCount = currentSprite.getNumberOfScripts();
 		int brickCount = currentSprite.getNumberOfBricks();
-		int lookCount = currentSprite.getLookDataList().size();
+		int lookCount = currentSprite.getLookInfoList().size();
 		int soundCount = currentSprite.getSoundList().size();
 
 		String scriptCountString = tvScriptCount.getText().toString();
@@ -1331,8 +1331,8 @@ public class ProjectActivityTest extends BaseActivityInstrumentationTestCase<Mai
 		List<SoundInfo> firstSoundList = firstSprite.getSoundList();
 		assertEquals("The number of sounds differs!", firstSoundList.size(), copiedSoundList.size());
 
-		List<LookData> copiedCustomeList = copiedSprite.getLookDataList();
-		List<LookData> firstCustomeList = firstSprite.getLookDataList();
+		List<LookInfo> copiedCustomeList = copiedSprite.getLookInfoList();
+		List<LookInfo> firstCustomeList = firstSprite.getLookInfoList();
 		assertEquals("The number of customes differs!", firstCustomeList.size(), copiedCustomeList.size());
 
 		assertEquals("The first sprite is NOT copied!", copiedSprite.getName(),
@@ -1475,7 +1475,7 @@ public class ProjectActivityTest extends BaseActivityInstrumentationTestCase<Mai
 		ArrayList<Brick> brickListFirstSprite = firstSprite.getScript(0).getBrickList();
 
 		assertNotSame("Sprite is not copied!", firstSprite, copiedSprite);
-		assertNotSame("CustomDataList is not copied!", firstSprite.getLookDataList(), copiedSprite.getLookDataList());
+		assertNotSame("CustomDataList is not copied!", firstSprite.getLookInfoList(), copiedSprite.getLookInfoList());
 		assertNotSame("Script is no copied!", firstSprite.getScript(0), copiedSprite.getScript(0));
 		assertNotSame("Script is no copied!", firstSprite.getScript(1), copiedSprite.getScript(1));
 		assertNotSame("Soundlist is no copied!", firstSprite.getSoundList(), copiedSprite.getSoundList());

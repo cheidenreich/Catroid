@@ -60,7 +60,7 @@ import org.catrobat.catroid.camera.CameraManager;
 import org.catrobat.catroid.common.BroadcastSequenceMap;
 import org.catrobat.catroid.common.BroadcastWaitSequenceMap;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenModes;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.BackgroundWaitHandler;
@@ -265,8 +265,8 @@ public class StageListener implements ApplicationListener {
 		Map<String, List<String>> scriptActions = new HashMap<>();
 		copy.createStartScriptActionSequenceAndPutToMap(scriptActions);
 		precomputeActionsForBroadcastEvents(scriptActions);
-		if (!copy.getLookDataList().isEmpty()) {
-			copy.look.setLookData(copy.getLookDataList().get(0));
+		if (!copy.getLookInfoList().isEmpty()) {
+			copy.look.setLookInfo(copy.getLookInfoList().get(0));
 		}
 
 		copy.createWhenClonedAction();
@@ -487,8 +487,8 @@ public class StageListener implements ApplicationListener {
 			for (int currentSprite = 0; currentSprite < spriteSize; currentSprite++) {
 				Sprite sprite = sprites.get(currentSprite);
 				sprite.createStartScriptActionSequenceAndPutToMap(scriptActions);
-				if (!sprite.getLookDataList().isEmpty()) {
-					sprite.look.setLookData(sprite.getLookDataList().get(0));
+				if (!sprite.getLookInfoList().isEmpty()) {
+					sprite.look.setLookInfo(sprite.getLookInfoList().get(0));
 				}
 			}
 
@@ -813,12 +813,12 @@ public class StageListener implements ApplicationListener {
 		List<Sprite> sprites = scene.getSpriteList();
 		int spriteSize = sprites.size();
 		for (int i = 0; i > spriteSize; i++) {
-			List<LookData> data = sprites.get(i).getLookDataList();
+			List<LookInfo> data = sprites.get(i).getLookInfoList();
 			int dataSize = data.size();
 			for (int j = 0; j < dataSize; j++) {
-				LookData lookData = data.get(j);
-				lookData.getPixmap().dispose();
-				lookData.getTextureRegion().getTexture().dispose();
+				LookInfo lookInfo = data.get(j);
+				lookInfo.getPixmap().dispose();
+				lookInfo.getTextureRegion().getTexture().dispose();
 			}
 		}
 	}

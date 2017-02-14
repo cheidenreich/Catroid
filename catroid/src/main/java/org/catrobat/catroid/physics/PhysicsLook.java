@@ -26,7 +26,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Sprite;
 
@@ -51,8 +51,8 @@ public class PhysicsLook extends Look {
 	}
 
 	@Override
-	public void setLookData(LookData lookData) {
-		super.setLookData(lookData);
+	public void setLookInfo(LookInfo lookInfo) {
+		super.setLookInfo(lookInfo);
 		PhysicsWorld physicsWorld = ProjectManager.getInstance().getSceneToPlay().getPhysicsWorld();
 		physicsWorld.changeLook(physicsObject, this);
 		updatePhysicsObjectState(true);
@@ -132,8 +132,8 @@ public class PhysicsLook extends Look {
 				super.setRotation(0f);
 				boolean orientedRight = realRotation > 180 || realRotation == 0;
 				boolean orientedLeft = realRotation <= 180 && realRotation != 0;
-				if (((isFlipped() && orientedRight) || (!isFlipped() && orientedLeft)) && lookData != null) {
-					lookData.getTextureRegion().flip(true, false);
+				if (((isFlipped() && orientedRight) || (!isFlipped() && orientedLeft)) && lookInfo != null) {
+					lookInfo.getTextureRegion().flip(true, false);
 				}
 				break;
 			case ROTATION_STYLE_ALL_AROUND:

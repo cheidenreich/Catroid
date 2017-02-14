@@ -36,11 +36,11 @@ public class SetRotationStyleAction extends TemporalAction {
 	protected void update(float delta) {
 		sprite.look.setRotationMode(mode);
 		if (mode != Look.ROTATION_STYLE_LEFT_RIGHT_ONLY && sprite.look.isFlipped()) {
-			sprite.look.getLookData().getTextureRegion().flip(true, false);
+			sprite.look.getLookInfo().getTextureRegion().flip(true, false);
 		}
 		boolean orientedLeft = sprite.look.getDirectionInUserInterfaceDimensionUnit() < 0;
 		if (mode == Look.ROTATION_STYLE_LEFT_RIGHT_ONLY && orientedLeft) {
-			sprite.look.getLookData().getTextureRegion().flip(true, false);
+			sprite.look.getLookInfo().getTextureRegion().flip(true, false);
 		}
 
 		sprite.look.setDirectionInUserInterfaceDimensionUnit(sprite.look.getDirectionInUserInterfaceDimensionUnit());

@@ -31,7 +31,7 @@ import android.os.Bundle;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.ScriptActivity;
 
@@ -76,11 +76,11 @@ public class DeleteLookDialog extends DialogFragment {
 	}
 
 	private void handleDeleteLook(int position) {
-		List<LookData> lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
+		List<LookInfo> lookInfoList = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
 
 		//TODO REFACTOR: handle error if file not deleted:
-		StorageHandler.deleteFile(lookDataList.get(position).getAbsolutePath());
-		lookDataList.remove(position);
+		StorageHandler.deleteFile(lookInfoList.get(position).getAbsolutePath());
+		lookInfoList.remove(position);
 
 		getActivity().sendBroadcast(new Intent(ScriptActivity.ACTION_LOOK_DELETED));
 	}

@@ -32,7 +32,7 @@ import android.util.Log;
 import com.badlogic.gdx.math.Polygon;
 
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.utils.ImageEditing;
 
 import java.util.ArrayList;
@@ -48,15 +48,15 @@ public class CollisionInformation {
 	public Polygon[] collisionPolygons;
 	public Thread collisionPolygonCalculationThread;
 	private boolean isCalculationThreadCancelled = true;
-	private LookData lookData;
+	private LookInfo lookInfo;
 
-	public CollisionInformation(LookData lookData) {
-		this.lookData = lookData;
+	public CollisionInformation(LookInfo lookInfo) {
+		this.lookInfo = lookInfo;
 	}
 
 	public void calculate() {
 		isCalculationThreadCancelled = false;
-		CollisionPolygonCreationTask task = new CollisionPolygonCreationTask(lookData);
+		CollisionPolygonCreationTask task = new CollisionPolygonCreationTask(lookInfo);
 		collisionPolygonCalculationThread = new Thread(task);
 		collisionPolygonCalculationThread.start();
 	}
@@ -67,7 +67,7 @@ public class CollisionInformation {
 
 	public void cancelCalculation() {
 		isCalculationThreadCancelled = true;
-		Log.i(TAG, "Collision Polygon Calculation of " + lookData.getLookName() + " cancelled!");
+		Log.i(TAG, "Collision Polygon Calculation of " + lookInfo.getName() + " cancelled!");
 	}
 
 	public int getNumberOfVertices() {
@@ -80,7 +80,7 @@ public class CollisionInformation {
 
 	public void loadOrCreateCollisionPolygon() {
 		isCalculationThreadCancelled = false;
-		String path = lookData.getAbsolutePath();
+		String path = lookInfo.getAbsolutePath();
 		if (collisionPolygons == null) {
 			if (!path.endsWith(".png")) {
 				Bitmap bitmap = BitmapFactory.decodeFile(path);
@@ -93,7 +93,7 @@ public class CollisionInformation {
 				if (isCalculationThreadCancelled) {
 					return;
 				}
-				ArrayList<ArrayList<CollisionPolygonVertex>> boundingPolygon = createBoundingPolygonVertices(path, lookData);
+				ArrayList<ArrayList<CollisionPolygonVertex>> boundingPolygon = createBoundingPolygonVertices(path, lookInfo);
 				if (boundingPolygon.size() == 0) {
 					return;
 				}
@@ -136,13 +136,13 @@ public class CollisionInformation {
 					return;
 				}
 				writeCollisionVerticesToPNGMeta(collisionPolygons, path);
-				Log.i("CollsionPolygon", "Polygon size of look " + lookData.getLookName() + ": " + getNumberOfVertices());
+				Log.i("CollsionPolygon", "Polygon size of look " + lookInfo.getName() + ": " + getNumberOfVertices());
 			}
 		}
 	}
 
 	public static ArrayList<ArrayList<CollisionPolygonVertex>> createBoundingPolygonVertices(String absoluteBitmapPath,
-			LookData lookData) {
+			LookInfo lookInfo) {
 		Bitmap bitmap = BitmapFactory.decodeFile(absoluteBitmapPath);
 		if (bitmap == null) {
 			Log.e("CollisionPolygon", "bitmap " + absoluteBitmapPath + " is null. Cannot create Collision polygon");
@@ -155,14 +155,14 @@ public class CollisionInformation {
 
 		boolean[][] grid = createCollisionGrid(bitmap);
 
-		if (lookData.getCollisionInformation().isCalculationThreadCancelled) {
+		if (lookInfo.getCollisionInformation().isCalculationThreadCancelled) {
 			return new ArrayList<>();
 		}
 
 		ArrayList<CollisionPolygonVertex> vertical = createVerticalVertices(grid, bitmap.getWidth(), bitmap.getHeight());
 		ArrayList<CollisionPolygonVertex> horizontal = createHorizontalVertices(grid, bitmap.getWidth(), bitmap.getHeight());
 
-		if (lookData.getCollisionInformation().isCalculationThreadCancelled) {
+		if (lookInfo.getCollisionInformation().isCalculationThreadCancelled) {
 			return new ArrayList<>();
 		}
 
@@ -173,7 +173,7 @@ public class CollisionInformation {
 		vertical.remove(0);
 
 		do {
-			if (lookData.getCollisionInformation().isCalculationThreadCancelled) {
+			if (lookInfo.getCollisionInformation().isCalculationThreadCancelled) {
 				return new ArrayList<>();
 			}
 

@@ -58,7 +58,7 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.NfcTagData;
 import org.catrobat.catroid.common.ScratchProgramData;
 import org.catrobat.catroid.common.SoundInfo;
@@ -453,14 +453,6 @@ public final class Utils {
 				UtilFile.encodeSpecialCharsForFileSystem(sceneName));
 	}
 
-	public static String getBackpackImageDirectoryPath() {
-		return buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY, Constants.BACKPACK_IMAGE_DIRECTORY);
-	}
-
-	public static String getBackpackSoundDirectoryPath() {
-		return buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY, Constants.BACKPACK_SOUND_DIRECTORY);
-	}
-
 	public static void showErrorDialog(Context context, int errorMessageId) {
 		Builder builder = new CustomAlertDialogBuilder(context);
 		builder.setTitle(R.string.error);
@@ -740,10 +732,10 @@ public final class Utils {
 		return getUniqueName(name, nameSet);
 	}
 
-	public static String getUniqueLookName(String name, List<LookData> scope) {
+	public static String getUniqueLookName(String name, List<LookInfo> scope) {
 		Set<String> nameSet = new HashSet<>();
-		for (LookData lookData : scope) {
-			nameSet.add(lookData.getLookName());
+		for (LookInfo lookInfo : scope) {
+			nameSet.add(lookInfo.getName());
 		}
 
 		return getUniqueName(name, nameSet);
@@ -752,7 +744,7 @@ public final class Utils {
 	public static String getUniqueSoundName(String name, List<SoundInfo> scope) {
 		Set<String> nameSet = new HashSet<>();
 		for (SoundInfo soundInfo : scope) {
-			nameSet.add(soundInfo.getTitle());
+			nameSet.add(soundInfo.getName());
 		}
 
 		return getUniqueName(name, nameSet);
@@ -770,54 +762,28 @@ public final class Utils {
 		return newName;
 	}
 
-	public static String getUniqueLookName(LookData lookData, boolean forBackPack) {
-		return searchForNonExistingLookName(lookData, 0, forBackPack);
+	public static String getUniqueLookName(LookInfo lookInfo, boolean forBackPack) {
+		return searchForNonExistingLookName(lookInfo, 0, forBackPack);
 	}
 
-	private static String searchForNonExistingLookName(LookData originalLookData,
+	private static String searchForNonExistingLookName(LookInfo originalLookInfo,
 			int nextNumber, boolean forBackPack) {
 		String newName;
-		List<LookData> lookDataList;
+		List<LookInfo> lookInfoList;
 		if (forBackPack) {
-			lookDataList = BackPackListManager.getInstance().getAllBackPackedLooks();
+			lookInfoList = BackPackListManager.getInstance().getAllBackPackedLooks();
 		} else {
-			lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
+			lookInfoList = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
 		}
 
 		if (nextNumber == 0) {
-			newName = originalLookData.getLookName();
+			newName = originalLookInfo.getName();
 		} else {
-			newName = originalLookData.getLookName() + "_" + nextNumber;
+			newName = originalLookInfo.getName() + "_" + nextNumber;
 		}
-		for (LookData lookData : lookDataList) {
-			if (lookData.getLookName().equals(newName)) {
-				return searchForNonExistingLookName(originalLookData, ++nextNumber, forBackPack);
-			}
-		}
-		return newName;
-	}
-
-	public static String getUniqueSpriteName(Sprite sprite) {
-		return searchForNonExistingSpriteName(sprite, 0);
-	}
-
-	private static String searchForNonExistingSpriteName(Sprite sprite, int nextNumber) {
-		String newName;
-		List<Sprite> spriteList;
-		if (!sprite.isBackpackObject) {
-			spriteList = BackPackListManager.getInstance().getAllBackPackedSprites();
-		} else {
-			spriteList = ProjectManager.getInstance().getCurrentScene().getSpriteList();
-		}
-
-		if (nextNumber == 0) {
-			newName = sprite.getName();
-		} else {
-			newName = sprite.getName() + "_" + nextNumber;
-		}
-		for (Sprite spriteListItem : spriteList) {
-			if (spriteListItem.getName().equals(newName)) {
-				return searchForNonExistingSpriteName(sprite, ++nextNumber);
+		for (LookInfo lookInfo : lookInfoList) {
+			if (lookInfo.getName().equals(newName)) {
+				return searchForNonExistingLookName(originalLookInfo, ++nextNumber, forBackPack);
 			}
 		}
 		return newName;
@@ -909,15 +875,15 @@ public final class Utils {
 
 		if (nextNumber == 0) {
 			if (soundInfo != null) {
-				newTitle = soundInfo.getTitle();
+				newTitle = soundInfo.getName();
 			}
 		} else {
 			if (soundInfo != null) {
-				newTitle = soundInfo.getTitle() + "_" + nextNumber;
+				newTitle = soundInfo.getName() + "_" + nextNumber;
 			}
 		}
 		for (SoundInfo soundInfoFromList : soundInfoList) {
-			if (soundInfoFromList.getTitle().equals(newTitle)) {
+			if (soundInfoFromList.getName().equals(newTitle)) {
 				return searchForNonExistingSoundTitle(soundInfo, ++nextNumber, forBackPack);
 			}
 		}
@@ -988,14 +954,14 @@ public final class Utils {
 				Sprite standardSprite = standardScene.getSpriteList().get(i);
 				Sprite spriteToCheck = sceneToCheck.getSpriteList().get(i);
 
-				for (int t = 0; t < standardSprite.getLookDataList().size(); t++) {
-					LookData standardLook = standardSprite.getLookDataList().get(t);
-					LookData lookToCheck = spriteToCheck.getLookDataList().get(t);
+				for (int t = 0; t < standardSprite.getLookInfoList().size(); t++) {
+					LookInfo standardLook = standardSprite.getLookInfoList().get(t);
+					LookInfo lookToCheck = spriteToCheck.getLookInfoList().get(t);
 
 					result &= standardLook.equals(lookToCheck);
 					if (!result) {
-						Log.e(TAG, "isStandardScene: " + standardLook.getLookName() + " was not the same as "
-								+ lookToCheck.getLookName());
+						Log.e(TAG, "isStandardScene: " + standardLook.getName() + " was not the same as "
+								+ lookToCheck.getName());
 						return false;
 					}
 				}
@@ -1006,8 +972,8 @@ public final class Utils {
 
 					result &= standardSound.equals(soundToCheck);
 					if (!result) {
-						Log.e(TAG, "isStandardScene: " + standardSound.getTitle() + " was not the same as "
-								+ standardSound.getTitle());
+						Log.e(TAG, "isStandardScene: " + standardSound.getName() + " was not the same as "
+								+ standardSound.getName());
 						return false;
 					}
 				}
@@ -1091,8 +1057,8 @@ public final class Utils {
 	}
 
 	public static boolean checkIfLookExists(String name) {
-		for (LookData lookData : ProjectManager.getInstance().getCurrentSprite().getLookDataList()) {
-			if (lookData.getLookName().compareTo(name) == 0) {
+		for (LookInfo lookInfo : ProjectManager.getInstance().getCurrentSprite().getLookInfoList()) {
+			if (lookInfo.getName().compareTo(name) == 0) {
 				return true;
 			}
 		}
@@ -1101,7 +1067,7 @@ public final class Utils {
 
 	public static boolean checkIfSoundExists(String name) {
 		for (SoundInfo soundInfo : ProjectManager.getInstance().getCurrentSprite().getSoundList()) {
-			if (soundInfo.getTitle().compareTo(name) == 0) {
+			if (soundInfo.getName().compareTo(name) == 0) {
 				return true;
 			}
 		}

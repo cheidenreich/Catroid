@@ -22,69 +22,53 @@
  */
 package org.catrobat.catroid.ui.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
-import org.catrobat.catroid.ui.BottomBar;
+import org.catrobat.catroid.common.LookInfo;
+import org.catrobat.catroid.io.StorageHandler;
+import org.catrobat.catroid.io.backpack.BackpackLookController;
 import org.catrobat.catroid.ui.adapter.CheckBoxListAdapter;
 import org.catrobat.catroid.ui.adapter.LookListAdapter;
 import org.catrobat.catroid.ui.controller.BackPackListManager;
-import org.catrobat.catroid.ui.controller.LookController;
-import org.catrobat.catroid.utils.Utils;
+import org.catrobat.catroid.utils.ToastUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 public class BackPackLookListFragment extends BackPackActivityFragment implements CheckBoxListAdapter
-		.ListItemClickHandler<LookData>, CheckBoxListAdapter.ListItemLongClickHandler {
+		.ListItemClickHandler<LookInfo>, CheckBoxListAdapter.ListItemLongClickHandler {
 
 	public static final String TAG = BackPackLookListFragment.class.getSimpleName();
+	public static final String SHARED_PREFERENCE_NAME = "showLookDetails";
 
 	private LookListAdapter lookAdapter;
-	private ListView listView;
-
-	private LookData lookToEdit;
-	private int selectedLookPosition;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View backPackLookListFragment = inflater.inflate(R.layout.fragment_backpack, container, false);
-		listView = (ListView) backPackLookListFragment.findViewById(android.R.id.list);
-
-		return backPackLookListFragment;
+		return inflater.inflate(R.layout.fragment_backpack, container, false);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		registerForContextMenu(listView);
-
-		singleItemTitle = getString(R.string.look);
-		multipleItemsTitle = getString(R.string.looks);
-
-		if (savedInstanceState != null) {
-			lookToEdit = (LookData) savedInstanceState.getSerializable(LookController.BUNDLE_ARGUMENTS_SELECTED_LOOK);
-		}
+		registerForContextMenu(getListView());
+		itemIdentifier = R.plurals.look;
+		deleteDialogTitle = R.plurals.delete_dialog_look;
 
 		initializeList();
 		checkEmptyBackgroundBackPack();
-		BottomBar.hideBottomBar(getActivity());
 	}
 
 	private void initializeList() {
-		List<LookData> lookList = BackPackListManager.getInstance().getBackPackedLooks();
+		List<LookInfo> lookList = BackPackListManager.getInstance().getBackPackedLooks();
 
 		lookAdapter = new LookListAdapter(getActivity(), R.layout.list_item, lookList);
 		setListAdapter(lookAdapter);
@@ -94,131 +78,62 @@ public class BackPackLookListFragment extends BackPackActivityFragment implement
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(LookController.BUNDLE_ARGUMENTS_SELECTED_LOOK, lookToEdit);
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
-
-		if (!Utils.checkForExternalStorageAvailableAndDisplayErrorIfNot(getActivity())) {
-			return;
-		}
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
-				.getApplicationContext());
-
-		setShowDetails(settings.getBoolean(LookController.SHARED_PREFERENCE_NAME, false));
+		loadShowDetailsPreferences(SHARED_PREFERENCE_NAME);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		ProjectManager projectManager = ProjectManager.getInstance();
-		if (projectManager.getCurrentProject() != null) {
-			projectManager.saveProject(getActivity().getApplicationContext());
-		}
-
 		BackPackListManager.getInstance().saveBackpack();
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity()
-				.getApplicationContext());
-		SharedPreferences.Editor editor = settings.edit();
-
-		editor.putBoolean(LookController.SHARED_PREFERENCE_NAME, getShowDetails());
-		editor.commit();
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		if (BackPackListManager.getInstance().getBackPackedLooks().isEmpty()) {
-			menu.findItem(R.id.unpacking).setVisible(false);
-		}
+		saveCurrentProject();
+		putShowDetailsPreferences(SHARED_PREFERENCE_NAME);
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle(lookAdapter.getCheckedItems().get(0).getName());
 		super.onCreateContextMenu(menu, view, menuInfo);
-
-		lookToEdit = lookAdapter.getItem(selectedLookPosition);
-		menu.setHeaderTitle(lookToEdit.getLookName());
-
-		getActivity().getMenuInflater().inflate(R.menu.context_menu_unpacking, menu);
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.context_menu_unpacking:
-				unpackCheckedItems(true);
-				break;
-			case R.id.context_menu_delete:
-				showDeleteDialog(true);
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
-
-	@Override
-	public void handleOnItemClick(int position, View view, LookData listItem) {
-		selectedLookPosition = position;
-		listView.showContextMenuForChild(view);
+	public void handleOnItemClick(int position, View view, LookInfo listItem) {
+		lookAdapter.setAllItemsCheckedTo(false);
+		lookAdapter.addToCheckedItems(listItem);
+		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
 	public void handleOnItemLongClick(int position, View view) {
-		selectedLookPosition = position;
-		listView.showContextMenuForChild(view);
+		LookInfo listItem = lookAdapter.getItem(position);
+		lookAdapter.setAllItemsCheckedTo(false);
+		lookAdapter.addToCheckedItems(listItem);
+		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
-	protected void showDeleteDialog(boolean singleItem) {
-		int titleId;
-		if (lookAdapter.getCheckedItems().size() == 1 || singleItem) {
-			titleId = R.string.dialog_confirm_delete_look_title;
-		} else {
-			titleId = R.string.dialog_confirm_delete_multiple_looks_title;
+	public void deleteCheckedItems() {
+		for (LookInfo lookInfo : lookAdapter.getCheckedItems()) {
+			if (StorageHandler.deleteFile(lookInfo.getAbsolutePath())) {
+				lookAdapter.remove(lookInfo);
+			} else {
+				ToastUtil.showError(getActivity(), R.string.error_delete_look);
+			}
 		}
-		showDeleteDialog(titleId, singleItem);
-	}
-
-	@Override
-	protected void deleteCheckedItems(boolean singleItem) {
-		if (singleItem) {
-			deleteLook();
-			return;
-		}
-		for (LookData look : lookAdapter.getCheckedItems()) {
-			lookToEdit = look;
-			deleteLook();
-		}
-	}
-
-	private void deleteLook() {
-		BackPackListManager.getInstance().removeItemFromLookBackPack(lookToEdit);
-		checkEmptyBackgroundBackPack();
-		lookAdapter.notifyDataSetChanged();
-	}
-
-	protected void unpackCheckedItems(boolean singleItem) {
-		if (singleItem) {
-			unpackLook();
-			showUnpackingCompleteToast(1);
-			return;
-		}
-		for (LookData lookData : lookAdapter.getCheckedItems()) {
-			lookToEdit = lookData;
-			unpackLook();
-		}
-		showUnpackingCompleteToast(lookAdapter.getCheckedItems().size());
 		clearCheckedItems();
 	}
 
-	private void unpackLook() {
-		LookController.getInstance().unpack(lookToEdit, false, false);
+	@Override
+	protected void unpackCheckedItems() {
+		for (LookInfo LookInfo : lookAdapter.getCheckedItems()) {
+			try {
+				LookInfo unpackedLookInfo = BackpackLookController.unpack(LookInfo);
+				ProjectManager.getInstance().getCurrentSprite().getLookInfoList().add(unpackedLookInfo);
+			} catch (IOException e) {
+				ToastUtil.showError(getActivity(), R.string.error_unpack_look);
+			}
+		}
+		clearCheckedItems();
 	}
 }

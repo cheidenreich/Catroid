@@ -30,7 +30,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import junit.framework.Assert;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
@@ -46,13 +46,13 @@ public class CollisionDetectionPolygonCreationTest extends InstrumentationTestCa
 	protected Project project;
 	protected Sprite sprite;
 
-	public static LookData generateLookData(File testImage) {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
+	public static LookInfo generateLookData(File testImage) {
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
 		Pixmap pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
-		return lookData;
+		lookInfo.setPixmap(pixmap);
+		return lookInfo;
 	}
 
 	@Override
@@ -80,10 +80,10 @@ public class CollisionDetectionPolygonCreationTest extends InstrumentationTestCa
 			Assert.fail("Couldn't load file, exception thrown!");
 		}
 
-		LookData lookData = generateLookData(file);
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = generateLookData(file);
+		sprite.getLookInfoList().add(lookInfo);
 
-		CollisionInformation collisionInformation = lookData.getCollisionInformation();
+		CollisionInformation collisionInformation = lookInfo.getCollisionInformation();
 		collisionInformation.loadOrCreateCollisionPolygon();
 		return collisionInformation;
 	}

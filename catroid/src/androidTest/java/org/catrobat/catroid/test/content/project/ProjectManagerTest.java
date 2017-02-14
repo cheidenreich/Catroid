@@ -28,7 +28,7 @@ import android.test.InstrumentationTestCase;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.SingleSprite;
@@ -171,7 +171,7 @@ public class ProjectManagerTest extends InstrumentationTestCase {
 		assertEquals("Wrong sprite name", context.getString(R.string.background), background.getName());
 		assertEquals("Script list not empty", 0, background.getNumberOfScripts());
 		assertEquals("Brick list not empty", 0, background.getNumberOfBricks());
-		assertEquals("Look data not empty", 0, background.getLookDataList().size());
+		assertEquals("Look data not empty", 0, background.getLookInfoList().size());
 		assertEquals("Sound list not empty", 0, background.getSoundList().size());
 	}
 
@@ -224,10 +224,10 @@ public class ProjectManagerTest extends InstrumentationTestCase {
 		SetLookBrick lookBrick = new SetLookBrick();
 		File image = TestUtils.saveFileToProject(projectName, project.getDefaultScene().getName(), "image.png", org.catrobat.catroid.test.R.raw.icon,
 				getInstrumentation().getContext(), 0);
-		LookData lookData = new LookData();
-		lookData.setLookFilename(image.getName());
-		lookData.setLookName("name");
-		lookBrick.setLook(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(image.getName());
+		lookInfo.setName("name");
+		lookBrick.setLook(lookInfo);
 		SetSizeToBrick setSizeToBrick = new SetSizeToBrick(size);
 		ComeToFrontBrick comeToFrontBrick = new ComeToFrontBrick();
 		PlaceAtBrick placeAtBrick = new PlaceAtBrick(xPosition, yPosition);

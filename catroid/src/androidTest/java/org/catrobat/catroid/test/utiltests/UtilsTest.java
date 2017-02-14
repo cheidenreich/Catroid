@@ -28,7 +28,7 @@ import android.util.Log;
 
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DefaultProjectHandler;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -442,13 +442,13 @@ public class UtilsTest extends AndroidTestCase {
 		}
 
 		if (setLookBrick != null) {
-			LookData oldLookData = setLookBrick.getLook();
-			LookData newLookData = new LookData();
-			setLookBrick.setLook(newLookData);
+			LookInfo oldLookInfo = setLookBrick.getLook();
+			LookInfo newLookInfo = new LookInfo();
+			setLookBrick.setLook(newLookInfo);
 			assertFalse("Failed to recognize that the project is not standard after changing the set look brick",
 					Utils.isStandardProject(defaultProject, getContext()));
 
-			setLookBrick.setLook(oldLookData);
+			setLookBrick.setLook(oldLookInfo);
 			assertTrue("Failed to recognize the standard project",
 					Utils.isStandardProject(defaultProject, getContext()));
 		}

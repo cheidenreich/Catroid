@@ -68,7 +68,7 @@ import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.pocketmusic.PocketMusicActivity;
 import org.catrobat.catroid.soundrecorder.SoundRecorderActivity;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.ScriptActivity;
 import org.catrobat.catroid.ui.SoundViewHolder;
@@ -84,14 +84,12 @@ import org.catrobat.catroid.ui.dialogs.NewSoundDialog;
 import org.catrobat.catroid.ui.dialogs.RenameSoundDialog;
 import org.catrobat.catroid.ui.dynamiclistview.DynamicListView;
 import org.catrobat.catroid.utils.SnackbarUtil;
-import org.catrobat.catroid.utils.ToastUtil;
 import org.catrobat.catroid.utils.UtilUi;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
@@ -535,8 +533,8 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 	}
 
 	private void openBackPack() {
-		Intent intent = new Intent(getActivity(), BackPackActivity.class);
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_SOUNDS);
+		Intent intent = new Intent(getActivity(), BackpackActivity.class);
+		intent.putExtra(BackpackActivity.FRAGMENT, BackPackSoundListFragment.class);
 		startActivity(intent);
 	}
 
@@ -638,7 +636,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 	@Override
 	public void showRenameDialog() {
 		RenameSoundDialog renameSoundDialog = new RenameSoundDialog(R.string.rename_sound_dialog, R.string
-				.sound_name, selectedSoundInfo.getTitle());
+				.sound_name, selectedSoundInfo.getName());
 		renameSoundDialog.show(getFragmentManager(), RenameSoundDialog.DIALOG_FRAGMENT_TAG);
 	}
 
@@ -668,7 +666,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 				String newSoundTitle = intent.getExtras().getString(RenameSoundDialog.EXTRA_NEW_SOUND_TITLE);
 
 				if (newSoundTitle != null && !newSoundTitle.equalsIgnoreCase("")) {
-					selectedSoundInfo.setTitle(newSoundTitle);
+					selectedSoundInfo.setName(newSoundTitle);
 					adapter.notifyDataSetChanged();
 				}
 			}
@@ -774,7 +772,7 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 					SoundInfo soundInfo = soundInfoList.get(position);
 					File copiedLookFile = StorageHandler.copyFile(soundInfo.getAbsolutePath());
 
-					String copiedLookName = soundInfo.getTitle() + "_" + R.string.copy_addition;
+					String copiedLookName = soundInfo.getName() + "_" + R.string.copy_addition;
 					Utils.getUniqueSoundName(copiedLookName, soundInfoList);
 
 					SoundInfo copiedSound = new SoundInfo(copiedLookName, copiedLookFile.getName());
@@ -1077,11 +1075,11 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 
 		selectedSoundInfo = soundInfoList.get(position);
 
-		if (selectedSoundInfo.getSoundFileName().matches(".*MUS-.*\\.midi")) {
+		if (selectedSoundInfo.getFileName().matches(".*MUS-.*\\.midi")) {
 			Intent intent = new Intent(getActivity(), PocketMusicActivity.class);
 
-			intent.putExtra("FILENAME", selectedSoundInfo.getSoundFileName());
-			intent.putExtra("TITLE", selectedSoundInfo.getTitle());
+			intent.putExtra("FILENAME", selectedSoundInfo.getFileName());
+			intent.putExtra("TITLE", selectedSoundInfo.getName());
 
 			startActivity(intent);
 		}

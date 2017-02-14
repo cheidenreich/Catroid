@@ -130,14 +130,14 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		soundFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(), "longsound.mp3",
 				RESOURCE_SOUND, getInstrumentation().getContext(), UiTestUtils.FileTypes.SOUND);
 		soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle(FIRST_TEST_SOUND_NAME);
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName(FIRST_TEST_SOUND_NAME);
 
 		soundFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(), "testsoundui.mp3",
 				RESOURCE_SOUND2, getInstrumentation().getContext(), UiTestUtils.FileTypes.SOUND);
 		soundInfo2 = new SoundInfo();
-		soundInfo2.setSoundFileName(soundFile.getName());
-		soundInfo2.setTitle(SECOND_TEST_SOUND_NAME);
+		soundInfo2.setFileName(soundFile.getName());
+		soundInfo2.setName(SECOND_TEST_SOUND_NAME);
 
 		soundInfoList.add(soundInfo);
 		soundInfoList.add(soundInfo2);
@@ -192,20 +192,20 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		solo.goBack();
 		solo.clickOnText(solo.getString(R.string.sounds));
 
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(0).getTitle(), FIRST_TEST_SOUND_NAME);
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(1).getTitle(), SECOND_TEST_SOUND_NAME);
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(2).getTitle(), "TestSound0");
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(3).getTitle(), "TestSound1");
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(4).getTitle(), "TestSound2");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(0).getName(), FIRST_TEST_SOUND_NAME);
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(1).getName(), SECOND_TEST_SOUND_NAME);
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(2).getName(), "TestSound0");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(3).getName(), "TestSound1");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(4).getName(), "TestSound2");
 
 		ArrayList<Integer> yPositionList = UiTestUtils.getListItemYPositions(solo, 1);
 		UiTestUtils.longClickAndDrag(solo, 10, yPositionList.get(4), 10, yPositionList.get(0) - 100, 20);
 
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(0).getTitle(), FIRST_TEST_SOUND_NAME);
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(1).getTitle(), SECOND_TEST_SOUND_NAME);
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(2).getTitle(), "TestSound0");
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(3).getTitle(), "TestSound2");
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(4).getTitle(), "TestSound1");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(0).getName(), FIRST_TEST_SOUND_NAME);
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(1).getName(), SECOND_TEST_SOUND_NAME);
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(2).getName(), "TestSound0");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(3).getName(), "TestSound2");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(4).getName(), "TestSound1");
 	}
 
 	public void testDragAndDropDown() {
@@ -216,20 +216,20 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		solo.goBack();
 		solo.clickOnText(solo.getString(R.string.sounds));
 
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(0).getTitle(), FIRST_TEST_SOUND_NAME);
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(1).getTitle(), SECOND_TEST_SOUND_NAME);
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(2).getTitle(), "TestSound0");
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(3).getTitle(), "TestSound1");
-		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(4).getTitle(), "TestSound2");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(0).getName(), FIRST_TEST_SOUND_NAME);
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(1).getName(), SECOND_TEST_SOUND_NAME);
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(2).getName(), "TestSound0");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(3).getName(), "TestSound1");
+		assertEquals("Wrong List before DragAndDropTest", soundInfoList.get(4).getName(), "TestSound2");
 
 		ArrayList<Integer> yPositionList = UiTestUtils.getListItemYPositions(solo, 1);
 		UiTestUtils.longClickAndDrag(solo, 10, yPositionList.get(1), 10, yPositionList.get(4) + 100, 20);
 
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(0).getTitle(), FIRST_TEST_SOUND_NAME);
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(1).getTitle(), "TestSound0");
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(2).getTitle(), "TestSound1");
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(3).getTitle(), SECOND_TEST_SOUND_NAME);
-		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(4).getTitle(), "TestSound2");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(0).getName(), FIRST_TEST_SOUND_NAME);
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(1).getName(), "TestSound0");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(2).getName(), "TestSound1");
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(3).getName(), SECOND_TEST_SOUND_NAME);
+		assertEquals("Wrong List after DragAndDropTest", soundInfoList.get(4).getName(), "TestSound2");
 	}
 
 	public void testInitialLayout() {
@@ -507,7 +507,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		solo.sleep(TIME_TO_WAIT);
 		int numberSoundsAfter = ProjectManager.getInstance().getCurrentSprite().getSoundList().size();
 		assertEquals("No Sound was added from Media Library!", expectedNumberOfSounds, numberSoundsAfter);
-		String newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(numberSoundsBefore).getTitle();
+		String newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(numberSoundsBefore).getName();
 		assertEquals("Temp File for " + newSoundName + " was not deleted!", false, UiTestUtils
 				.checkTempFileFromMediaLibrary(Constants.TMP_SOUNDS_PATH, newSoundName));
 		solo.sleep(TIME_TO_WAIT);
@@ -542,7 +542,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		numberSoundsAfter = ProjectManager.getInstance().getCurrentSprite().getSoundList().size();
 		assertEquals("Sound was added from Media Library!", expectedNumberOfSounds, numberSoundsAfter);
 		newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(numberSoundsBefore)
-				.getTitle();
+				.getName();
 		assertEquals("Temp File for " + newSoundName + " was not deleted!", false, UiTestUtils
 				.checkTempFileFromMediaLibrary(Constants.TMP_SOUNDS_PATH, newSoundName));
 		solo.sleep(TIME_TO_WAIT);
@@ -571,11 +571,11 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		expectedNumberOfSounds++;
 		numberSoundsAfter = ProjectManager.getInstance().getCurrentSprite().getSoundList().size();
 		assertEquals("Second Sound was not added from Media Library!", expectedNumberOfSounds, numberSoundsAfter);
-		newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(numberSoundsBefore).getTitle();
+		newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(numberSoundsBefore).getName();
 		assertEquals("Temp File for " + newSoundName + " was not deleted!", false, UiTestUtils
 				.checkTempFileFromMediaLibrary(Constants.TMP_SOUNDS_PATH, newSoundName));
 		newSoundName = ProjectManager.getInstance().getCurrentSprite().getSoundList().get(expectedNumberOfSounds - 1)
-				.getTitle();
+				.getName();
 		assertEquals("Temp File for  " + newSoundName + " was not deleted!(", false, UiTestUtils
 				.checkTempFileFromMediaLibrary(Constants.TMP_SOUNDS_PATH, newSoundName));
 	}
@@ -1204,7 +1204,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		soundInfoList = projectManager.getCurrentSprite().getSoundList();
 		solo.sleep(TIME_TO_WAIT);
 		assertEquals("Sound is not correctly renamed in SoundList (1 should be appended)", expectedNewSoundName,
-				soundInfoList.get(checkboxIndex).getTitle());
+				soundInfoList.get(checkboxIndex).getName());
 		assertTrue("Sound not renamed in actual view", solo.searchText(expectedNewSoundName, true));
 	}
 
@@ -1657,8 +1657,8 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 		File soundFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(), fileName,
 				resource, getInstrumentation().getContext(), UiTestUtils.FileTypes.SOUND);
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle(title);
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName(title);
 
 		soundInfoList.add(soundInfo);
 		projectManager.getFileChecksumContainer().addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
@@ -1772,7 +1772,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 	private String getSoundTitle(int soundIndex) {
 		soundInfoList = projectManager.getCurrentSprite().getSoundList();
-		return soundInfoList.get(soundIndex).getTitle();
+		return soundInfoList.get(soundIndex).getName();
 	}
 
 	private void checkIfCheckboxesAreCorrectlyChecked(boolean firstCheckboxExpectedChecked,
@@ -1797,7 +1797,7 @@ public class SoundFragmentTest extends BaseActivityInstrumentationTestCase<MainM
 
 	private void addSoundInfoWithName(String soundName) {
 		SoundInfo soundInfoToAdd = soundInfo.clone();
-		soundInfoToAdd.setTitle(soundName);
+		soundInfoToAdd.setName(soundName);
 		soundInfoList.add(soundInfoToAdd);
 	}
 }

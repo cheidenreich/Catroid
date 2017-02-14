@@ -52,8 +52,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.LookViewHolder;
@@ -95,18 +95,18 @@ public final class LookController {
 	}
 
 	public void updateLookLogic(final int position, final LookViewHolder holder, final LookBaseAdapter lookAdapter) {
-		final LookData lookData = lookAdapter.getLookDataItems().get(position);
+		final LookInfo lookInfo = lookAdapter.getLookInfoItems().get(position);
 
-		if (lookData == null) {
+		if (lookInfo == null) {
 			return;
 		}
 		holder.lookNameTextView.setTag(position);
 		holder.lookElement.setTag(position);
-		holder.lookImageView.setImageBitmap(lookData.getThumbnailBitmap());
-		holder.lookNameTextView.setText(lookData.getLookName());
+		holder.lookImageView.setImageBitmap(lookInfo.getThumbnailBitmap());
+		holder.lookNameTextView.setText(lookInfo.getName());
 
 		boolean checkboxIsVisible = handleCheckboxes(position, holder, lookAdapter);
-		handleDetails(lookData, holder, lookAdapter);
+		handleDetails(lookInfo, holder, lookAdapter);
 
 		// Disable ImageView on active ActionMode
 		if (checkboxIsVisible) {
@@ -148,12 +148,12 @@ public final class LookController {
 		});
 	}
 
-	private void handleDetails(LookData lookData, LookViewHolder holder, LookBaseAdapter lookAdapter) {
+	private void handleDetails(LookInfo lookInfo, LookViewHolder holder, LookBaseAdapter lookAdapter) {
 		if (lookAdapter.getShowDetails()) {
-			if (lookData.getAbsolutePath() != null) {
-				holder.lookFileSizeTextView.setText(UtilFile.getSizeAsString(new File(lookData.getAbsolutePath())));
+			if (lookInfo.getAbsolutePath() != null) {
+				holder.lookFileSizeTextView.setText(UtilFile.getSizeAsString(new File(lookInfo.getAbsolutePath())));
 			}
-			int[] measure = lookData.getMeasure();
+			int[] measure = lookInfo.getMeasure();
 			String measureString = measure[0] + " x " + measure[1];
 
 			holder.lookMeasureTextView.setText(measureString);
@@ -214,7 +214,7 @@ public final class LookController {
 		return new CursorLoader(activity, imageUri, projection, null, null, null);
 	}
 
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data, Activity activity, List<LookData> lookDataList,
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data, Activity activity, List<LookInfo> lookInfoList,
 			LookFragment fragment) {
 		String originalImagePath = "";
 		CursorLoader cursorLoader = (CursorLoader) loader;
@@ -239,75 +239,75 @@ public final class LookController {
 			Utils.showErrorDialog(activity, R.string.error_load_image);
 			return;
 		}
-		copyImageToCatroid(originalImagePath, activity, lookDataList, fragment);
+		copyImageToCatroid(originalImagePath, activity, lookInfoList, fragment);
 	}
 
-	public LookData updateLookBackPackAfterUnpacking(LookData lookData, LookBaseAdapter adapter, String name, boolean
+	public LookInfo updateLookBackPackAfterUnpacking(LookInfo lookInfo, LookBaseAdapter adapter, String name, boolean
 			delete, String existingFileNameInProjectDirectory, boolean fromHiddenBackPack) {
 		String fileName;
 		if (existingFileNameInProjectDirectory == null) {
-			fileName = lookData.getLookFileName();
+			fileName = lookInfo.getFileName();
 			String fileFormat = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
 			fileName = fileName.substring(0, fileName.indexOf('_') + 1) + name + fileFormat;
 		} else {
 			fileName = existingFileNameInProjectDirectory;
 		}
 
-		LookData newLookData = new LookData(name, fileName);
-		ProjectManager.getInstance().getCurrentSprite().getLookDataList().add(newLookData);
+		LookInfo newLookInfo = new LookInfo(name, fileName);
+		ProjectManager.getInstance().getCurrentSprite().getLookInfoList().add(newLookInfo);
 
 		if (delete) {
 			if (fromHiddenBackPack) {
-				BackPackListManager.getInstance().removeItemFromLookHiddenBackpack(lookData);
+				BackPackListManager.getInstance().removeItemFromLookHiddenBackpack(lookInfo);
 			} else {
-				BackPackListManager.getInstance().removeItemFromLookBackPack(lookData);
+				BackPackListManager.getInstance().removeItemFromLookBackPack(lookInfo);
 			}
 
 			//TODO REFACTOR: handle error if not deleted:
-			StorageHandler.deleteFile(lookData.getAbsoluteBackPackPath());
+			StorageHandler.deleteFile(lookInfo.getAbsoluteBackPackPath());
 		}
 
 		if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}
-		return newLookData;
+		return newLookInfo;
 	}
 
-	public void updateLookAdapter(String name, String fileName, List<LookData> lookDataList, LookFragment fragment) {
-		updateLookAdapter(name, fileName, lookDataList, fragment, false);
+	public void updateLookAdapter(String name, String fileName, List<LookInfo> lookInfoList, LookFragment fragment) {
+		updateLookAdapter(name, fileName, lookInfoList, fragment, false);
 	}
 
-	private void updateLookAdapter(String name, String fileName, List<LookData> lookDataList, LookFragment fragment,
+	private void updateLookAdapter(String name, String fileName, List<LookInfo> lookInfoList, LookFragment fragment,
 			boolean isDroneVideo) {
-		LookData lookData;
+		LookInfo lookInfo;
 
 		if (isDroneVideo) {
-			lookData = new DroneVideoLookData();
+			lookInfo = new DroneVideoLookInfo();
 		} else {
-			lookData = new LookData();
+			lookInfo = new LookInfo();
 		}
 
-		lookData.setLookFilename(fileName);
-		lookData.setLookName(name);
-		lookDataList.add(lookData);
-		fragment.updateLookAdapter(lookData);
+		lookInfo.setFileName(fileName);
+		lookInfo.setName(name);
+		lookInfoList.add(lookInfo);
+		fragment.updateLookAdapter(lookInfo);
 
 		if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
-			lookData.getCollisionInformation().calculate();
+			lookInfo.getCollisionInformation().calculate();
 		}
 	}
 
-	public static LookData createLookFromBitmapResource(Resources res, int imageId, String outputImageName)
+	public static LookInfo createLookFromBitmapResource(Resources res, int imageId, String outputImageName)
 			throws IOException {
 
 		Bitmap newImage = BitmapFactory.decodeResource(res, imageId);
-		File outputFile = new File(ProjectManager.getInstance().getImageDirectory(), outputImageName);
+		File outputFile = new File(ProjectManager.getInstance().getCurrentScene().getImageDirectory(), outputImageName);
 		StorageHandler.saveBitmapToImageFile(outputFile, newImage);
 
-		return new LookData(outputImageName, outputFile.getName());
+		return new LookInfo(outputImageName, outputFile.getName());
 	}
 
-	private void copyImageToCatroid(String originalImagePath, Activity activity, List<LookData> lookDataList,
+	private void copyImageToCatroid(String originalImagePath, Activity activity, List<LookInfo> lookInfoList,
 			LookFragment fragment) {
 		try {
 			int[] imageDimensions = ImageEditing.getImageDimensions(originalImagePath);
@@ -363,7 +363,7 @@ public final class LookController {
 					return;
 				}
 			}
-			updateLookAdapter(imageName, imageFileName, lookDataList, fragment);
+			updateLookAdapter(imageName, imageFileName, lookInfoList, fragment);
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error, all error handling should be done outside of this method, rethrow exception
 			Log.e(TAG, "Error loading image in copyImageToCatroid IOException");
@@ -377,7 +377,7 @@ public final class LookController {
 		activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
 	}
 
-	public void loadImageIntoCatroid(Intent intent, Activity activity, List<LookData> lookDataList,
+	public void loadImageIntoCatroid(Intent intent, Activity activity, List<LookInfo> lookInfoList,
 			LookFragment fragment) {
 		String originalImagePath = "";
 		//get path of image - will work for most applications
@@ -403,11 +403,11 @@ public final class LookController {
 			arguments.putParcelable(LOADER_ARGUMENTS_IMAGE_URI, intent.getData());
 			fragment.initOrRestartLoader(arguments);
 		} else {
-			copyImageToCatroid(originalImagePath, activity, lookDataList, fragment);
+			copyImageToCatroid(originalImagePath, activity, lookInfoList, fragment);
 		}
 	}
 
-	public void loadPocketPaintImageIntoCatroid(Intent intent, Activity activity, LookData selectedLookData) {
+	public void loadPocketPaintImageIntoCatroid(Intent intent, Activity activity, LookInfo selectedLookInfo) {
 		Bundle bundle = intent.getExtras();
 		String pathOfPocketPaintImage = bundle.getString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT);
 
@@ -420,8 +420,8 @@ public final class LookController {
 
 		String editedFileChecksum = Utils.md5Checksum(new File(pathOfPocketPaintImage));
 
-		// If look changed --> saving new image with new checksum and changing lookData
-		if (!selectedLookData.getChecksum().equalsIgnoreCase(editedFileChecksum)) {
+		// If look changed --> saving new image with new checksum and changing lookInfo
+		if (!selectedLookInfo.getChecksum().equalsIgnoreCase(editedFileChecksum)) {
 
 			String projectName = ProjectManager.getInstance().getCurrentProject().getName();
 			String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
@@ -437,13 +437,13 @@ public final class LookController {
 				//TODO REFACTOR: handle error
 			}
 
-			StorageHandler.deleteFile(selectedLookData.getAbsolutePath());
+			StorageHandler.deleteFile(selectedLookInfo.getAbsolutePath());
 
-			selectedLookData.setLookFilename(imageFile.getName());
-			selectedLookData.resetThumbnailBitmap();
+			selectedLookInfo.setFileName(imageFile.getName());
+			selectedLookInfo.resetThumbnailBitmap();
 
 			if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
-				selectedLookData.getCollisionInformation().calculate();
+				selectedLookInfo.getCollisionInformation().calculate();
 			}
 		}
 
@@ -452,7 +452,7 @@ public final class LookController {
 	}
 
 	public void loadPictureFromCameraIntoCatroid(Uri lookFromCameraUri, Activity activity,
-			List<LookData> lookData, LookFragment fragment) {
+			List<LookInfo> lookInfo, LookFragment fragment) {
 		if (lookFromCameraUri != null) {
 			String originalImagePath = lookFromCameraUri.getPath();
 
@@ -462,7 +462,7 @@ public final class LookController {
 				Utils.showErrorDialog(activity, R.string.error_load_image);
 				return;
 			}
-			copyImageToCatroid(originalImagePath, activity, lookData, fragment);
+			copyImageToCatroid(originalImagePath, activity, lookInfo, fragment);
 
 			File pictureOnSdCard = new File(lookFromCameraUri.getPath());
 			pictureOnSdCard.delete();
@@ -470,10 +470,10 @@ public final class LookController {
 	}
 
 	public void loadPictureFromLibraryIntoCatroid(String filePath, Activity activity,
-			List<LookData> lookData, LookFragment fragment) {
+			List<LookInfo> lookInfo, LookFragment fragment) {
 		File mediaImage = null;
 		mediaImage = new File(filePath);
-		copyImageToCatroid(mediaImage.toString(), activity, lookData, fragment);
+		copyImageToCatroid(mediaImage.toString(), activity, lookInfo, fragment);
 		File pictureOnSdCard = new File(mediaImage.getPath());
 		pictureOnSdCard.delete();
 	}
@@ -508,27 +508,27 @@ public final class LookController {
 		return true;
 	}
 
-	public boolean otherLookDataItemsHaveAFileReference(LookData lookDataToCheck) {
-		for (LookData lookData : BackPackListManager.getInstance().getAllBackPackedLooks()) {
-			if (lookData.equals(lookDataToCheck)) {
+	public boolean otherLookDataItemsHaveAFileReference(LookInfo lookInfoToCheck) {
+		for (LookInfo lookInfo : BackPackListManager.getInstance().getAllBackPackedLooks()) {
+			if (lookInfo.equals(lookInfoToCheck)) {
 				continue;
 			}
-			if (lookData.getLookFileName().equals(lookDataToCheck.getLookFileName())) {
+			if (lookInfo.getFileName().equals(lookInfoToCheck.getFileName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean deleteLook(LookData look) {
+	public boolean deleteLook(LookInfo look) {
 		look.getCollisionInformation().cancelCalculation();
 		return StorageHandler.deleteFile(look.getAbsolutePath());
 	}
 
-	public boolean checkLookReplaceInBackpack(List<LookData> currentLookDataList) {
+	public boolean checkLookReplaceInBackpack(List<LookInfo> currentLookInfoList) {
 		boolean looksAlreadyInBackpack = false;
-		for (LookData lookData : currentLookDataList) {
-			looksAlreadyInBackpack = checkLookReplaceInBackpack(lookData);
+		for (LookInfo lookInfo : currentLookInfoList) {
+			looksAlreadyInBackpack = checkLookReplaceInBackpack(lookInfo);
 			if (looksAlreadyInBackpack) {
 				return looksAlreadyInBackpack;
 			}
@@ -536,11 +536,11 @@ public final class LookController {
 		return looksAlreadyInBackpack;
 	}
 
-	public boolean checkLookReplaceInBackpack(LookData currentLookData) {
-		return BackPackListManager.getInstance().backPackedLooksContain(currentLookData, true);
+	public boolean checkLookReplaceInBackpack(LookInfo currentLookInfo) {
+		return BackPackListManager.getInstance().backPackedLooksContain(currentLookInfo, true);
 	}
 
-	public void showBackPackReplaceDialog(final List<LookData> currentLookDataList, final Context context) {
+	public void showBackPackReplaceDialog(final List<LookInfo> currentLookInfoList, final Context context) {
 		Resources resources = context.getResources();
 		String replaceLookMessage = resources.getString(R.string.backpack_replace_look_multiple);
 
@@ -550,7 +550,7 @@ public final class LookController {
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						for (LookData currentLookData : currentLookDataList) {
+						for (LookInfo currentLookData : currentLookInfoList) {
 							backPackVisibleLook(currentLookData);
 						}
 						onBackpackLookCompleteListener.onBackpackLookComplete(true);
@@ -567,9 +567,9 @@ public final class LookController {
 		dialog.show();
 	}
 
-	public void showBackPackReplaceDialog(final LookData currentLookData, final Context context) {
+	public void showBackPackReplaceDialog(final LookInfo currentLookInfo, final Context context) {
 		Resources resources = context.getResources();
-		String replaceLookMessage = resources.getString(R.string.backpack_replace_look, currentLookData.getLookName());
+		String replaceLookMessage = resources.getString(R.string.backpack_replace_look, currentLookInfo.getName());
 
 		AlertDialog dialog = new CustomAlertDialogBuilder(context)
 				.setTitle(R.string.backpack)
@@ -577,7 +577,7 @@ public final class LookController {
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						backPackVisibleLook(currentLookData);
+						backPackVisibleLook(currentLookInfo);
 						onBackpackLookCompleteListener.onBackpackLookComplete(true);
 						dialog.dismiss();
 					}
@@ -591,74 +591,74 @@ public final class LookController {
 		dialog.show();
 	}
 
-	public void backPackVisibleLook(LookData currentLookData) {
-		String lookDataName = currentLookData.getLookName();
+	public void backPackVisibleLook(LookInfo currentLookInfo) {
+		String lookDataName = currentLookInfo.getName();
 		BackPackListManager.getInstance().removeItemFromLookBackPackByLookName(lookDataName);
-		backPack(currentLookData, lookDataName, false);
+		backPack(currentLookInfo, lookDataName, false);
 	}
 
-	public LookData backPackHiddenLook(LookData currentLookData) {
-		if (BackPackListManager.getInstance().backPackedLooksContain(currentLookData, false)) {
-			return currentLookData;
+	public LookInfo backPackHiddenLook(LookInfo currentLookInfo) {
+		if (BackPackListManager.getInstance().backPackedLooksContain(currentLookInfo, false)) {
+			return currentLookInfo;
 		}
-		String newLookDataName = Utils.getUniqueLookName(currentLookData, true);
-		return backPack(currentLookData, newLookDataName, true);
+		String newLookDataName = Utils.getUniqueLookName(currentLookInfo, true);
+		return backPack(currentLookInfo, newLookDataName, true);
 	}
 
-	private LookData backPack(LookData currentLookData, String newLookDataName, boolean addToHiddenBackpack) {
-		String existingFileNameInBackPackDirectory = lookFileAlreadyInBackPackDirectory(currentLookData);
-		currentLookData.isBackpackLookData = true;
+	private LookInfo backPack(LookInfo currentLookInfo, String newLookDataName, boolean addToHiddenBackpack) {
+		String existingFileNameInBackPackDirectory = lookFileAlreadyInBackPackDirectory(currentLookInfo);
+		currentLookInfo.isBackpackLookData = true;
 		File backPackedFile = null;
-		if (existingFileNameInBackPackDirectory == null && currentLookData != null
-				&& currentLookData.getAbsolutePath() != null && !currentLookData.getAbsolutePath().isEmpty()) {
-			backPackedFile = copyLookBackPack(currentLookData, newLookDataName, false);
+		if (existingFileNameInBackPackDirectory == null && currentLookInfo != null
+				&& currentLookInfo.getAbsolutePath() != null && !currentLookInfo.getAbsolutePath().isEmpty()) {
+			backPackedFile = copyLookBackPack(currentLookInfo, newLookDataName, false);
 		}
-		return updateLookBackPackAfterInsertion(newLookDataName, currentLookData,
+		return updateLookBackPackAfterInsertion(newLookDataName, currentLookInfo,
 				existingFileNameInBackPackDirectory, addToHiddenBackpack, backPackedFile);
 	}
 
-	public LookData unpack(LookData selectedLookDataBackPack, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
-		if (fromHiddenBackPack && ProjectManager.getInstance().getCurrentSprite().containsLookData(selectedLookDataBackPack)) {
-			return selectedLookDataBackPack;
+	public LookInfo unpack(LookInfo selectedLookInfoBackPack, boolean deleteUnpackedItems, boolean fromHiddenBackPack) {
+		if (fromHiddenBackPack && ProjectManager.getInstance().getCurrentSprite().containsLookData(selectedLookInfoBackPack)) {
+			return selectedLookInfoBackPack;
 		}
-		selectedLookDataBackPack.isBackpackLookData = true;
-		String newLookDataName = Utils.getUniqueLookName(selectedLookDataBackPack, false);
-		String existingFileNameInProjectDirectory = lookFileAlreadyInProjectDirectory(selectedLookDataBackPack);
+		selectedLookInfoBackPack.isBackpackLookData = true;
+		String newLookDataName = Utils.getUniqueLookName(selectedLookInfoBackPack, false);
+		String existingFileNameInProjectDirectory = lookFileAlreadyInProjectDirectory(selectedLookInfoBackPack);
 		if (existingFileNameInProjectDirectory == null) {
 			Log.d(TAG, "copyLookBackPack" + newLookDataName);
-			copyLookBackPack(selectedLookDataBackPack, newLookDataName, true);
+			copyLookBackPack(selectedLookInfoBackPack, newLookDataName, true);
 		}
-		return LookController.getInstance().updateLookBackPackAfterUnpacking(selectedLookDataBackPack,
+		return LookController.getInstance().updateLookBackPackAfterUnpacking(selectedLookInfoBackPack,
 				BackPackListManager.getInstance().getCurrentLookAdapter(), newLookDataName, deleteUnpackedItems,
 				existingFileNameInProjectDirectory, fromHiddenBackPack);
 	}
 
-	private String lookFileAlreadyInBackPackDirectory(LookData lookDataToCheck) {
-		for (LookData lookData : BackPackListManager.getInstance().getAllBackPackedLooks()) {
-			if (lookData.getChecksum().equals(lookDataToCheck.getChecksum())) {
-				return lookData.getLookFileName();
+	private String lookFileAlreadyInBackPackDirectory(LookInfo lookInfoToCheck) {
+		for (LookInfo lookInfo : BackPackListManager.getInstance().getAllBackPackedLooks()) {
+			if (lookInfo.getChecksum().equals(lookInfoToCheck.getChecksum())) {
+				return lookInfo.getFileName();
 			}
 		}
 		return null;
 	}
 
-	private String lookFileAlreadyInProjectDirectory(LookData lookDataToCheck) {
+	private String lookFileAlreadyInProjectDirectory(LookInfo lookInfoToCheck) {
 		List<Sprite> spritesToCheck = ProjectManager.getInstance().getCurrentScene().getSpriteList();
 		for (Sprite sprite : spritesToCheck) {
-			for (LookData lookData : sprite.getLookDataList()) {
-				if (lookData.getChecksum().equals(lookDataToCheck.getChecksum())) {
-					return lookData.getLookFileName();
+			for (LookInfo lookInfo : sprite.getLookInfoList()) {
+				if (lookInfo.getChecksum().equals(lookInfoToCheck.getChecksum())) {
+					return lookInfo.getFileName();
 				}
 			}
 		}
 		return null;
 	}
 
-	private LookData updateLookBackPackAfterInsertion(String title, LookData currentLookData, String existingFileNameInBackPackDirectory, boolean addToHiddenBackpack, File backPackedFile) {
+	private LookInfo updateLookBackPackAfterInsertion(String title, LookInfo currentLookInfo, String existingFileNameInBackPackDirectory, boolean addToHiddenBackpack, File backPackedFile) {
 		String fileName = null;
 		if (existingFileNameInBackPackDirectory == null) {
-			if (currentLookData != null) {
-				fileName = currentLookData.getLookFileName();
+			if (currentLookInfo != null) {
+				fileName = currentLookInfo.getFileName();
 				String hash = backPackedFile == null ? fileName.substring(0, 32) : Utils.md5Checksum(backPackedFile);
 				if (backPackedFile == null) {
 					Log.e(TAG, "backpacked file was null, file hash is possibly wrong");
@@ -670,21 +670,21 @@ public final class LookController {
 			fileName = existingFileNameInBackPackDirectory;
 		}
 
-		LookData newLookData = new LookData(title, fileName);
-		newLookData.isBackpackLookData = true;
+		LookInfo newLookInfo = new LookInfo(title, fileName);
+		newLookInfo.isBackpackLookData = true;
 
 		if (addToHiddenBackpack) {
-			BackPackListManager.getInstance().addLookToHiddenBackPack(newLookData);
+			BackPackListManager.getInstance().addLookToHiddenBackPack(newLookInfo);
 		} else {
-			BackPackListManager.getInstance().addLookToBackPack(newLookData);
+			BackPackListManager.getInstance().addLookToBackPack(newLookInfo);
 		}
 
-		return newLookData;
+		return newLookInfo;
 	}
 
-	private File copyLookBackPack(LookData selectedlookData, String newLookDataName, boolean copyFromBackpack) {
+	private File copyLookBackPack(LookInfo selectedlookInfo, String newLookDataName, boolean copyFromBackpack) {
 		try {
-			return StorageHandler.getInstance().copyImageBackPack(selectedlookData, newLookDataName, copyFromBackpack);
+			return StorageHandler.getInstance().copyImageBackPack(selectedlookInfo, newLookDataName, copyFromBackpack);
 		} catch (IOException ioException) {
 			Log.e(TAG, Log.getStackTraceString(ioException));
 		}

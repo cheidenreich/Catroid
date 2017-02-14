@@ -27,7 +27,7 @@ import android.test.InstrumentationTestCase;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.FileChecksumContainer;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -53,7 +53,6 @@ import org.catrobat.catroid.content.bricks.WhenStartedBrick;
 import org.catrobat.catroid.exceptions.ProjectException;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.test.utils.TestUtils;
-import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
@@ -189,13 +188,13 @@ public class MediaPathTest extends InstrumentationTestCase {
 	public void testIncrementUsage() {
 		FileChecksumContainer container = ProjectManager.getInstance().getFileChecksumContainer();
 		Sprite testSprite = new SingleSprite("testSprite");
-		ArrayList<LookData> lookDataList = new ArrayList<LookData>();
+		ArrayList<LookInfo> lookInfoList = new ArrayList<LookInfo>();
 
-		LookData lookData = new LookData();
-		lookData.setLookName("testLook");
-		lookData.setLookFilename(Utils.md5Checksum(testImage) + "_" + testImage.getName());
-		lookDataList.add(lookData);
-		testSprite.setLookDataList(lookDataList);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setName("testLook");
+		lookInfo.setFileName(Utils.md5Checksum(testImage) + "_" + testImage.getName());
+		lookInfoList.add(lookInfo);
+		testSprite.setLookDataList(lookInfoList);
 		project.getDefaultScene().addSprite(testSprite);
 		project.getDefaultScene().addSprite(testSprite.clone());
 
@@ -287,11 +286,11 @@ public class MediaPathTest extends InstrumentationTestCase {
 		project.getDefaultScene().addSprite(sprite);
 
 		SetLookBrick lookBrick2 = new SetLookBrick();
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImageCopy2.getName());
-		lookData.setLookName("testImageCopy2");
-		lookBrick2.setLook(lookData);
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImageCopy2.getName());
+		lookInfo.setName("testImageCopy2");
+		lookBrick2.setLook(lookInfo);
+		sprite.getLookInfoList().add(lookInfo);
 
 		ArrayList<Brick> brickList1 = new ArrayList<Brick>();
 		ArrayList<Brick> brickList2 = new ArrayList<Brick>();
@@ -304,16 +303,16 @@ public class MediaPathTest extends InstrumentationTestCase {
 		brickList1.add(lookBrick2);
 
 		SetLookBrick lookBrick = new SetLookBrick();
-		lookData = new LookData();
-		lookData.setLookFilename(testImageCopy.getName());
-		lookData.setLookName("testImageCopy");
-		lookBrick.setLook(lookData);
-		sprite.getLookDataList().add(lookData);
+		lookInfo = new LookInfo();
+		lookInfo.setFileName(testImageCopy.getName());
+		lookInfo.setName("testImageCopy");
+		lookBrick.setLook(lookInfo);
+		sprite.getLookInfoList().add(lookInfo);
 
 		PlaySoundBrick soundBrick = new PlaySoundBrick();
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(testSoundCopy.getName());
-		soundInfo.setTitle("title");
+		soundInfo.setFileName(testSoundCopy.getName());
+		soundInfo.setName("title");
 		soundBrick.setSoundInfo(soundInfo);
 		sprite.getSoundList().add(soundInfo);
 

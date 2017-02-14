@@ -32,7 +32,7 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.SingleSprite;
 import org.catrobat.catroid.content.Sprite;
@@ -111,10 +111,10 @@ public class PhysicsShapeBuilderTest extends InstrumentationTestCase {
 	}
 
 	public void testSimpleSingleConvexPolygon() {
-		LookData lookData = PhysicsTestUtils.generateLookData(simpleSingleConvexPolygonFile);
-		physicsLook.setLookData(lookData);
+		LookInfo lookInfo = PhysicsTestUtils.generateLookData(simpleSingleConvexPolygonFile);
+		physicsLook.setLookInfo(lookInfo);
 
-		Shape[] shapes = physicsShapeBuilder.getScaledShapes(lookData,
+		Shape[] shapes = physicsShapeBuilder.getScaledShapes(lookInfo,
 				sprite.look.getSizeInUserInterfaceDimensionUnit() / 100f);
 
 		int expectedPolynoms = 1;
@@ -123,16 +123,16 @@ public class PhysicsShapeBuilderTest extends InstrumentationTestCase {
 	}
 
 	public void testDifferentAccuracySettings() {
-		LookData lookData = PhysicsTestUtils.generateLookData(complexSingleConvexPolygonFile);
-		physicsLook.setLookData(lookData);
+		LookInfo lookInfo = PhysicsTestUtils.generateLookData(complexSingleConvexPolygonFile);
+		physicsLook.setLookInfo(lookInfo);
 
 		float[] accuracyLevels = (float[]) Reflection.getPrivateField(PhysicsShapeBuilder.class, "ACCURACY_LEVELS");
 
-		Shape[] lowerAccuracyShapes = physicsShapeBuilder.getScaledShapes(lookData, accuracyLevels[0]);
+		Shape[] lowerAccuracyShapes = physicsShapeBuilder.getScaledShapes(lookInfo, accuracyLevels[0]);
 		Shape[] lowestAccuracyShapes = lowerAccuracyShapes;
 		Shape[] highestAccuracyShapes = null;
 		for (int accuracyIdx = 1; accuracyIdx < accuracyLevels.length; accuracyIdx++) {
-			Shape[] higherAccuracyShapes = physicsShapeBuilder.getScaledShapes(lookData, accuracyLevels[accuracyIdx]);
+			Shape[] higherAccuracyShapes = physicsShapeBuilder.getScaledShapes(lookInfo, accuracyLevels[accuracyIdx]);
 			assertTrue("lower accuracy must have less or equal shapes than higher accuracy", lowerAccuracyShapes
 					.length <= higherAccuracyShapes.length);
 			lowerAccuracyShapes = higherAccuracyShapes;

@@ -24,7 +24,7 @@ package org.catrobat.catroid.content.actions;
 
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Sprite;
 
 import java.util.List;
@@ -35,13 +35,13 @@ public class NextLookAction extends TemporalAction {
 
 	@Override
 	protected void update(float delta) {
-		final List<LookData> lookDataList = sprite.getLookDataList();
-		int lookDataListSize = lookDataList.size();
+		final List<LookInfo> lookInfoList = sprite.getLookInfoList();
+		int lookDataListSize = lookInfoList.size();
 
-		if (lookDataListSize > 0 && sprite.look.getLookData() != null) {
-			LookData currentLookData = sprite.look.getLookData();
-			int newIndex = (lookDataList.indexOf(currentLookData) + 1) % lookDataListSize;
-			sprite.look.setLookData(lookDataList.get(newIndex));
+		if (lookDataListSize > 0 && sprite.look.getLookInfo() != null) {
+			LookInfo currentLookInfo = sprite.look.getLookInfo();
+			int newIndex = (lookInfoList.indexOf(currentLookInfo) + 1) % lookDataListSize;
+			sprite.look.setLookInfo(lookInfoList.get(newIndex));
 		}
 	}
 

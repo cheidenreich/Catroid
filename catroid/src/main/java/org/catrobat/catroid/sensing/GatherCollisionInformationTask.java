@@ -27,7 +27,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Sprite;
 
 public class GatherCollisionInformationTask extends AsyncTask<Void, Void, Boolean> {
@@ -55,12 +55,12 @@ public class GatherCollisionInformationTask extends AsyncTask<Void, Void, Boolea
 	private void getCollisionInformation() {
 		Log.i(TAG, "Waiting for all calculation threads to finish...");
 		for (Sprite s : ProjectManager.getInstance().getCurrentScene().getSpriteList()) {
-			for (LookData lookData : s.getLookDataList()) {
-				if (lookData.getCollisionInformation().collisionPolygonCalculationThread == null) {
+			for (LookInfo lookInfo : s.getLookInfoList()) {
+				if (lookInfo.getCollisionInformation().collisionPolygonCalculationThread == null) {
 					continue;
 				}
 				try {
-					lookData.getCollisionInformation().collisionPolygonCalculationThread.join();
+					lookInfo.getCollisionInformation().collisionPolygonCalculationThread.join();
 				} catch (InterruptedException e) {
 					Log.i(TAG, "Thread got interupted");
 				}
@@ -69,7 +69,7 @@ public class GatherCollisionInformationTask extends AsyncTask<Void, Void, Boolea
 
 		for (Sprite s : ProjectManager.getInstance().getCurrentScene().getSpriteList()) {
 			if (s.hasCollision()) {
-				for (LookData l : s.getLookDataList()) {
+				for (LookInfo l : s.getLookInfoList()) {
 					l.getCollisionInformation().loadOrCreateCollisionPolygon();
 				}
 			}

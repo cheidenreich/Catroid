@@ -62,11 +62,11 @@ import android.widget.TextView;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneVideoLookData;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.DroneVideoLookInfo;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.io.StorageHandler;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.LookViewHolder;
 import org.catrobat.catroid.ui.ScriptActivity;
@@ -105,8 +105,8 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	private static String multipleItemAppendixActionMode;
 	public Intent lastReceivedIntent = null;
 	private LookBaseAdapter adapter;
-	private List<LookData> lookDataList;
-	private LookData selectedLookData;
+	private List<LookInfo> lookInfoList;
+	private LookInfo selectedLookInfo;
 	private Uri lookFromCameraUri = null;
 	private ListView listView;
 	private LookRenamedReceiver lookRenamedReceiver;
@@ -150,15 +150,15 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		public void onDestroyActionMode(ActionMode mode) {
 			for (int position : adapter.getCheckedItems()) {
 				try {
-					LookData lookData = lookDataList.get(position);
-					File copiedLookFile = StorageHandler.copyFile(lookData.getAbsolutePath());
+					LookInfo lookInfo = lookInfoList.get(position);
+					File copiedLookFile = StorageHandler.copyFile(lookInfo.getAbsolutePath());
 
-					String copiedLookName = lookData.getLookName() + "_" + R.string.copy_addition;
-					Utils.getUniqueLookName(copiedLookName, lookDataList);
+					String copiedLookName = lookInfo.getName() + "_" + R.string.copy_addition;
+					Utils.getUniqueLookName(copiedLookName, lookInfoList);
 
-					LookData copiedLook = new LookData(copiedLookName, copiedLookFile.getName());
+					LookInfo copiedLook = new LookInfo(copiedLookName, copiedLookFile.getName());
 
-					lookDataList.add(copiedLook);
+					lookInfoList.add(copiedLook);
 					updateLookAdapter(copiedLook);
 
 					activity.sendBroadcast(new Intent(ScriptActivity.ACTION_BRICK_LIST_CHANGED));
@@ -202,7 +202,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 			if (iterator.hasNext()) {
 				int position = iterator.next();
-				selectedLookData = (LookData) listView.getItemAtPosition(position);
+				selectedLookInfo = (LookInfo) listView.getItemAtPosition(position);
 				showRenameDialog();
 			}
 			clearCheckedLooksAndEnableButtons();
@@ -308,7 +308,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		}
 
 		if (savedInstanceState != null) {
-			selectedLookData = (LookData) savedInstanceState
+			selectedLookInfo = (LookInfo) savedInstanceState
 					.getSerializable(LookController.BUNDLE_ARGUMENTS_SELECTED_LOOK);
 
 			boolean uriIsSet = savedInstanceState.getBoolean(LookController.BUNDLE_ARGUMENTS_URI_IS_SET);
@@ -319,13 +319,13 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		}
 
 		try {
-			lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
+			lookInfoList = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
 		} catch (NullPointerException nullPointerException) {
 			Log.e(TAG, Log.getStackTraceString(nullPointerException));
-			lookDataList = new ArrayList<>();
+			lookInfoList = new ArrayList<>();
 		}
 
-		((DynamicListView) getListView()).setDataList(lookDataList);
+		((DynamicListView) getListView()).setDataList(lookInfoList);
 
 		if (ProjectManager.getInstance().getCurrentSpritePosition() == 0) {
 			TextView emptyViewHeading = (TextView) activity.findViewById(R.id.fragment_look_text_heading);
@@ -336,7 +336,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		}
 
 		adapter = new LookAdapter(activity, R.layout.fragment_look_looklist_item,
-				R.id.fragment_look_item_name_text_view, lookDataList, false);
+				R.id.fragment_look_item_name_text_view, lookInfoList, false);
 		adapter.setOnLookEditListener(this);
 		setListAdapter(adapter);
 		((LookAdapter) adapter).setLookFragment(this);
@@ -365,7 +365,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putBoolean(LookController.BUNDLE_ARGUMENTS_URI_IS_SET, (lookFromCameraUri != null));
-		outState.putSerializable(LookController.BUNDLE_ARGUMENTS_SELECTED_LOOK, selectedLookData);
+		outState.putSerializable(LookController.BUNDLE_ARGUMENTS_SELECTED_LOOK, selectedLookInfo);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -457,8 +457,8 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		editor.commit();
 	}
 
-	public void setSelectedLookData(LookData lookData) {
-		selectedLookData = lookData;
+	public void setSelectedLookInfo(LookInfo lookInfo) {
+		selectedLookInfo = lookInfo;
 	}
 
 	@Override
@@ -469,35 +469,35 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 			switch (requestCode) {
 				case LookController.REQUEST_SELECT_OR_DRAW_IMAGE:
 					if (data != null) {
-						LookController.getInstance().loadImageIntoCatroid(data, activity, lookDataList, this);
+						LookController.getInstance().loadImageIntoCatroid(data, activity, lookInfoList, this);
 					}
 					break;
 				case LookController.REQUEST_POCKET_PAINT_EDIT_IMAGE:
 					if (data != null) {
 						LookController.getInstance().loadPocketPaintImageIntoCatroid(data, activity,
-								selectedLookData);
+								selectedLookInfo);
 					}
 					break;
 				case LookController.REQUEST_TAKE_PICTURE:
 					String defLookName = getString(R.string.default_look_name);
 					lookFromCameraUri = UtilCamera.rotatePictureIfNecessary(lookFromCameraUri, defLookName);
 					LookController.getInstance().loadPictureFromCameraIntoCatroid(lookFromCameraUri, activity,
-							lookDataList, this);
+							lookInfoList, this);
 					break;
 				case LookController.REQUEST_MEDIA_LIBRARY:
 					String filePath = data.getStringExtra(WebViewActivity.MEDIA_FILE_PATH);
 					LookController.getInstance().loadPictureFromLibraryIntoCatroid(filePath, activity,
-							lookDataList, this);
+							lookInfoList, this);
 					break;
 				case LookController.REQUEST_DRONE_VIDEO:
 					String droneFilePath = getString(R.string.add_look_drone_video);
 					try {
-						LookData look = LookController.getInstance().createLookFromBitmapResource(
+						LookInfo look = LookController.getInstance().createLookFromBitmapResource(
 								activity.getResources(), R.drawable.ic_video, droneFilePath);
 
-						DroneVideoLookData droneLook = new DroneVideoLookData(look);
+						DroneVideoLookInfo droneLook = new DroneVideoLookInfo(look);
 
-						lookDataList.add(droneLook);
+						lookInfoList.add(droneLook);
 						updateLookAdapter(droneLook);
 
 						if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {
@@ -517,8 +517,8 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	}
 
 	private void openBackPack() {
-		Intent intent = new Intent(getActivity(), BackPackActivity.class);
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_LOOKS);
+		Intent intent = new Intent(getActivity(), BackpackActivity.class);
+		intent.putExtra(BackpackActivity.FRAGMENT, BackPackLookListFragment.class);
 		startActivity(intent);
 	}
 
@@ -529,7 +529,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		LookController.getInstance().onLoadFinished(loader, data, activity, lookDataList, this);
+		LookController.getInstance().onLoadFinished(loader, data, activity, lookInfoList, this);
 	}
 
 	@Override
@@ -789,12 +789,12 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 			return;
 		}
 
-		selectedLookData = lookDataList.get(selectedPosition);
+		selectedLookInfo = lookInfoList.get(selectedPosition);
 
 		Bundle bundleForPocketPaint = new Bundle();
 
 		try {
-			File tempCopy = StorageHandler.copyFile(lookDataList.get(selectedPosition).getAbsolutePath(), Constants.TMP_PATH);
+			File tempCopy = StorageHandler.copyFile(lookInfoList.get(selectedPosition).getAbsolutePath(), Constants.TMP_PATH);
 
 			bundleForPocketPaint.putString(Constants.EXTRA_PICTURE_PATH_POCKET_PAINT, tempCopy.getAbsolutePath());
 			bundleForPocketPaint.putInt(Constants.EXTRA_X_VALUE_POCKET_PAINT, 0);
@@ -818,7 +818,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 			@Override
 			public void onClick(View view) {
-				for (int position = 0; position < lookDataList.size(); position++) {
+				for (int position = 0; position < lookInfoList.size(); position++) {
 					adapter.addCheckedItem(position);
 					adapter.notifyDataSetChanged();
 				}
@@ -841,18 +841,18 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				List<LookData> deletedLooks = new ArrayList<>();
+				List<LookInfo> deletedLooks = new ArrayList<>();
 				for(int position : adapter.getCheckedItems()) {
-					LookData toDelete = lookDataList.get(position);
+					LookInfo toDelete = lookInfoList.get(position);
 					if(LookController.getInstance().deleteLook(toDelete)){
 						deletedLooks.add(toDelete);
 					}
 					//TODO REFACTOR: show toast if sound was not deleted
 				}
 
-				lookDataList.removeAll(deletedLooks);
+				lookInfoList.removeAll(deletedLooks);
 
-				ProjectManager.getInstance().getCurrentSprite().setLookDataList(lookDataList);
+				ProjectManager.getInstance().getCurrentSprite().setLookDataList(lookInfoList);
 
 				adapter.notifyDataSetChanged();
 				clearCheckedLooksAndEnableButtons();
@@ -893,7 +893,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 	@Override
 	public void showRenameDialog() {
 		RenameLookDialog renameLookDialog = new RenameLookDialog(R.string.rename_look_dialog, R.string
-				.lookname, selectedLookData.getLookName());
+				.lookname, selectedLookInfo.getName());
 		renameLookDialog.show(getFragmentManager(), RenameLookDialog.DIALOG_FRAGMENT_TAG);
 	}
 
@@ -947,11 +947,11 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		return convertView;
 	}
 
-	public void updateLookAdapter(LookData lookData) {
+	public void updateLookAdapter(LookInfo lookInfo) {
 		adapter.notifyDataSetChanged();
 
 		if (lookDataListChangedAfterNewListener != null) {
-			lookDataListChangedAfterNewListener.onLookDataListChangedAfterNew(lookData);
+			lookDataListChangedAfterNewListener.onLookDataListChangedAfterNew(lookInfo);
 		}
 
 		//scroll down the list to the new item:
@@ -978,8 +978,8 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 		getLoaderManager().destroyLoader(LookController.ID_LOADER_MEDIA_IMAGE);
 	}
 
-	public List<LookData> getLookDataList() {
-		return lookDataList;
+	public List<LookInfo> getLookInfoList() {
+		return lookInfoList;
 	}
 
 	@Override
@@ -989,7 +989,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 
 	public interface OnLookDataListChangedAfterNewListener {
 
-		void onLookDataListChangedAfterNew(LookData soundInfo);
+		void onLookDataListChangedAfterNew(LookInfo soundInfo);
 	}
 
 	private class LookRenamedReceiver extends BroadcastReceiver {
@@ -999,7 +999,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 				String newLookName = intent.getExtras().getString(RenameLookDialog.EXTRA_NEW_LOOK_NAME);
 
 				if (newLookName != null && !newLookName.equalsIgnoreCase("")) {
-					selectedLookData.setLookName(newLookName);
+					selectedLookInfo.setName(newLookName);
 					adapter.notifyDataSetChanged();
 				}
 			}

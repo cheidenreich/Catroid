@@ -43,7 +43,7 @@ import android.widget.TextView;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.WebViewActivity;
@@ -214,11 +214,11 @@ public class OverwriteRenameMediaDialog extends DialogFragment implements OnClic
 		if (replaceButton.isChecked()) {
 			switch (mediaType) {
 				case Constants.MEDIA_TYPE_LOOK:
-					LookData lookToRemove = null;
-					for (LookData lookData : ProjectManager.getInstance().getCurrentSprite().getLookDataList()) {
-						if (lookData.getLookName().compareTo(mediaName) == 0) {
-							lookToRemove = lookData;
-							ProjectManager.getInstance().getCurrentSprite().getLookDataList().remove(lookToRemove);
+					LookInfo lookToRemove = null;
+					for (LookInfo lookInfo : ProjectManager.getInstance().getCurrentSprite().getLookInfoList()) {
+						if (lookInfo.getName().compareTo(mediaName) == 0) {
+							lookToRemove = lookInfo;
+							ProjectManager.getInstance().getCurrentSprite().getLookInfoList().remove(lookToRemove);
 
 							//TODO REFACTOR: handle error if file not deleted:
 							StorageHandler.deleteFile(lookToRemove.getAbsolutePath());
@@ -229,7 +229,7 @@ public class OverwriteRenameMediaDialog extends DialogFragment implements OnClic
 				case Constants.MEDIA_TYPE_SOUND:
 					SoundInfo soundToRemove = null;
 					for (SoundInfo soundInfo : ProjectManager.getInstance().getCurrentSprite().getSoundList()) {
-						if (soundInfo.getTitle().compareTo(mediaName) == 0) {
+						if (soundInfo.getName().compareTo(mediaName) == 0) {
 							soundToRemove = soundInfo;
 							ProjectManager.getInstance().getCurrentSprite().getSoundList().remove(soundToRemove);
 

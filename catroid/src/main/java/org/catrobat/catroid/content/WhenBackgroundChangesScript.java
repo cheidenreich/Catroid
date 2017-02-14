@@ -22,7 +22,7 @@
  */
 package org.catrobat.catroid.content;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.ScriptBrick;
 import org.catrobat.catroid.content.bricks.WhenBackgroundChangesBrick;
@@ -33,7 +33,7 @@ public class WhenBackgroundChangesScript extends Script {
 
 	private static final long serialVersionUID = 1L;
 
-	private LookData look;
+	private LookInfo look;
 
 	@Override
 	public Script copyScriptForSprite(Sprite copySprite) {
@@ -60,11 +60,11 @@ public class WhenBackgroundChangesScript extends Script {
 		return resources;
 	}
 
-	public LookData getLook() {
+	public LookInfo getLook() {
 		return look;
 	}
 
-	public void setLook(LookData look) {
+	public void setLook(LookInfo look) {
 		this.look = look;
 	}
 }

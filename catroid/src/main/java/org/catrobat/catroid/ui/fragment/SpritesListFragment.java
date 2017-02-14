@@ -52,7 +52,7 @@ import android.widget.ListView;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.GroupItemSprite;
 import org.catrobat.catroid.content.GroupSprite;
@@ -61,7 +61,7 @@ import org.catrobat.catroid.content.SingleSprite;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.formulaeditor.DataContainer;
 import org.catrobat.catroid.io.StorageHandler;
-import org.catrobat.catroid.ui.BackPackActivity;
+import org.catrobat.catroid.ui.BackpackActivity;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.CapitalizedTextView;
 import org.catrobat.catroid.ui.ProgramMenuActivity;
@@ -253,8 +253,8 @@ public class SpritesListFragment extends Fragment implements SpriteAdapter.OnSpr
 	}
 
 	public void switchToBackPack() {
-		Intent intent = new Intent(getActivity(), BackPackActivity.class);
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, BackPackActivity.FRAGMENT_BACKPACK_SPRITES);
+		Intent intent = new Intent(getActivity(), BackpackActivity.class);
+		intent.putExtra(BackpackActivity.FRAGMENT, BackPackSpriteListFragment.class);
 		startActivity(intent);
 	}
 
@@ -563,8 +563,8 @@ public class SpritesListFragment extends Fragment implements SpriteAdapter.OnSpr
 		ProjectManager projectManager = ProjectManager.getInstance();
 		DataContainer dataContainer = projectManager.getCurrentScene().getDataContainer();
 
-		for (LookData currentLookData : spriteToEdit.getLookDataList()) {
-			currentLookData.getCollisionInformation().cancelCalculation();
+		for (LookInfo currentLookInfo : spriteToEdit.getLookInfoList()) {
+			currentLookInfo.getCollisionInformation().cancelCalculation();
 		}
 
 		deleteSpriteFiles();
@@ -931,10 +931,10 @@ public class SpritesListFragment extends Fragment implements SpriteAdapter.OnSpr
 	}
 
 	private void deleteSpriteFiles() {
-		for (LookData currentLookData : spriteToEdit.getLookDataList()) {
+		for (LookInfo currentLookInfo : spriteToEdit.getLookInfoList()) {
 
 			//TODO REFACTOR: handle error if file not deleted:
-			StorageHandler.deleteFile(currentLookData.getAbsolutePath());
+			StorageHandler.deleteFile(currentLookInfo.getAbsolutePath());
 		}
 		for (SoundInfo currentSoundInfo : spriteToEdit.getSoundList()) {
 

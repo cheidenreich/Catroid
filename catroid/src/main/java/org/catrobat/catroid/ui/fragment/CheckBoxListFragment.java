@@ -22,19 +22,21 @@
  */
 package org.catrobat.catroid.ui.fragment;
 
-import android.app.AlertDialog;
 import android.app.ListFragment;
-import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.ui.BottomBar;
 import org.catrobat.catroid.ui.CapitalizedTextView;
@@ -70,6 +72,7 @@ public abstract class CheckBoxListFragment extends ListFragment implements Check
 			actionMode.finish();
 			actionMode = null;
 		}
+		adapter.setAllItemsCheckedTo(false);
 	}
 
 	@Override
@@ -91,12 +94,36 @@ public abstract class CheckBoxListFragment extends ListFragment implements Check
 		return adapter.getSelectMode();
 	}
 
+	protected void putShowDetailsPreferences(String sharedPreferenceName) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		SharedPreferences.Editor editor = settings.edit();
+
+		editor.putBoolean(sharedPreferenceName, getShowDetails());
+		editor.commit();
+	}
+
+	protected void loadShowDetailsPreferences(String sharedPreferenceName) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		setShowDetails(settings.getBoolean(sharedPreferenceName, false));
+	}
+
+	protected void saveCurrentProject() {
+		if (ProjectManager.getInstance().getCurrentProject() != null) {
+			ProjectManager.getInstance().saveProject(getActivity().getApplicationContext());
+		}
+	}
+
 	public void setShowDetails(boolean showDetails) {
 		adapter.setShowDetails(showDetails);
 	}
 
 	public boolean getShowDetails() {
 		return adapter.getShowDetails();
+	}
+
+	public void setShowDetailsTitle(MenuItem menuItem) {
+		int titleId = getShowDetails() ? R.string.hide_details : R.string.show_details;
+		menuItem.setTitle(titleId);
 	}
 
 	public void clearCheckedItems() {
@@ -171,18 +198,5 @@ public abstract class CheckBoxListFragment extends ListFragment implements Check
 
 	private boolean areAllItemsChecked() {
 		return adapter.getCheckedItems().size() == adapter.getCount();
-	}
-
-	protected void showError(int messageId) {
-		new AlertDialog.Builder(getActivity())
-				.setTitle(R.string.error)
-				.setMessage(messageId)
-				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int id) {
-					}
-				})
-				.setCancelable(false)
-				.show();
 	}
 }

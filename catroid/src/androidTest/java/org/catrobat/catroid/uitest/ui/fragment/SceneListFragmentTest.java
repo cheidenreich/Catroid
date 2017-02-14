@@ -254,7 +254,7 @@ public class SceneListFragmentTest extends BaseActivityInstrumentationTestCase<M
 
 		assertTrue("Scene is not empty", scene.getSpriteList().size() == 1 && scene.getSpriteList().get(0)
 				.getListWithAllBricks().size() == 0 && scene.getSpriteList().get(0).getSoundList().size() == 0
-				&& scene.getSpriteList().get(0).getLookDataList().size() == 0);
+				&& scene.getSpriteList().get(0).getLookInfoList().size() == 0);
 	}
 
 	public void testSelectAllActionModeButton() {

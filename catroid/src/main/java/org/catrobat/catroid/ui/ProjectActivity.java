@@ -70,6 +70,7 @@ import org.catrobat.catroid.ui.dialogs.NewSceneDialog;
 import org.catrobat.catroid.ui.dialogs.NewSpriteDialog;
 import org.catrobat.catroid.ui.dialogs.PlaySceneDialog;
 import org.catrobat.catroid.ui.dialogs.SignInDialog;
+import org.catrobat.catroid.ui.fragment.BackPackSceneListFragment;
 import org.catrobat.catroid.ui.fragment.ListItemActionsInterface;
 import org.catrobat.catroid.ui.fragment.SceneListFragment;
 import org.catrobat.catroid.ui.fragment.SpritesListFragment;
@@ -343,17 +344,15 @@ public class ProjectActivity extends BaseActivity {
 
 	private void openBackPack() {
 		updateFragmentPosition();
-		Intent intent = new Intent(this, BackPackActivity.class);
-		int fragmentPos = 0;
+		Intent intent = new Intent(this, BackpackActivity.class);
 		switch (currentFragmentPosition) {
 			case FRAGMENT_SCENES:
-				fragmentPos = BackPackActivity.FRAGMENT_BACKPACK_SCENES;
+				intent.putExtra(BackpackActivity.FRAGMENT, BackPackSceneListFragment.class);
 				break;
 			case FRAGMENT_SPRITES:
-				fragmentPos = BackPackActivity.FRAGMENT_BACKPACK_SPRITES;
+				intent.putExtra(BackpackActivity.FRAGMENT, BackPackSceneListFragment.class);
 				break;
 		}
-		intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, fragmentPos);
 		startActivity(intent);
 	}
 

@@ -147,8 +147,8 @@ public class PlaceAtBrickTest extends BaseActivityInstrumentationTestCase<Script
 		script.addBrick(placeAtBrick);
 		PlaySoundBrick soundBrick = new PlaySoundBrick();
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName("sound.mp3");
-		soundInfo.setTitle("sound.mp3");
+		soundInfo.setFileName("sound.mp3");
+		soundInfo.setName("sound.mp3");
 		soundBrick.setSoundInfo(soundInfo);
 		script.addBrick(soundBrick);
 

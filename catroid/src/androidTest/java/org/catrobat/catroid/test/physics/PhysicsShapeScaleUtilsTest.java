@@ -32,7 +32,7 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.physics.PhysicsWorld;
@@ -83,8 +83,8 @@ public class PhysicsShapeScaleUtilsTest extends InstrumentationTestCase {
 				complexSingleConvexPolygonFileName, COMPLEX_SINGLE_CONVEX_POLYGON_RES_ID, getInstrumentation()
 						.getContext(), TestUtils.TYPE_IMAGE_FILE);
 
-		LookData complexSingleConvexPolygonLookData = PhysicsTestUtils.generateLookData(complexSingleConvexPolygonFile);
-		Pixmap pixmap = complexSingleConvexPolygonLookData.getPixmap();
+		LookInfo complexSingleConvexPolygonLookInfo = PhysicsTestUtils.generateLookData(complexSingleConvexPolygonFile);
+		Pixmap pixmap = complexSingleConvexPolygonLookInfo.getPixmap();
 		complexSingleConvexPolygonShapes = strategy.build(pixmap, 1.0f);
 	}
 

@@ -393,17 +393,13 @@ public class ScriptActivity extends BaseActivity {
 	}
 
 	private void openBackPack() {
-		Intent intent = new Intent(currentFragment.getActivity(), BackPackActivity.class);
+		Intent intent = new Intent(currentFragment.getActivity(), BackpackActivity.class);
 		if (currentFragment == lookFragment) {
-			intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, FRAGMENT_LOOKS);
+			intent.putExtra(BackpackActivity.FRAGMENT, BackPackLookListFragment.class);
 		} else if (currentFragment == soundFragment) {
-			intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, FRAGMENT_SOUNDS);
+			intent.putExtra(BackpackActivity.FRAGMENT, BackPackSoundListFragment.class);
 		} else if (currentFragment == scriptFragment) {
-			if (scriptFragment.isInUserBrickOverview()) {
-				intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, USERBRICKS_PROTOTYPE_VIEW);
-			} else {
-				intent.putExtra(BackPackActivity.EXTRA_FRAGMENT_POSITION, FRAGMENT_SCRIPTS);
-			}
+			intent.putExtra(BackpackActivity.FRAGMENT, BackPackScriptListFragment.class);
 		}
 		startActivity(intent);
 	}

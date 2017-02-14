@@ -28,7 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.ActionFactory;
 import org.catrobat.catroid.content.Project;
@@ -86,55 +86,55 @@ public class NextLookActionTest extends InstrumentationTestCase {
 
 		Sprite sprite = new SingleSprite("cat");
 
-		LookData lookData1 = new LookData();
-		lookData1.setLookFilename(testImage.getName());
-		lookData1.setLookName("testImage1");
-		sprite.getLookDataList().add(lookData1);
+		LookInfo lookInfo1 = new LookInfo();
+		lookInfo1.setFileName(testImage.getName());
+		lookInfo1.setName("testImage1");
+		sprite.getLookInfoList().add(lookInfo1);
 
-		LookData lookData2 = new LookData();
-		lookData2.setLookFilename(testImage.getName());
-		lookData2.setLookName("testImage2");
-		sprite.getLookDataList().add(lookData2);
+		LookInfo lookInfo2 = new LookInfo();
+		lookInfo2.setFileName(testImage.getName());
+		lookInfo2.setName("testImage2");
+		sprite.getLookInfoList().add(lookInfo2);
 
 		ActionFactory factory = sprite.getActionFactory();
-		Action setLookAction = factory.createSetLookAction(sprite, lookData1);
+		Action setLookAction = factory.createSetLookAction(sprite, lookInfo1);
 		Action nextLookAction = factory.createNextLookAction(sprite);
 
 		setLookAction.act(1.0f);
 		nextLookAction.act(1.0f);
 
-		assertEquals("Look is not next look", lookData2, sprite.look.getLookData());
+		assertEquals("Look is not next look", lookInfo2, sprite.look.getLookInfo());
 	}
 
 	public void testLastLook() {
 		Sprite sprite = new SingleSprite("cat");
 
-		LookData lookData1 = new LookData();
-		lookData1.setLookFilename(testImage.getName());
-		lookData1.setLookName("testImage1");
-		lookData1.setLookFilename("testImage1");
-		sprite.getLookDataList().add(lookData1);
+		LookInfo lookInfo1 = new LookInfo();
+		lookInfo1.setFileName(testImage.getName());
+		lookInfo1.setName("testImage1");
+		lookInfo1.setFileName("testImage1");
+		sprite.getLookInfoList().add(lookInfo1);
 
-		LookData lookData2 = new LookData();
-		lookData2.setLookFilename(testImage.getName());
-		lookData2.setLookName("testImage");
-		lookData2.setLookFilename("testImage2");
-		sprite.getLookDataList().add(lookData2);
+		LookInfo lookInfo2 = new LookInfo();
+		lookInfo2.setFileName(testImage.getName());
+		lookInfo2.setName("testImage");
+		lookInfo2.setFileName("testImage2");
+		sprite.getLookInfoList().add(lookInfo2);
 
-		LookData lookData3 = new LookData();
-		lookData3.setLookFilename(testImage.getName());
-		lookData3.setLookName("testImage");
-		lookData3.setLookFilename("testImage3");
-		sprite.getLookDataList().add(lookData3);
+		LookInfo lookInfo3 = new LookInfo();
+		lookInfo3.setFileName(testImage.getName());
+		lookInfo3.setName("testImage");
+		lookInfo3.setFileName("testImage3");
+		sprite.getLookInfoList().add(lookInfo3);
 
 		ActionFactory factory = sprite.getActionFactory();
-		Action setLookAction = factory.createSetLookAction(sprite, lookData3);
+		Action setLookAction = factory.createSetLookAction(sprite, lookInfo3);
 		Action nextLookAction = factory.createNextLookAction(sprite);
 
 		setLookAction.act(1.0f);
 		nextLookAction.act(1.0f);
 
-		assertEquals("Look is not next look", lookData1, sprite.look.getLookData());
+		assertEquals("Look is not next look", lookInfo1, sprite.look.getLookInfo());
 	}
 
 	public void testLookGalleryNull() {
@@ -144,26 +144,26 @@ public class NextLookActionTest extends InstrumentationTestCase {
 		Action nextLookAction = factory.createNextLookAction(sprite);
 		nextLookAction.act(1.0f);
 
-		assertEquals("Look is not null", null, sprite.look.getLookData());
+		assertEquals("Look is not null", null, sprite.look.getLookInfo());
 	}
 
 	public void testLookGalleryWithOneLook() {
 		Sprite sprite = new SingleSprite("cat");
 
-		LookData lookData1 = new LookData();
-		lookData1.setLookFilename(testImage.getName());
-		lookData1.setLookName("testImage1");
-		sprite.getLookDataList().add(lookData1);
+		LookInfo lookInfo1 = new LookInfo();
+		lookInfo1.setFileName(testImage.getName());
+		lookInfo1.setName("testImage1");
+		sprite.getLookInfoList().add(lookInfo1);
 
 		ActionFactory factory = sprite.getActionFactory();
-		Action setLookAction = factory.createSetLookAction(sprite, lookData1);
+		Action setLookAction = factory.createSetLookAction(sprite, lookInfo1);
 		Action nextLookAction = factory.createNextLookAction(sprite);
 
 		setLookAction.act(1.0f);
 		nextLookAction.act(1.0f);
 
-		assertEquals("Wrong look after executing NextLookBrick with just one look", lookData1,
-				sprite.look.getLookData());
+		assertEquals("Wrong look after executing NextLookBrick with just one look", lookInfo1,
+				sprite.look.getLookInfo());
 	}
 
 	public void testNextLookWithNoLookSet() {
@@ -173,13 +173,13 @@ public class NextLookActionTest extends InstrumentationTestCase {
 		ActionFactory factory = sprite.getActionFactory();
 		Action nextLookAction = factory.createNextLookAction(sprite);
 
-		LookData lookData1 = new LookData();
-		lookData1.setLookFilename(testImage.getName());
-		lookData1.setLookName("testImage1");
-		sprite.getLookDataList().add(lookData1);
+		LookInfo lookInfo1 = new LookInfo();
+		lookInfo1.setFileName(testImage.getName());
+		lookInfo1.setName("testImage1");
+		sprite.getLookInfoList().add(lookInfo1);
 
 		nextLookAction.act(1.0f);
 
-		assertNull("No Custume should be set.", sprite.look.getLookData());
+		assertNull("No Custume should be set.", sprite.look.getLookInfo());
 	}
 }

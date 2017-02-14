@@ -48,8 +48,8 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 	}
 
 	public SoundInfo(String name, String fileName) {
-		setTitle(name);
-		setSoundFileName(fileName);
+		setName(name);
+		setFileName(fileName);
 	}
 
 	@Override
@@ -112,27 +112,28 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 		}
 	}
 
-	public String getTitle() {
+	public String getName() {
 		return name;
 	}
 
-	public void setTitle(String title) {
+	public void setName(String title) {
 		this.name = title;
 	}
 
-	public String getSoundFileName() {
+	public String getFileName() {
 		return fileName;
 	}
 
-	public void setSoundFileName(String fileName) {
+	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 
 	public String getChecksum() {
-		if (fileName == null) {
-			return null;
+		File file = new File(getAbsolutePath());
+		if (!file.exists()) {
+			throw new NullPointerException("LookFile does not exist!");
 		}
-		return fileName.substring(0, 32);
+		return Utils.md5Checksum(file);
 	}
 
 	private String getPathToSoundDirectory() {

@@ -43,7 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.GroupItemSprite;
 import org.catrobat.catroid.content.GroupSprite;
 import org.catrobat.catroid.content.SingleSprite;
@@ -451,7 +451,7 @@ public class SpriteAdapter extends BaseExpandableListAdapter implements ActionMo
 		holder.bricks.setText(context.getResources().getString(R.string.number_of_bricks).concat(" ").concat(Integer
 				.toString(sprite.getNumberOfBricks())));
 
-		holder.looks.setText(context.getResources().getString(R.string.number_of_looks).concat(" ").concat(Integer.toString(sprite.getLookDataList().size())));
+		holder.looks.setText(context.getResources().getString(R.string.number_of_looks).concat(" ").concat(Integer.toString(sprite.getLookInfoList().size())));
 
 		holder.sounds.setText(context.getResources().getString(R.string.number_of_sounds).concat(" ").concat(Integer.toString(sprite.getSoundList().size())));
 
@@ -497,14 +497,14 @@ public class SpriteAdapter extends BaseExpandableListAdapter implements ActionMo
 	}
 
 	private void setImage(ViewHolder holder, Sprite sprite) {
-		LookData firstLookData = null;
-		if (sprite.getLookDataList().size() > 0) {
-			firstLookData = sprite.getLookDataList().get(0);
+		LookInfo firstLookInfo = null;
+		if (sprite.getLookInfoList().size() > 0) {
+			firstLookInfo = sprite.getLookInfoList().get(0);
 		}
-		if (firstLookData == null) {
+		if (firstLookInfo == null) {
 			holder.image.setImageBitmap(null);
 		} else {
-			holder.image.setImageBitmap(firstLookData.getThumbnailBitmap());
+			holder.image.setImageBitmap(firstLookInfo.getThumbnailBitmap());
 		}
 	}
 

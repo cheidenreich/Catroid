@@ -29,7 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.content.ActionFactory;
 import org.catrobat.catroid.content.Project;
@@ -90,14 +90,14 @@ public class SetLookActionTest extends InstrumentationTestCase {
 
 		Sprite sprite = new SingleSprite("new sprite");
 		project.getDefaultScene().addSprite(sprite);
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName("testImage");
-		sprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName("testImage");
+		sprite.getLookInfoList().add(lookInfo);
 
 		ActionFactory factory = sprite.getActionFactory();
-		Action action = factory.createSetLookAction(sprite, lookData);
+		Action action = factory.createSetLookAction(sprite, lookInfo);
 		action.act(1.0f);
-		assertEquals("Action didn't set the LookData", lookData, sprite.look.getLookData());
+		assertEquals("Action didn't set the LookInfo", lookInfo, sprite.look.getLookInfo());
 	}
 }

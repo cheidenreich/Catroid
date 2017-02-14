@@ -57,7 +57,7 @@ public class IfOnEdgeBouncePhysicsActionTest extends PhysicsBaseTest {
 
 	public void testNormalBehavior() {
 
-		assertTrue("getLookData is null", sprite.look.getLookData() != null);
+		assertTrue("getLookInfo is null", sprite.look.getLookInfo() != null);
 
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 		physicsObject.setType(PhysicsObject.Type.DYNAMIC);
@@ -84,7 +84,7 @@ public class IfOnEdgeBouncePhysicsActionTest extends PhysicsBaseTest {
 	}
 
 	public void testVelocityThresholdAtTopCollision() {
-		assertTrue("getLookData is null", sprite.look.getLookData() != null);
+		assertTrue("getLookInfo is null", sprite.look.getLookInfo() != null);
 
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 		physicsObject.setType(PhysicsObject.Type.DYNAMIC);
@@ -114,14 +114,14 @@ public class IfOnEdgeBouncePhysicsActionTest extends PhysicsBaseTest {
 	}
 
 	public void testSpriteOverlapsRightAndTopAxis() {
-		assertTrue("getLookData is null", sprite.look.getLookData() != null);
+		assertTrue("getLookInfo is null", sprite.look.getLookInfo() != null);
 
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 		physicsObject.setType(PhysicsObject.Type.DYNAMIC);
 
-		float setXValue = ScreenValues.SCREEN_WIDTH / 2 - sprite.look.getLookData().getPixmap().getWidth() / 4;
+		float setXValue = ScreenValues.SCREEN_WIDTH / 2 - sprite.look.getLookInfo().getPixmap().getWidth() / 4;
 		sprite.look.setXInUserInterfaceDimensionUnit(setXValue);
-		float setYValue = ScreenValues.SCREEN_HEIGHT / 2 - sprite.look.getLookData().getPixmap().getHeight() / 4;
+		float setYValue = ScreenValues.SCREEN_HEIGHT / 2 - sprite.look.getLookInfo().getPixmap().getHeight() / 4;
 		sprite.look.setYInUserInterfaceDimensionUnit(setYValue);
 
 		float setVelocityXValue = 400.0f;
@@ -171,7 +171,7 @@ public class IfOnEdgeBouncePhysicsActionTest extends PhysicsBaseTest {
 	}
 
 	public void testCollisionBroadcastOnIfOnEdgeBounce() {
-		assertTrue("getLookData is null", sprite.look.getLookData() != null);
+		assertTrue("getLookInfo is null", sprite.look.getLookInfo() != null);
 
 		CollisionScript spriteCollisionScript = new CollisionScript("");
 		spriteCollisionScript.setAndReturnBroadcastMessage(sprite.getName(), PhysicsCollision
@@ -188,9 +188,9 @@ public class IfOnEdgeBouncePhysicsActionTest extends PhysicsBaseTest {
 		PhysicsObject physicsObject = physicsWorld.getPhysicsObject(sprite);
 		physicsObject.setType(PhysicsObject.Type.DYNAMIC);
 
-		float setXValue = ScreenValues.SCREEN_WIDTH / 2 - sprite.look.getLookData().getPixmap().getWidth() / 4;
+		float setXValue = ScreenValues.SCREEN_WIDTH / 2 - sprite.look.getLookInfo().getPixmap().getWidth() / 4;
 		sprite.look.setXInUserInterfaceDimensionUnit(setXValue);
-		float setYValue = ScreenValues.SCREEN_HEIGHT / 2 - sprite.look.getLookData().getPixmap().getHeight() / 4;
+		float setYValue = ScreenValues.SCREEN_HEIGHT / 2 - sprite.look.getLookInfo().getPixmap().getHeight() / 4;
 		sprite.look.setYInUserInterfaceDimensionUnit(setYValue);
 
 		assertEquals("SetXValue not the same", setXValue, sprite.look.getXInUserInterfaceDimensionUnit());

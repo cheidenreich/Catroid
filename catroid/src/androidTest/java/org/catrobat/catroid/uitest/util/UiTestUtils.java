@@ -69,7 +69,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.BrickValues;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.FileChecksumContainer;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.BroadcastScript;
 import org.catrobat.catroid.content.GroupItemSprite;
@@ -2746,21 +2746,21 @@ public final class UiTestUtils {
 			int soundResource, String testLookName, String testSoundName) {
 		ProjectManager projectManager = ProjectManager.getInstance();
 
-		List<LookData> lookDataList = projectManager.getCurrentSprite().getLookDataList();
+		List<LookInfo> lookInfoList = projectManager.getCurrentSprite().getLookInfoList();
 		File imageFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(), "catroid_sunglasses.png",
 				imageResource, instrumentationContext, UiTestUtils.FileTypes.IMAGE);
-		LookData lookData = new LookData();
-		lookData.setLookFilename(imageFile.getName());
-		lookData.setLookName(testLookName);
-		lookDataList.add(lookData);
-		projectManager.getFileChecksumContainer().addChecksum(lookData.getChecksum(), lookData.getAbsolutePath());
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(imageFile.getName());
+		lookInfo.setName(testLookName);
+		lookInfoList.add(lookInfo);
+		projectManager.getFileChecksumContainer().addChecksum(lookInfo.getChecksum(), lookInfo.getAbsolutePath());
 
 		List<SoundInfo> soundInfoList = projectManager.getCurrentSprite().getSoundList();
 		File soundFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, projectManager.getCurrentScene().getName(), "longsound.mp3",
 				soundResource, instrumentationContext, UiTestUtils.FileTypes.SOUND);
 		SoundInfo soundInfo = new SoundInfo();
-		soundInfo.setSoundFileName(soundFile.getName());
-		soundInfo.setTitle(testSoundName);
+		soundInfo.setFileName(soundFile.getName());
+		soundInfo.setName(testSoundName);
 		soundInfoList.add(soundInfo);
 		projectManager.getFileChecksumContainer().addChecksum(soundInfo.getChecksum(), soundInfo.getAbsolutePath());
 
@@ -2781,7 +2781,7 @@ public final class UiTestUtils {
 		List<Brick> bricks = projectManager.getCurrentSprite().getListWithAllBricks();
 
 		((PlaySoundBrick) bricks.get(1)).setSoundInfo(soundInfo);
-		((SetLookBrick) bricks.get(3)).setLook(lookData);
+		((SetLookBrick) bricks.get(3)).setLook(lookInfo);
 		((AddItemToUserListBrick) bricks.get(4)).setUserList(spriteUserList);
 		((AddItemToUserListBrick) bricks.get(5)).setUserList(projectUserList);
 		((SetVariableBrick) bricks.get(6)).setUserVariable(spriteUserVariable);

@@ -24,13 +24,13 @@ package org.catrobat.catroid.content.actions;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.BackgroundWaitHandler;
 import org.catrobat.catroid.content.Sprite;
 
 public class SetLookAction extends Action {
 
-	private LookData look;
+	private LookInfo look;
 	private Sprite sprite;
 
 	private boolean wait = false;
@@ -41,8 +41,8 @@ public class SetLookAction extends Action {
 		if (wait) {
 			BackgroundWaitHandler.addObserver(look, this);
 		}
-		if (look != null && sprite != null && sprite.getLookDataList().contains(look)) {
-			sprite.look.setLookData(look);
+		if (look != null && sprite != null && sprite.getLookInfoList().contains(look)) {
+			sprite.look.setLookInfo(look);
 			setLookDone = true;
 		}
 	}
@@ -68,7 +68,7 @@ public class SetLookAction extends Action {
 		}
 	}
 
-	public void setLookData(LookData look) {
+	public void setLookData(LookInfo look) {
 		this.look = look;
 	}
 

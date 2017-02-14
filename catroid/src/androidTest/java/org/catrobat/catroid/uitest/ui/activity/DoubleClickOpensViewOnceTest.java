@@ -36,7 +36,7 @@ import junit.framework.TestSuite;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.test.utils.Reflection;
 import org.catrobat.catroid.ui.MainMenuActivity;
@@ -528,11 +528,11 @@ public class DoubleClickOpensViewOnceTest extends TestSuite {
 			File imageFile = UiTestUtils.saveFileToProject(UiTestUtils.DEFAULT_TEST_PROJECT_NAME, ProjectManager.getInstance().getCurrentScene().getName(),
 					"catroid_sunglasses.png", RESOURCE_IMAGE, getInstrumentation().getContext(), UiTestUtils.FileTypes.IMAGE);
 
-			List<LookData> lookDataList = ProjectManager.getInstance().getCurrentSprite().getLookDataList();
-			LookData lookData = new LookData();
-			lookData.setLookFilename(imageFile.getName());
-			lookData.setLookName(FIRST_TEST_LOOK_NAME);
-			lookDataList.add(lookData);
+			List<LookInfo> lookInfoList = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
+			LookInfo lookInfo = new LookInfo();
+			lookInfo.setFileName(imageFile.getName());
+			lookInfo.setName(FIRST_TEST_LOOK_NAME);
+			lookInfoList.add(lookInfo);
 
 			super.setUp();
 			UiTestUtils.getIntoLooksFromMainMenu(solo, true);

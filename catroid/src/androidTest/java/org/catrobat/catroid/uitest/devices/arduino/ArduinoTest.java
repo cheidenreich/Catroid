@@ -27,7 +27,7 @@ import android.widget.ListView;
 
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.bluetooth.ConnectBluetoothDeviceActivity;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.ScreenValues;
 import org.catrobat.catroid.common.bluetooth.BluetoothTestUtils;
 import org.catrobat.catroid.common.bluetooth.ConnectionDataLogger;
@@ -191,11 +191,11 @@ public class ArduinoTest extends BaseActivityInstrumentationTestCase<MainMenuAct
 		File image = UiTestUtils.saveFileToProject(projectName, project.getDefaultScene().getName(), imageName, IMAGE_FILE_ID, getInstrumentation()
 				.getContext(), UiTestUtils.FileTypes.IMAGE);
 
-		LookData lookData = new LookData();
-		lookData.setLookFilename(image.getName());
-		lookData.setLookName(imageName);
-		setLookBrick.setLook(lookData);
-		firstSprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(image.getName());
+		lookInfo.setName(imageName);
+		setLookBrick.setLook(lookInfo);
+		firstSprite.getLookInfoList().add(lookInfo);
 
 		StorageHandler.getInstance().saveProject(project);
 

@@ -32,7 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import junit.framework.Assert;
 
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.content.ActionFactory;
 import org.catrobat.catroid.content.Look;
 import org.catrobat.catroid.content.Project;
@@ -51,13 +51,13 @@ public class CollisionDetectionAdvancedTest extends InstrumentationTestCase {
 	protected Sprite sprite1;
 	protected Sprite sprite2;
 
-	protected static LookData generateLookData(File testImage) {
-		LookData lookData = new LookData();
-		lookData.setLookFilename(testImage.getName());
-		lookData.setLookName(testImage.getName());
+	protected static LookInfo generateLookData(File testImage) {
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(testImage.getName());
+		lookInfo.setName(testImage.getName());
 		Pixmap pixmap = Utils.getPixmapFromFile(testImage);
-		lookData.setPixmap(pixmap);
-		return lookData;
+		lookInfo.setPixmap(pixmap);
+		return lookInfo;
 	}
 
 	protected void initializeSprite(Sprite sprite, int resourceId, String filename) {
@@ -75,14 +75,14 @@ public class CollisionDetectionAdvancedTest extends InstrumentationTestCase {
 			Assert.fail("Couldn't load file, exception thrown!");
 		}
 
-		LookData lookData = generateLookData(file);
-		CollisionInformation collisionInformation = lookData.getCollisionInformation();
+		LookInfo lookInfo = generateLookData(file);
+		CollisionInformation collisionInformation = lookInfo.getCollisionInformation();
 		collisionInformation.loadOrCreateCollisionPolygon();
 
-		sprite.look.setLookData(lookData);
-		sprite.getLookDataList().add(lookData);
-		sprite.look.setHeight(sprite.look.getLookData().getPixmap().getHeight());
-		sprite.look.setWidth(sprite.look.getLookData().getPixmap().getWidth());
+		sprite.look.setLookInfo(lookInfo);
+		sprite.getLookInfoList().add(lookInfo);
+		sprite.look.setHeight(sprite.look.getLookInfo().getPixmap().getHeight());
+		sprite.look.setWidth(sprite.look.getLookInfo().getPixmap().getWidth());
 		sprite.look.setPositionInUserInterfaceDimensionUnit(0, 0);
 	}
 
@@ -105,8 +105,8 @@ public class CollisionDetectionAdvancedTest extends InstrumentationTestCase {
 		initializeSprite(sprite1, org.catrobat.catroid.test.R.raw.collision_donut, "collision_donut.png");
 		initializeSprite(sprite2, org.catrobat.catroid.test.R.raw.icon, "icon.png");
 
-		Polygon[] collisionPolygons1 = sprite1.look.getLookData().getCollisionInformation().collisionPolygons;
-		Polygon[] collisionPolygons2 = sprite2.look.getLookData().getCollisionInformation().collisionPolygons;
+		Polygon[] collisionPolygons1 = sprite1.look.getLookInfo().getCollisionInformation().collisionPolygons;
+		Polygon[] collisionPolygons2 = sprite2.look.getLookInfo().getCollisionInformation().collisionPolygons;
 
 		Assert.assertNotNull("CollsionPolygons is null", collisionPolygons1);
 		Assert.assertEquals("Wrong amount of collisionPolygons", 2, collisionPolygons1.length);

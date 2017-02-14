@@ -26,7 +26,7 @@ import android.content.Context;
 import android.widget.ListView;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.common.LookData;
+import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.bluetooth.ConnectionDataLogger;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
@@ -352,11 +352,11 @@ public class LegoNXTPreferencesTests extends BaseActivityInstrumentationTestCase
 		File image = UiTestUtils.saveFileToProject(projectName, project.getDefaultScene().getName(), imageName, IMAGE_FILE_ID, getInstrumentation()
 				.getContext(), UiTestUtils.FileTypes.IMAGE);
 
-		LookData lookData = new LookData();
-		lookData.setLookFilename(image.getName());
-		lookData.setLookName(imageName);
-		setLookBrick.setLook(lookData);
-		firstSprite.getLookDataList().add(lookData);
+		LookInfo lookInfo = new LookInfo();
+		lookInfo.setFileName(image.getName());
+		lookInfo.setName(imageName);
+		setLookBrick.setLook(lookInfo);
+		firstSprite.getLookInfoList().add(lookInfo);
 
 		StorageHandler.getInstance().saveProject(project);
 	}
