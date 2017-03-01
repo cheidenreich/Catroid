@@ -150,7 +150,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.BackPackActivity"
+            android:name=".ui.BackpackActivity"
             android:noHistory="true"
 
             android:screenOrientation="portrait"
