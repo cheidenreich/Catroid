@@ -41,7 +41,6 @@ import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.ui.adapter.CheckBoxListAdapter;
 import org.catrobat.catroid.ui.adapter.SpriteListAdapter;
 import org.catrobat.catroid.ui.controller.BackPackListManager;
-import org.catrobat.catroid.ui.controller.LookController;
 import org.catrobat.catroid.ui.dialogs.CustomAlertDialogBuilder;
 import org.catrobat.catroid.utils.ToastUtil;
 
@@ -53,10 +52,8 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 
 	public static final String TAG = BackPackSpriteListFragment.class.getSimpleName();
 	public static final String SHARED_PREFERENCE_NAME = "showSpriteDetails";
-	private static final String BUNDLE_ARGUMENTS_ITEM_TO_EDIT = "spriteToEdit";
 
 	private SpriteListAdapter spriteAdapter;
-	private Sprite spriteToEdit;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,10 +68,6 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 		itemIdentifier = R.plurals.sprite;
 		deleteDialogTitle = R.plurals.delete_dialog_sprite;
 
-		if (savedInstanceState != null) {
-			spriteToEdit = (Sprite) savedInstanceState.get(BUNDLE_ARGUMENTS_ITEM_TO_EDIT);
-		}
-
 		initializeList();
 		checkEmptyBackgroundBackPack();
 	}
@@ -83,17 +76,10 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 		List<Sprite> spriteList = BackPackListManager.getInstance().getBackPackedSprites();
 
 		spriteAdapter = new SpriteListAdapter(getActivity(), R.layout.list_item, spriteList);
-
 		setListAdapter(spriteAdapter);
 		spriteAdapter.setListItemClickHandler(this);
 		spriteAdapter.setListItemCheckHandler(this);
 		spriteAdapter.setListItemLongClickHandler(this);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(BUNDLE_ARGUMENTS_ITEM_TO_EDIT, spriteToEdit);
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -112,7 +98,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
-		menu.setHeaderTitle(spriteToEdit.getName());
+		menu.setHeaderTitle(spriteAdapter.getCheckedItems().get(0).getName());
 		getActivity().getMenuInflater().inflate(R.menu.context_menu_backpack_sprite, menu);
 	}
 
@@ -125,9 +111,6 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 			case R.id.context_menu_unpack_object:
 				unpackCheckedItems();
 				break;
-			case R.id.context_menu_delete:
-				showDeleteDialog();
-				break;
 			default:
 				return super.onContextItemSelected(item);
 		}
@@ -136,45 +119,37 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 
 	@Override
 	public void handleOnItemClick(int position, View view, Sprite listItem) {
-		spriteToEdit = listItem;
+		spriteAdapter.setAllItemsCheckedTo(false);
+		spriteAdapter.addToCheckedItems(listItem);
 		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
 	public void handleOnItemLongClick(int position, View view) {
-		spriteToEdit = spriteAdapter.getItem(position);
+		Sprite listItem = spriteAdapter.getItem(position);
+		spriteAdapter.setAllItemsCheckedTo(false);
+		spriteAdapter.addToCheckedItems(listItem);
 		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
 	public void deleteCheckedItems() {
-		//TODO: find better solution.
-		if (spriteAdapter.getCheckedItems().isEmpty()) {
-			delete(spriteToEdit);
-			return;
-		}
-
 		for (Sprite sprite : spriteAdapter.getCheckedItems()) {
-			delete(sprite);
+			spriteAdapter.remove(sprite);
+			removeLooksAndSounds(sprite);
 		}
-
 		clearCheckedItems();
 	}
 
-	public void delete(Sprite sprite) {
-		spriteAdapter.remove(sprite);
-		removeLooksAndSounds();
-	}
-
-	private void removeLooksAndSounds() {
+	private void removeLooksAndSounds(Sprite sprite) {
 		//TODO: could still be better!
-		for (LookInfo lookInfo : spriteToEdit.getLookInfoList()) {
+		for (LookInfo lookInfo : sprite.getLookInfoList()) {
 			if (!StorageHandler.deleteFile(lookInfo.getAbsolutePath())) {
 				ToastUtil.showError(getActivity(), R.string.error_delete_look);
 			}
 		}
 
-		for (SoundInfo sound : spriteToEdit.getSoundList()) {
+		for (SoundInfo sound : sprite.getSoundList()) {
 			if (!StorageHandler.deleteFile(sound.getAbsolutePath())) {
 				ToastUtil.showError(getActivity(), R.string.error_delete_sound);
 			}
@@ -183,26 +158,16 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 
 	@Override
 	protected void unpackCheckedItems() {
-		//TODO: find better solution.
-		if (spriteAdapter.getCheckedItems().isEmpty()) {
-			unpack(spriteToEdit);
-			return;
-		}
-
+		//TODO: unpack as background (e.g. via flag in BackpackSpriteController).
 		for (Sprite sprite : spriteAdapter.getCheckedItems()) {
-			unpack(sprite);
+			try {
+				Sprite unpackedSprite = BackpackSpriteController.unpack(sprite);
+				ProjectManager.getInstance().getCurrentScene().addSprite(unpackedSprite);
+			} catch (IOException e) {
+				ToastUtil.showError(getActivity(), R.string.error_unpack_sprite);
+			}
 		}
-
 		clearCheckedItems();
-	}
-
-	private void unpack(Sprite sprite) {
-		try {
-			Sprite unpackedSprite = BackpackSpriteController.unpack(sprite);
-			ProjectManager.getInstance().getCurrentScene().addSprite(unpackedSprite);
-		} catch (IOException e) {
-			ToastUtil.showError(getActivity(), R.string.error_unpack_sprite);
-		}
 	}
 
 	private void showUnpackAsBackgroundDialog() {
@@ -212,7 +177,7 @@ public class BackPackSpriteListFragment extends BackPackActivityFragment impleme
 		builder.setPositiveButton(R.string.main_menu_continue, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				//TODO: unpack as background (e.g. via flag in BackpackSpriteController.
+				//TODO: unpack as background (e.g. via flag in BackpackSpriteController).
 				unpackCheckedItems();
 				clearCheckedItems();
 			}

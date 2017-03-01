@@ -47,10 +47,8 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 
 	public static final String TAG = BackPackLookListFragment.class.getSimpleName();
 	public static final String SHARED_PREFERENCE_NAME = "showSoundDetails";
-	private static final String BUNDLE_ARGUMENTS_ITEM_TO_EDIT = "soundToEdit";
 
 	private SoundListAdapter soundAdapter;
-	private SoundInfo soundToEdit;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,10 +63,6 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 		itemIdentifier = R.plurals.sound;
 		deleteDialogTitle = R.plurals.delete_dialog_sound;
 
-		if (savedInstanceState != null) {
-			soundToEdit = (SoundInfo) savedInstanceState.getSerializable(BUNDLE_ARGUMENTS_ITEM_TO_EDIT);
-		}
-
 		initializeList();
 		checkEmptyBackgroundBackPack();
 	}
@@ -81,12 +75,6 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 		soundAdapter.setListItemClickHandler(this);
 		soundAdapter.setListItemCheckHandler(this);
 		soundAdapter.setListItemLongClickHandler(this);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(BUNDLE_ARGUMENTS_ITEM_TO_EDIT, soundToEdit);
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -105,19 +93,22 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
-		menu.setHeaderTitle(soundToEdit.getName());
+		menu.setHeaderTitle(soundAdapter.getCheckedItems().get(0).getName());
 		super.onCreateContextMenu(menu, view, menuInfo);
 	}
 
 	@Override
 	public void handleOnItemClick(int position, View view, SoundInfo listItem) {
-		soundToEdit = listItem;
+		soundAdapter.setAllItemsCheckedTo(false);
+		soundAdapter.addToCheckedItems(listItem);
 		getListView().showContextMenuForChild(view);
 	}
 
 	@Override
 	public void handleOnItemLongClick(int position, View view) {
-		soundToEdit = soundAdapter.getItem(position);
+		SoundInfo listItem = soundAdapter.getItem(position);
+		soundAdapter.setAllItemsCheckedTo(false);
+		soundAdapter.addToCheckedItems(listItem);
 		getListView().showContextMenuForChild(view);
 	}
 
@@ -130,6 +121,7 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 				ToastUtil.showError(getActivity(), R.string.error_delete_sound);
 			}
 		}
+		clearCheckedItems();
 	}
 
 	@Override
@@ -142,7 +134,6 @@ public class BackPackSoundListFragment extends BackPackActivityFragment implemen
 				ToastUtil.showError(getActivity(), R.string.error_unpack_sound);
 			}
 		}
-
 		clearCheckedItems();
 	}
 }
