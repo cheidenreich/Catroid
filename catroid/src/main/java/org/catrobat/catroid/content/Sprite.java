@@ -57,6 +57,7 @@ import org.catrobat.catroid.physics.PhysicsLook;
 import org.catrobat.catroid.physics.PhysicsWorld;
 import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.ui.fragment.SpriteFactory;
+import org.catrobat.catroid.utils.Utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -118,6 +119,12 @@ public class Sprite implements Serializable, Cloneable {
 	@Override
 	public int hashCode() {
 		return super.hashCode() * TAG.hashCode();
+	}
+
+	public void initializeSpriteFiles(String imageDirectory, String soundDirectory){
+		for (LookInfo lookInfo : lookList) {
+			lookInfo.initializeFile(imageDirectory);
+		}
 	}
 
 	public List<Script> getScriptList() {

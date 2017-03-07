@@ -146,8 +146,7 @@ public class WhenBackgroundChangesBrick extends BrickBaseType implements
 	private ArrayAdapter<LookInfo> createLookAdapter(Context context) {
 		ArrayAdapter<LookInfo> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item);
 		arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		LookInfo dummyLookInfo = new LookInfo();
-		dummyLookInfo.setName(context.getString(R.string.new_broadcast_message));
+		LookInfo dummyLookInfo = new LookInfo(context.getString(R.string.new_broadcast_message), null);
 		arrayAdapter.add(dummyLookInfo);
 		for (LookInfo lookInfo : getSprite().getLookInfoList()) {
 			arrayAdapter.add(lookInfo);

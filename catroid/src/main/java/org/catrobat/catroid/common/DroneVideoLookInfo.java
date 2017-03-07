@@ -31,6 +31,8 @@ import com.parrot.freeflight.ui.gl.GLBGVideoSprite;
 
 import org.catrobat.catroid.content.bricks.Brick;
 
+import java.io.File;
+
 public class DroneVideoLookInfo extends LookInfo {
 
 	private static final String TAG = DroneVideoLookInfo.class.getSimpleName();
@@ -40,13 +42,12 @@ public class DroneVideoLookInfo extends LookInfo {
 	private transient int[] videoSize = { 0, 0 };
 	private transient int[] defaultVideoTextureSize;
 
-	public DroneVideoLookInfo() {
-
+	public DroneVideoLookInfo(String name, File imageFile) {
+		super(name, imageFile);
 	}
 
 	public DroneVideoLookInfo(LookInfo original) {
-		this.name = original.getName();
-		this.fileName = original.getFileName();
+		this(original.getName(), original.imageFile);
 	}
 
 	@Override

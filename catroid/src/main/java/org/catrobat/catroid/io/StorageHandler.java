@@ -601,8 +601,10 @@ public final class StorageHandler {
 		try {
 			project = (Project) xstream.getProjectFromXML(new File(buildProjectPath(projectName), PROJECTCODE_NAME));
 			for (String sceneName : project.getSceneOrder()) {
-				project.getSceneByName(sceneName).setProject(project);
-				project.getSceneByName(sceneName).getDataContainer().setProject(project);
+				Scene scene = project.getSceneByName(sceneName);
+				scene.setProject(project);
+				scene.getDataContainer().setProject(project);
+				scene.initializeSceneFiles();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "Could not get Project from xml and get Scene from order", e);

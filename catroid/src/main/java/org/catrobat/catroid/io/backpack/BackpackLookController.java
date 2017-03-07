@@ -47,7 +47,7 @@ public final class BackpackLookController {
 
 		File packedLookFile = StorageHandler.copyFile(item.getAbsolutePath(), backpackImageDirectory);
 
-		LookInfo packedLookInfo = new LookInfo(item.getName(), packedLookFile.getName());
+		LookInfo packedLookInfo = new LookInfo(item.getName(), packedLookFile);
 		packedLookInfo.isBackpackLookData = true;
 		return packedLookInfo;
 	}
@@ -65,7 +65,7 @@ public final class BackpackLookController {
 		String currentImageDirectory = ProjectManager.getInstance().getCurrentScene().getImageDirectory();
 		File unpackedLookFile = StorageHandler.copyFile(item.getAbsolutePath(), currentImageDirectory);
 
-		LookInfo unpackedLookInfo = new LookInfo(newLookName, unpackedLookFile.getName());
+		LookInfo unpackedLookInfo = new LookInfo(newLookName, unpackedLookFile);
 		unpackedLookInfo.isBackpackLookData = false;
 		return unpackedLookInfo;
 	}

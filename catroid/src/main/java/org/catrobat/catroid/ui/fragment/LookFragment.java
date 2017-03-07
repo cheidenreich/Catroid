@@ -156,7 +156,7 @@ public class LookFragment extends ScriptActivityFragment implements LookBaseAdap
 					String copiedLookName = lookInfo.getName() + "_" + R.string.copy_addition;
 					Utils.getUniqueLookName(copiedLookName, lookInfoList);
 
-					LookInfo copiedLook = new LookInfo(copiedLookName, copiedLookFile.getName());
+					LookInfo copiedLook = new LookInfo(copiedLookName, copiedLookFile);
 
 					lookInfoList.add(copiedLook);
 					updateLookAdapter(copiedLook);

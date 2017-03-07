@@ -403,10 +403,10 @@ public class NewSpriteDialog extends DialogFragment {
 
 		try {
 			if (isDroneVideo) {
-				lookInfo = new DroneVideoLookInfo();
+				lookInfo = new DroneVideoLookInfo(null, null);
 				newLookFile = new File(lookUri.getPath());
 			} else {
-				lookInfo = new LookInfo();
+				lookInfo = new LookInfo(null, null);
 				String projectName = ProjectManager.getInstance().getCurrentProject().getName();
 				String sceneName = ProjectManager.getInstance().getCurrentScene().getName();
 				String destinationDir = Utils.buildPath(Utils.buildScenePath(projectName, sceneName), Constants
@@ -427,11 +427,10 @@ public class NewSpriteDialog extends DialogFragment {
 				}
 			}
 
-			String imageFileName = newLookFile.getName();
 			Utils.rewriteImageFileForStage(getActivity(), newLookFile);
 
 			lookInfo.setName(newSpriteName);
-			lookInfo.setFileName(imageFileName);
+			lookInfo.setFile(newLookFile);
 		} catch (IOException ioException) {
 			Utils.showErrorDialog(getActivity(), R.string.error_load_image);
 			Log.e(TAG, Log.getStackTraceString(ioException));

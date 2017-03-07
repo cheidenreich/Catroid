@@ -53,7 +53,7 @@ public class RenameLookDialog extends TextDialog {
 			return false;
 		}
 
-		LookInfo lookInfo = new LookInfo();
+		LookInfo lookInfo = new LookInfo(newLookName, null);
 		lookInfo.setName(newLookName);
 		newLookName = Utils.getUniqueLookName(lookInfo, false);
 

@@ -242,22 +242,20 @@ public final class LookController {
 		copyImageToCatroid(originalImagePath, activity, lookInfoList, fragment);
 	}
 
-	public void updateLookAdapter(String name, String fileName, List<LookInfo> lookInfoList, LookFragment fragment) {
-		updateLookAdapter(name, fileName, lookInfoList, fragment, false);
+	public void updateLookAdapter(String name, File imageFile, List<LookInfo> lookInfoList, LookFragment fragment) {
+		updateLookAdapter(name, imageFile, lookInfoList, fragment, false);
 	}
 
-	private void updateLookAdapter(String name, String fileName, List<LookInfo> lookInfoList, LookFragment fragment,
+	private void updateLookAdapter(String name, File imageFile, List<LookInfo> lookInfoList, LookFragment fragment,
 			boolean isDroneVideo) {
 		LookInfo lookInfo;
 
 		if (isDroneVideo) {
-			lookInfo = new DroneVideoLookInfo();
+			lookInfo = new DroneVideoLookInfo(name, imageFile);
 		} else {
-			lookInfo = new LookInfo();
+			lookInfo = new LookInfo(name, imageFile);
 		}
 
-		lookInfo.setFileName(fileName);
-		lookInfo.setName(name);
 		lookInfoList.add(lookInfo);
 		fragment.updateLookAdapter(lookInfo);
 
@@ -273,7 +271,7 @@ public final class LookController {
 		File outputFile = new File(ProjectManager.getInstance().getCurrentScene().getImageDirectory(), outputImageName);
 		StorageHandler.saveBitmapToImageFile(outputFile, newImage);
 
-		return new LookInfo(outputImageName, outputFile.getName());
+		return new LookInfo(outputImageName, outputFile);
 	}
 
 	private void copyImageToCatroid(String originalImagePath, Activity activity, List<LookInfo> lookInfoList,
@@ -314,7 +312,6 @@ public final class LookController {
 				imageName = oldFile.getName();
 			}
 
-			String imageFileName = imageFile.getName();
 			// if pixmap cannot be created, image would throw an Exception in stage
 			// so has to be loaded again with other Config
 			Pixmap pixmap = Utils.getPixmapFromFile(imageFile);
@@ -332,7 +329,7 @@ public final class LookController {
 					return;
 				}
 			}
-			updateLookAdapter(imageName, imageFileName, lookInfoList, fragment);
+			updateLookAdapter(imageName, imageFile, lookInfoList, fragment);
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error, all error handling should be done outside of this method, rethrow exception
 			Log.e(TAG, "Error loading image in copyImageToCatroid IOException");
@@ -408,7 +405,7 @@ public final class LookController {
 
 			StorageHandler.deleteFile(selectedLookInfo.getAbsolutePath());
 
-			selectedLookInfo.setFileName(imageFile.getName());
+			selectedLookInfo.setFile(imageFile);
 			selectedLookInfo.resetThumbnailBitmap();
 
 			if (ProjectManager.getInstance().getCurrentSprite().hasCollision()) {

@@ -141,15 +141,15 @@ public class DefaultProjectCreatorDefault extends DefaultProjectCreator {
 					projectName, backgroundFile.getName(), birdWingUpFile.getName(), birdWingDownFile.getName(),
 					soundFile1.getName(), soundFile2.getName()));
 
-			LookInfo backgroundLookInfo = new LookInfo(backgroundName, backgroundFile.getName());
+			LookInfo backgroundLookInfo = new LookInfo(backgroundName, backgroundFile);
 
 			Sprite backgroundSprite = defaultProject.getDefaultScene().getSpriteList().get(0);
 			backgroundSprite.getLookInfoList().add(backgroundLookInfo);
 
-			LookInfo birdWingUpLookInfo = new LookInfo(birdWingUpLookName, birdWingUpFile.getName());
-			LookInfo birdWingDownLookInfo = new LookInfo(birdWingDownLookName, birdWingDownFile.getName());
+			LookInfo birdWingUpLookInfo = new LookInfo(birdWingUpLookName, birdWingUpFile);
+			LookInfo birdWingDownLookInfo = new LookInfo(birdWingDownLookName, birdWingDownFile);
 
-			LookInfo cloudLookInfo = new LookInfo(cloudName, cloudFile.getName());
+			LookInfo cloudLookInfo = new LookInfo(cloudName, cloudFile);
 
 			SoundInfo soundInfo1 = new SoundInfo(tweet1, soundFile1.getName());
 			SoundInfo soundInfo2 = new SoundInfo(tweet2, soundFile2.getName());

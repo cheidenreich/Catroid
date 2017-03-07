@@ -125,6 +125,13 @@ public class Scene implements Serializable {
 		return Utils.buildPath(getSceneDirectory(), Constants.SOUND_DIRECTORY);
 	}
 
+	public void initializeSceneFiles()
+	{
+		for(Sprite sprite : spriteList){
+			sprite.initializeSpriteFiles(getImageDirectory(), getSoundDirectory());
+		}
+	}
+
 	public synchronized void addSprite(Sprite sprite) {
 		if (spriteList.contains(sprite)) {
 			return;

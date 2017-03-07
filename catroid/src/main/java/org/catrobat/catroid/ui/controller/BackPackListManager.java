@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.common.Backpack;
+import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.LookInfo;
 import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.Scene;
@@ -441,9 +442,22 @@ public final class BackPackListManager {
 		@Override
 		protected Void doInBackground(Void... params) {
 			backpack = StorageHandler.getInstance().loadBackpack();
+			initializeBackPackFiles();
 			setBackPackFlags();
 			ProjectManager.getInstance().checkNestingBrickReferences(false, true);
 			return null;
+		}
+
+		private void initializeBackPackFiles(){
+			for (LookInfo lookInfo : backpack.backpackedLooks) {
+				lookInfo.initializeFile(Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
+						Constants.BACKPACK_IMAGE_DIRECTORY));
+			}
+
+			for (LookInfo lookInfo : backpack.hiddenBackpackedLooks) {
+				lookInfo.initializeFile(Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
+						Constants.BACKPACK_IMAGE_DIRECTORY));
+			}
 		}
 
 		private void setBackPackFlags() {

@@ -55,6 +55,8 @@ public class LookInfo implements Serializable, Cloneable {
 	@XStreamAsAttribute
 	protected String name;
 	protected String fileName;
+
+	protected transient File imageFile;
 	private transient Bitmap thumbnailBitmap;
 	protected transient Integer width;
 	protected transient Integer height;
@@ -66,12 +68,22 @@ public class LookInfo implements Serializable, Cloneable {
 	private transient CollisionInformation collisionInformation = null;
 	public transient boolean isBackpackLookData = false;
 
-	public LookInfo() {
+//	public LookInfo(String name, String fileName) {
+//		setName(name);
+//		setFileName(fileName);
+//	}
+
+	public LookInfo(String name, File imageFile){
+		this.name = name;
+		this.imageFile = imageFile;
+
+		if(imageFile != null) {
+			this.fileName = imageFile.getName();
+		}
 	}
 
-	public LookInfo(String name, String fileName) {
-		setName(name);
-		setFileName(fileName);
+	public void initializeFile(String directory){
+		imageFile = new File(Utils.buildPath(directory, fileName));
 	}
 
 	public void draw(Batch batch, float alpha) {
@@ -88,7 +100,12 @@ public class LookInfo implements Serializable, Cloneable {
 		}
 
 		LookInfo lookInfo = (LookInfo) obj;
-		return lookInfo.getChecksum().equals(this.getChecksum()) && lookInfo.name.equals(this.name);
+
+		if(this.imageFile == null || lookInfo.imageFile == null){
+			return false;
+		}
+
+		return lookInfo.imageFile.equals(this.imageFile) && lookInfo.name.equals(this.name);
 	}
 
 	@Override
@@ -101,7 +118,7 @@ public class LookInfo implements Serializable, Cloneable {
 		try {
 			File copiedFile = StorageHandler.copyFile(this.getAbsolutePath());
 			List<LookInfo> scope = ProjectManager.getInstance().getCurrentSprite().getLookInfoList();
-			return new LookInfo(Utils.getUniqueLookName(this.name, scope), copiedFile.getName());
+			return new LookInfo(Utils.getUniqueLookName(this.name, scope), copiedFile);
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error
 			e.printStackTrace();
@@ -142,12 +159,8 @@ public class LookInfo implements Serializable, Cloneable {
 	}
 
 	public String getAbsolutePath() {
-		if (fileName != null) {
-			if (isBackpackLookData) {
-				return Utils.buildPath(getPathToBackPackImageDirectory(), fileName);
-			} else {
-				return Utils.buildPath(getPathToImageDirectory(), fileName);
-			}
+		if (imageFile != null) {
+			return imageFile.getAbsolutePath();
 		} else {
 			return null;
 		}
@@ -177,8 +190,15 @@ public class LookInfo implements Serializable, Cloneable {
 		this.name = name;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+//	public void setFileName(String fileName) {
+//		this.fileName = fileName;
+//	}
+
+	public void setFile(File file) {
+		this.imageFile = file;
+		if(file != null) {
+			this.fileName = file.getName();
+		}
 	}
 
 	public String getFileName() {
