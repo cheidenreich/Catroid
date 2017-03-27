@@ -449,14 +449,26 @@ public final class BackPackListManager {
 		}
 
 		private void initializeBackPackFiles(){
+			String imageDir = Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
+					Constants.BACKPACK_IMAGE_DIRECTORY);
+
+			String soundDir = Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
+					Constants.BACKPACK_SOUND_DIRECTORY);
+
 			for (LookInfo lookInfo : backpack.backpackedLooks) {
-				lookInfo.initializeFile(Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
-						Constants.BACKPACK_IMAGE_DIRECTORY));
+				lookInfo.initializeFile(imageDir);
 			}
 
 			for (LookInfo lookInfo : backpack.hiddenBackpackedLooks) {
-				lookInfo.initializeFile(Utils.buildPath(Constants.DEFAULT_ROOT, Constants.BACKPACK_DIRECTORY,
-						Constants.BACKPACK_IMAGE_DIRECTORY));
+				lookInfo.initializeFile(imageDir);
+			}
+
+			for(SoundInfo soundInfo : backpack.backpackedSounds) {
+				soundInfo.initializeFile(soundDir);
+			}
+
+			for(SoundInfo soundInfo : backpack.hiddenBackpackedSounds) {
+				soundInfo.initializeFile(soundDir);
 			}
 		}
 

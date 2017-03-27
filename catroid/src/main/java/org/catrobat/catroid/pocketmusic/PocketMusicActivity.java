@@ -69,10 +69,10 @@ public class PocketMusicActivity extends BaseActivity {
 			MidiToProjectConverter converter = new MidiToProjectConverter();
 			try {
 				SoundInfo soundInfo = new SoundInfo();
-				soundInfo.setFileName(fileName);
+				File file = soundInfo.createSoundFileForCurrentProject(title, fileName);
 
 				if (null != ProjectManager.getInstance().getCurrentProject()) {
-					project = converter.convertMidiFileToProject(new File(soundInfo.getAbsolutePath()));
+					project = converter.convertMidiFileToProject(file);
 					project.setFileName(fileName);
 					project.setName(title);
 				}
@@ -96,13 +96,11 @@ public class PocketMusicActivity extends BaseActivity {
 		SoundInfo soundInfo = new SoundInfo();
 
 		if (fileExists) {
-			soundInfo.setName(project.getName());
-			soundInfo.setFileName(project.getFileName());
+			soundInfo.createSoundFileForCurrentProject(project.getName(), project.getFileName());
 		} else {
-			soundInfo.setName(getString(R.string.pocketmusic_recorded_filename));
-
 			Random randomGenerator = new Random();
-			soundInfo.setFileName("MUS-" + Math.abs(randomGenerator.nextInt()) + ".midi");
+			String fileName = "MUS-" + Math.abs(randomGenerator.nextInt()) + ".midi";
+			soundInfo.createSoundFileForCurrentProject(getString(R.string.pocketmusic_recorded_filename), fileName);
 		}
 		return soundInfo;
 	}
@@ -148,8 +146,8 @@ public class PocketMusicActivity extends BaseActivity {
 				}
 
 				if (!fileExists) {
-					soundInfo.setFileName(Utils.md5Checksum(soundInfo.getAbsolutePath()) + "_" + soundInfo.getFileName());
-					File rename = new File(soundInfo.getAbsolutePath());
+					String newFileName = Utils.md5Checksum(soundInfo.getAbsolutePath()) + "_" + soundInfo.getFileName();
+					File rename = soundInfo.createSoundFileForCurrentProject(soundInfo.getName(), newFileName);
 					initialFile.renameTo(rename);
 
 					ProjectManager.getInstance().getCurrentSprite().getSoundList().add(soundInfo);

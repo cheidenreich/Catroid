@@ -48,7 +48,7 @@ public final class BackpackSoundController {
 
 		File packedSoundFile = StorageHandler.copyFile(item.getAbsolutePath(), backpackSoundDirectory);
 
-		SoundInfo packedSoundInfo = new SoundInfo(item.getName(), packedSoundFile.getName());
+		SoundInfo packedSoundInfo = new SoundInfo(item.getName(), packedSoundFile);
 		packedSoundInfo.setBackpackSoundInfo(true);
 		return packedSoundInfo;
 	}
@@ -66,7 +66,7 @@ public final class BackpackSoundController {
 		String currentSoundDirectory = ProjectManager.getInstance().getCurrentScene().getSoundDirectory();
 		File unpackedSoundFile = StorageHandler.copyFile(item.getAbsolutePath(), currentSoundDirectory);
 
-		SoundInfo unpackedSoundInfo = new SoundInfo(newSoundName, unpackedSoundFile.getName());
+		SoundInfo unpackedSoundInfo = new SoundInfo(newSoundName, unpackedSoundFile);
 		unpackedSoundInfo.setBackpackSoundInfo(false);
 		return unpackedSoundInfo;
 	}

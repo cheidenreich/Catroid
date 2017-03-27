@@ -31,6 +31,7 @@ import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.utils.Utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -44,12 +45,30 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 	private String name;
 	private String fileName;
 
+	private transient File soundFile;
+
 	public SoundInfo() {
 	}
 
-	public SoundInfo(String name, String fileName) {
-		setName(name);
-		setFileName(fileName);
+	public SoundInfo(String name, File soundFile) {
+		this.name = name;
+		this.soundFile = soundFile;
+
+		if(soundFile!=null){
+			this.fileName = soundFile.getName();
+		}
+	}
+
+	public File createSoundFileForCurrentProject(String title, String fileName) {
+		String directory = getPathToSoundDirectory();
+		File file = new File(Utils.buildPath(directory, fileName));
+		setFile(file);
+		setName(title);
+		return file;
+	}
+
+	public void initializeFile(String directory) {
+		soundFile = new File(Utils.buildPath(directory, fileName));
 	}
 
 	@Override
@@ -63,6 +82,11 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 		}
 
 		SoundInfo soundInfo = (SoundInfo) obj;
+
+		if (this.soundFile == null || soundInfo.soundFile == null) {
+			return false;
+		}
+
 		return soundInfo.getChecksum().equals(this.getChecksum()) && soundInfo.name.equals(this.name);
 	}
 
@@ -76,7 +100,7 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 		try {
 			File copiedFile = StorageHandler.copyFile(this.getAbsolutePath());
 			List<SoundInfo> scope = ProjectManager.getInstance().getCurrentSprite().getSoundList();
-			return new SoundInfo(Utils.getUniqueSoundName(this.name, scope), copiedFile.getName());
+			return new SoundInfo(Utils.getUniqueSoundName(this.name, scope), copiedFile);
 		} catch (IOException e) {
 			//TODO REFACTOR: handle error
 			e.printStackTrace();
@@ -85,12 +109,8 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 	}
 
 	public String getAbsolutePath() {
-		if (fileName != null) {
-			if (isBackpackSoundInfo) {
-				return Utils.buildPath(getPathToBackPackSoundDirectory(), fileName);
-			} else {
-				return Utils.buildPath(getPathToSoundDirectory(), fileName);
-			}
+		if (soundFile != null) {
+			return soundFile.getAbsolutePath();
 		} else {
 			return null;
 		}
@@ -124,8 +144,15 @@ public class SoundInfo implements Serializable, Comparable<SoundInfo>, Cloneable
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	//public void setFileName(String fileName) {
+	//	this.fileName = fileName;
+	//}
+
+	public void setFile(File file){
+		this.soundFile = file;
+		if (file != null) {
+			this.fileName = file.getName();
+		}
 	}
 
 	public String getChecksum() {

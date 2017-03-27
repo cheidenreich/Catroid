@@ -125,6 +125,9 @@ public class Sprite implements Serializable, Cloneable {
 		for (LookInfo lookInfo : lookList) {
 			lookInfo.initializeFile(imageDirectory);
 		}
+		for(SoundInfo soundInfo : soundList){
+			soundInfo.initializeFile(soundDirectory);
+		}
 	}
 
 	public List<Script> getScriptList() {

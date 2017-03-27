@@ -770,12 +770,12 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 			for (int position : adapter.getCheckedItems()) {
 				try {
 					SoundInfo soundInfo = soundInfoList.get(position);
-					File copiedLookFile = StorageHandler.copyFile(soundInfo.getAbsolutePath());
+					File copiedSoundFile = StorageHandler.copyFile(soundInfo.getAbsolutePath());
 
-					String copiedLookName = soundInfo.getName() + "_" + R.string.copy_addition;
-					Utils.getUniqueSoundName(copiedLookName, soundInfoList);
+					String copiedSoundName = soundInfo.getName() + "_" + R.string.copy_addition;
+					Utils.getUniqueSoundName(copiedSoundName, soundInfoList);
 
-					SoundInfo copiedSound = new SoundInfo(copiedLookName, copiedLookFile.getName());
+					SoundInfo copiedSound = new SoundInfo(copiedSoundName, copiedSoundFile);
 
 					soundInfoList.add(copiedSound);
 					updateSoundAdapter(copiedSound);
@@ -1010,8 +1010,8 @@ public class SoundFragment extends ScriptActivityFragment implements SoundBaseAd
 
 			if (file != null) {
 				String fileName = file.getName();
-				String soundTitle = fileName.substring(fileName.indexOf('_') + 1, fileName.lastIndexOf('.'));
-				SoundInfo newSoundInfo = SoundController.getInstance().updateSoundAdapter(soundTitle, fileName,
+				String soundTitle = fileName.substring(0, fileName.lastIndexOf('.'));
+				SoundInfo newSoundInfo = SoundController.getInstance().updateSoundAdapter(soundTitle, file,
 						soundInfoList, SoundFragment.this);
 
 				if (soundInfoListChangedAfterNewListener != null) {

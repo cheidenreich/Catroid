@@ -151,8 +151,8 @@ public class DefaultProjectCreatorDefault extends DefaultProjectCreator {
 
 			LookInfo cloudLookInfo = new LookInfo(cloudName, cloudFile);
 
-			SoundInfo soundInfo1 = new SoundInfo(tweet1, soundFile1.getName());
-			SoundInfo soundInfo2 = new SoundInfo(tweet2, soundFile2.getName());
+			SoundInfo soundInfo1 = new SoundInfo(tweet1, soundFile1);
+			SoundInfo soundInfo2 = new SoundInfo(tweet2, soundFile2);
 
 			Sprite cloudSprite1 = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), cloudSpriteName1);
 			Sprite cloudSprite2 = spriteFactory.newInstance(SingleSprite.class.getSimpleName(), cloudSpriteName2);
